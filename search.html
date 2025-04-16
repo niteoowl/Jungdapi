@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display/swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .search-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .search-box {
+            width: 80%;
+            max-width: 400px;
+            padding: 12px 40px 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            background-image: none;
+            background-size: 24px;
+            background-position: right 10px center;
+            background-repeat: no-repeat;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            background-color: #fff;
+            color: #333;
+            box-sizing: border-box;
+        }
+        .search-box::placeholder {
+            color: #999;
+            transition: color 0.3s ease;
+        }
+        .search-button {
+            position: relative;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -40px;
+            background-color: #fff;
+        }
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+        }
+        .results-header {
+            text-align: left;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .results-header h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .sort-options {
+            display: flex;
+            gap: 10px;
+        }
+        .sort-options button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .sort-options button:hover {
+            background-color: #eee;
+            border-color: #aaa;
+        }
+        .sort-options button.active {
+            background-color: #ddd;
+            border-color: #888;
+        }
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .answer-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .answer-card img {
+            width: 100px;
+            height: 130px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .answer-text {
+            flex: 1;
+        }
+        .answer-text h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .answer-text p {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .no-results {
+            margin-top: 20px;
+            color: #666;
+            font-size: 1.1em;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .pagination button:hover {
+            background-color: #eee;
+            border-color: #aaa;
+        }
+        .pagination button.active {
+            background-color: #ddd;
+            border-color: #888;
+        }
+        @media (max-width: 768px) {
+            .search-box {
+                width: 95%;
+                max-width: none;
+            }
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .sort-options {
+                justify-content: flex-start;
+            }
+            .answer-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .answer-card img {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+        }
+    </style>
+    <script>
+        let currentPage = 1;
+        const recordsPerPage = 3;
+        let allAnswers = [
+            {
+                title: '개념+유형 기초탄탄 라이트 중학 수학 1-1',
+                link: 'https://www.jungdap.kro.kr/개념-유형',
+                imgSrc: 'https://i.postimg.cc/3NcNq4y7/image.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+            {
+                title: '체크체크 중학 수학 1-1',
+                link: 'https://www.jungdap.kro.kr/체크체크',
+                imgSrc: 'https://i.postimg.cc/Vk1P8sjc/image.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+            {
+                title: '개념원리 RPM 중학 수학 1-1',
+                link: 'https://www.jungdap.kro.kr/rpm',
+                imgSrc: 'https://i.postimg.cc/zfYPHXtH/RMP.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+            {
+                title: '체크체크 중학 수학 1-2',
+                link: 'https://www.jungdap.kro.kr/체크체크-1-2',
+                imgSrc: 'https://i.postimg.cc/3Nj26YjV/1-2.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+            {
+                title: 'I Love Grammar 1권',
+                link: 'https://www.jungdap.kro.kr/ilove',
+                imgSrc: 'https://i.postimg.cc/T25Sv5Q1/ilove.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+            {
+                title: '1316 GRAMMAR Level 1',
+                link: 'https://shortlink.uk/YD8D',
+                imgSrc: 'https://i.postimg.cc/5NcKz42V/1316.jpg',
+                description: '클릭하여 답지를 다운로드 하세요.',
+            },
+        ];
+
+        function handleSearch() {
+            const searchBox = document.querySelector('.search-box');
+            const searchTerm = searchBox.value.toLowerCase();
+
+            const results = allAnswers.filter(answer =>
+                answer.title.toLowerCase().includes(searchTerm) || answer.description.toLowerCase().includes(searchTerm)
+            );
+
+            displaySearchResults(results, 1);
+        }
+
+        function displaySearchResults(results, page) {
+            const resultsContainer = document.querySelector('.results-container');
+            const noResultsMessage = document.querySelector('.no-results');
+            resultsContainer.innerHTML = '';
+
+            if (results.length === 0) {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+                const startIndex = (page - 1) * recordsPerPage;
+                const endIndex = startIndex + recordsPerPage;
+
+                for (let i = startIndex; i < endIndex && i < results.length; i++) {
+                    const answer = results[i];
+                    const answerCard = document.createElement('div');
+                    answerCard.className = 'answer-card';
+                    answerCard.innerHTML = `
+                        <img src="${answer.imgSrc}" alt="${answer.title}">
+                        <div class="answer-text">
+                            <h3>${answer.title}</h3>
+                            <p>${answer.description}</p>
+                        </div>
+                    `;
+                    answerCard.addEventListener('click', () => {
+                        window.open(answer.link, '_blank');
+                    });
+                    resultsContainer.appendChild(answerCard);
+                }
+            }
+
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(results.length / recordsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    displaySearchResults(results, currentPage);
+                });
+                if (i === page) {
+                    pageButton.classList.add('active');
+                }
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+
+        function sortByTitle() {
+            allAnswers.sort((a, b) => a.title.localeCompare(b.title));
+            displaySearchResults(allAnswers, 1);
+            document.querySelectorAll('.sort-options button').forEach(button => button.classList.remove('active'));
+            document.getElementById('sort-title').classList.add('active');
+        }
+
+        function sortByDate() {
+            allAnswers.sort((a, b) => 0.5 - Math.random());
+            displaySearchResults(allAnswers, 1);
+            document.querySelectorAll('.sort-options button').forEach(button => button.classList.remove('active'));
+            document.getElementById('sort-date').classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBox = document.querySelector('.search-box');
+            const sortTitleButton = document.getElementById('sort-title');
+            const sortDateButton = document.getElementById('sort-date');
+
+            document.querySelector('.search-button').addEventListener('click', handleSearch);
+            document.querySelector('.search-box').addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+            sortTitleButton.addEventListener('click', sortByTitle);
+            sortDateButton.addEventListener('click', sortByDate);
+
+            const initialSearchTerm = localStorage.getItem('searchTerm');
+            if (initialSearchTerm) {
+                searchBox.value = initialSearchTerm;
+                handleSearch();
+                localStorage.removeItem('searchTerm');
+            } else {
+                displaySearchResults(allAnswers, currentPage);
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>검색</h1>
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="답지를 검색하세요.">
+        <div class="search-button">
+            <img src="https://i.postimg.cc/Zn46mDxH/image.png" alt="검색" class="search-icon">
+        </div>
+    </div>
+
+    <div class="results-header">
+        <h2>검색 결과</h2>
+        <div class="sort-options">
+            <button id="sort-title">제목순</button>
+            <button id="sort-date">날짜순</button>
+        </div>
+    </div>
+
+    <div class="results-container">
+    </div>
+    <p class="no-results">검색 결과가 없습니다.</p>
+    <div id="pagination" class="pagination">
+    </div>
+</body>
+</html>
