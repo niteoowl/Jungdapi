@@ -406,19 +406,19 @@
             const allAnswers = [
                 {
                     title: '개념+유형 기초탄탄 라이트 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/개념-유',
+                    link: 'https://jungdapi.netlify.app/uhyeong',
                     imgSrc: 'https://i.postimg.cc/3NcNq4y7/image.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
                 {
                     title: '체크체크 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/체크체크',
+                    link: 'https://jungdapi.netlify.app/ch1',
                     imgSrc: 'https://i.postimg.cc/Vk1P8sjc/image.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
                 {
                     title: '개념원리 RPM 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/rpm',
+                    link: 'https://jungdapi.netlify.app/rpm',
                     imgSrc: 'https://i.postimg.cc/zfYPHXtH/RMP.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
@@ -555,11 +555,9 @@
                     </div>
                 `;
                 answerCard.addEventListener('click', () => {
-                    // 수정된 부분: window.open 사용
-                    window.open(answer.link, '_blank');
-                });
-                recentAnswersContainer.appendChild(answerCard);
-            }
+    // 수정된 부분: window.location.href 사용
+    window.location.href = answer.link;
+});
 
             const paginationContainer = document.getElementById('pagination');
             paginationContainer.innerHTML = '';
@@ -607,12 +605,12 @@
             });
 
             const carouselLinks = [
-                "https://www.jungdap.kro.kr/체크체크",
-                "https://www.jungdap.kro.kr/rpm",
-                "https://www.jungdap.kro.kr/체크체크-1-2",
-                "https://www.jungdap.kro.kr/개념-유형",
-                "https://www.jungdap.kro.kr/100발100중",
-                "https://www.jungdap.kro.kr/1316"
+                "https://jungdapi.netlify.app/ch1",
+                "https://jungdapi.netlify.app/rpm",
+                "https://jungdapi.netlify.app/ch2",
+                "https://jungdapi.netlify.app/uhyong",
+                "https://jungdapi.netlify.app/100bal",
+                "https://jungdapi.netlify.app/1316"
             ];
 
             carouselItems.forEach((item, index) => {
