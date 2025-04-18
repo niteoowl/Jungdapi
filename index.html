@@ -555,11 +555,8 @@
                     </div>
                 `;
                 answerCard.addEventListener('click', () => {
-                    // 수정된 부분: window.open 사용
-                    window.open(answer.link, '_blank');
-                });
-                recentAnswersContainer.appendChild(answerCard);
-            }
+    window.location.href = answer.link;
+});
 
             const paginationContainer = document.getElementById('pagination');
             paginationContainer.innerHTML = '';
