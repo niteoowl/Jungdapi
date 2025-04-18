@@ -350,45 +350,44 @@
 
     /* Sticky Header Styles */
         .sticky-header {
-            position: fixed; /* 헤더를 상단에 고정 */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background-color: transparent; /* 초기 배경색 투명 */
-            z-index: 100; /* 다른 요소 위에 오도록 설정 */
-            display: flex; /* Flexbox 레이아웃 사용 */
-            justify-content: space-between; /* 로고와 제목 간 간격 벌림 */
-            align-items: center; /* 항목들을 세로로 중앙 정렬 */
+            background-color: transparent;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px 20px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease; /* 부드러운 전환 효과 */
-            box-shadow: none; /* 초기 그림자 제거 */
-            backdrop-filter: none; /* 초기 블러 제거 */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+            box-shadow: none;
+            backdrop-filter: blur(0px); /* 초기 블러 효과 제거 */
         }
 
         .sticky-header.scrolled {
-            background-color: rgba(248, 248, 248, 0.95); /* 스크롤 시 배경색 변경, 투명도 적용 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 스크롤 시 그림자 추가 */
-            backdrop-filter: blur(10px); /* 스크롤 시 블러 효과 추가 */
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* 스크롤 시 블러 효과 적용 */
         }
 
         .sticky-header .logo-image {
-            height: 40px; /* 로고 크기 조정 필요에 따라 */
-            margin-right: 10px; /* 로고와 제목 사이 간격 */
+            height: 40px;
+            margin-right: 10px;
         }
 
         .sticky-header h1 {
-            margin: 0; /* 기본 제목 마진 제거 */
-            font-size: 1.2em; /* 글꼴 크기 조정 필요에 따라 */
-            color: #333; /* 본문 텍스트 색상과 일치 */
+            margin: 0;
+            font-size: 1.2em;
+            color: #333;
             transition: color 0.3s ease;
         }
         .sticky-header h1.dark-mode {
             color: #fff;
         }
 
-        /* 겹침 방지를 위해 본문 내용 조정 */
         body {
-            padding-top: 60px; /* 겹침 방지를 위해 본문 상단에 패딩 추가 */
+            padding-top: 60px;
         }
 
     </style>
@@ -397,7 +396,6 @@
         const recordsPerPage = 3;
 
         function handleSearch() {
-            // 수정된 부분: window.open 사용
             window.location.href = 'https://jungdapi.netlify.app/search';
         }
 
@@ -406,19 +404,19 @@
             const allAnswers = [
                 {
                     title: '개념+유형 기초탄탄 라이트 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/개념-유',
+                    link: 'https://jungdapi.netlify.app/uhyeong',
                     imgSrc: 'https://i.postimg.cc/3NcNq4y7/image.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
                 {
                     title: '체크체크 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/체크체크',
+                    link: 'https://jungdapi.netlify.app/ch1',
                     imgSrc: 'https://i.postimg.cc/Vk1P8sjc/image.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
                 {
                     title: '개념원리 RPM 중학 수학 1-1',
-                    link: 'https://www.jungdap.kro.kr/rpm',
+                    link: 'https://jungdapi.netlify.app/rpm',
                     imgSrc: 'https://i.postimg.cc/zfYPHXtH/RMP.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
@@ -555,7 +553,6 @@
                     </div>
                 `;
                 answerCard.addEventListener('click', () => {
-                    // 수정된 부분: window.open 사용
                     window.location.href=answer.link;
                 });
                 recentAnswersContainer.appendChild(answerCard);
@@ -595,8 +592,7 @@
             const carouselItems = document.querySelectorAll('.carousel-item');
             const sectionTitles = document.querySelectorAll('.section h2');
             const welcomeTitle = document.querySelector('h1');
-            const header = document.querySelector('.sticky-header'); // 헤더 요소 선택
-
+            const header = document.querySelector('.sticky-header');
 
             searchBox.addEventListener('click', handleSearch);
             document.querySelector('.search-button').addEventListener('click', handleSearch);
@@ -607,34 +603,33 @@
             });
 
             const carouselLinks = [
-                "https://www.jungdap.kro.kr/체크체크",
-                "https://www.jungdap.kro.kr/rpm",
-                "https://www.jungdap.kro.kr/체크체크-1-2",
-                "https://www.jungdap.kro.kr/개념-유형",
-                "https://www.jungdap.kro.kr/100발100중",
-                "https://www.jungdap.kro.kr/1316"
+                "https://jungdapi.netlify.app/ch1",
+                "https://jungdapi.netlify.app/rpm",
+                "https://jungdapi.netlify.app/chh2",
+                "https://jungdapi.netlify.app/uhyeong",
+                "https://jungdapi.netlify.app/100bal",
+                "https://jungdapi.netlify.app/1316"
             ];
 
             carouselItems.forEach((item, index) => {
                 item.addEventListener('click', () => {
-                    // 수정된 부분: window.open 사용
-                    window.location.href=carouselLinks[index];
+                   window.location.href=carouselLinks[index];
                 });
             });
 
             displayRecentAnswers(currentPage);
 
-            let isScrolled = false; // 스크롤 상태 추적 변수
+            let isScrolled = false;
 
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) { // 스크롤 임계값 설정 (원하는 값으로 변경 가능)
+window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
                     if (!isScrolled) {
-                        header.classList.add('scrolled'); // 'scrolled' 클래스 추가
+                        header.classList.add('scrolled');
                         isScrolled = true;
                     }
                 } else {
                     if (isScrolled) {
-                        header.classList.remove('scrolled'); // 'scrolled' 클래스 제거
+                        header.classList.remove('scrolled');
                         isScrolled = false;
                     }
                 }
