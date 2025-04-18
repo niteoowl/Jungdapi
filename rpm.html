@@ -178,7 +178,6 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
             const body = document.body;
             const bookSection = document.querySelector('.book-section');
             const bookTitle = document.querySelector('.book-title');
@@ -224,7 +223,6 @@
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
-    <button id="dark-mode-button" class="dark-mode-button"></button>
     <div class="book-section">
         <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
         <div class="book-info">
