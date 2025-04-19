@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파일 공유 웹사이트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="container mx-auto bg-white rounded-lg shadow-md p-8">
+        <h1 class="text-3xl font-semibold text-center text-blue-600 mb-6">파일 공유 플랫폼</h1>
+
+        <div class="upload-form bg-white rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">파일 업로드</h2>
+            <form id="file-upload-form" class="space-y-4">
+                <div>
+                    <label for="file-input" class="block text-gray-700 text-sm font-bold mb-2">파일 선택:</label>
+                    <input type="file" id="file-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <p id="file-name" class="text-gray-500 text-xs mt-1"></p>
+                </div>
+                <div>
+                    <label for="description-input" class="block text-gray-700 text-sm font-bold mb-2">파일 설명:</label>
+                    <textarea id="description-input" placeholder="파일에 대한 설명을 입력하세요." class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                </div>
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">업로드하기</button>
+            </form>
+            <div id="upload-message" class="mt-4 text-yellow-600 font-semibold"></div>
+        </div>
+
+        <div class="file-list-section bg-white rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">업로드된 파일 목록</h2>
+            <ul id="file-list" class="space-y-3">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const descriptionInput = document.getElementById('description-input');
+        const uploadForm = document.getElementById('file-upload-form');
+        const fileList = document.getElementById('file-list');
+        const uploadMessage = document.getElementById('upload-message');
+
+        const mockFiles = [
+            { name: "example1.pdf", description: "Example PDF File", url: "#" },
+            { name: "example2.docx", description: "Example Word Document", url: "#" },
+        ];
+
+        function displayMockFiles() {
+            mockFiles.forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.className = "bg-gray-50 border border-gray-200 rounded-md p-4 flex justify-between items-center";
+                listItem.innerHTML = `
+                    <div>
+                        <p class="text-lg font-semibold text-gray-800">${file.name}</p>
+                        <p class="text-gray-600 text-sm">${file.description}</p>
+                    </div>
+                    <a href="${file.url}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">다운로드</a>
+                `;
+                fileList.appendChild(listItem);
+            });
+        }
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        });
+
+        uploadForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const file = fileInput.files[0];
+            const description = descriptionInput.value;
+
+            if (!file) {
+                uploadMessage.textContent = "업로드할 파일을 선택해주세요.";
+                uploadMessage.classList.remove("text-yellow-600");
+                uploadMessage.classList.add("text-red-600");
+                return;
+            }
+
+            uploadMessage.textContent = "파일 업로드 처리 중... (실제 업로드 기능은 구현되어 있지 않습니다)";
+            uploadMessage.classList.remove("text-red-600");
+            uploadMessage.classList.add("text-yellow-600");
+
+
+            setTimeout(() => {
+                uploadMessage.textContent = "파일 업로드 완료! (모의 데이터)";
+                uploadMessage.classList.remove("text-yellow-600");
+                uploadMessage.classList.add("text-green-600");
+
+                const listItem = document.createElement('li');
+                listItem.className = "bg-gray-50 border border-gray-200 rounded-md p-4 flex justify-between items-center";
+                listItem.innerHTML = `
+                    <div>
+                        <p class="text-lg font-semibold text-gray-800">${file.name}</p>
+                        <p class="text-gray-600 text-sm">${description}</p>
+                    </div>
+                    <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">다운로드</a>
+                `;
+                fileList.appendChild(listItem);
+
+                fileInput.value = '';
+                descriptionInput.value = '';
+                fileNameDisplay.textContent = '';
+            }, 2000);
+        });
+
+        displayMockFiles();
+    </script>
+</body>
+</html>
