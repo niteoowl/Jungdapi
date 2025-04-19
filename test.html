@@ -3,120 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>파일 공유 웹사이트</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>커뮤니티 웹사이트</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Inter', sans-serif;
+        }
+        /* 기본적인 스타일은 여기에 작성할 수 있습니다. */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .write-form {
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0.5rem;
+            background-color: white; /* Added background color */
+        }
+        .write-form h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1e293b; /* Added heading color */
+        }
+        .write-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            resize: vertical;
+            font-family: 'Inter', sans-serif; /* Added font-family */
+            background-color: #f7fafc; /* Added background color */
+            color: #334155; /* Added text color */
+        }
+        .write-form button {
+            padding: 0.75rem 1.5rem;
+            background-color: #4f46e5;
+            color: white;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Inter', sans-serif; /* Added font-family */
+            font-weight: 500;
+            border: none;
+        }
+        .write-form button:hover {
+            background-color: #4338ca;
+        }
+        .post-list {
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 0.5rem;
+            background-color: white; /* Added background color */
+        }
+        .post-list h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1e293b; /* Added heading color */
+        }
+        .post-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            color: #334155; /* Added text color */
+        }
+        .post-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b; /* Added heading color */
+        }
+        .post-item p {
+            margin-bottom: 0.5rem;
+        }
+        .no-posts {
+            text-align: center;
+            color: #6b7280;
+            padding: 1rem;
+            background-color: #f7fafc;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+            margin-top: 1rem;
         }
     </style>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="container mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 class="text-3xl font-semibold text-center text-blue-600 mb-6">파일 공유 플랫폼</h1>
-
-        <div class="upload-form bg-white rounded-lg p-6 mb-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">파일 업로드</h2>
-            <form id="file-upload-form" class="space-y-4">
-                <div>
-                    <label for="file-input" class="block text-gray-700 text-sm font-bold mb-2">파일 선택:</label>
-                    <input type="file" id="file-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <p id="file-name" class="text-gray-500 text-xs mt-1"></p>
-                </div>
-                <div>
-                    <label for="description-input" class="block text-gray-700 text-sm font-bold mb-2">파일 설명:</label>
-                    <textarea id="description-input" placeholder="파일에 대한 설명을 입력하세요." class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
-                </div>
-                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">업로드하기</button>
-            </form>
-            <div id="upload-message" class="mt-4 text-yellow-600 font-semibold"></div>
-        </div>
-
-        <div class="file-list-section bg-white rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">업로드된 파일 목록</h2>
-            <ul id="file-list" class="space-y-3">
-                </ul>
+<body class="bg-gray-100 font-sans">
+    <div class="container">
+        <header class="header">
+            <h1 class="text-3xl font-semibold text-gray-800">커뮤니티</h1>
+        </header>
+        <form class="write-form" id="write-form">
+            <h2 class="text-xl font-semibold mb-4">글쓰기</h2>
+            <textarea id="post-content" placeholder="여기에 글을 작성하세요." rows="4" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+            <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md">작성하기</button>
+        </form>
+        <div class="post-list" id="post-list">
+            <h2 class="text-xl font-semibold mb-4">최근 글</h2>
+            <div id="no-posts" class="no-posts">
+                <p>아직 글이 없습니다.</p>
+            </div>
         </div>
     </div>
-
     <script>
-        const fileInput = document.getElementById('file-input');
-        const fileNameDisplay = document.getElementById('file-name');
-        const descriptionInput = document.getElementById('description-input');
-        const uploadForm = document.getElementById('file-upload-form');
-        const fileList = document.getElementById('file-list');
-        const uploadMessage = document.getElementById('upload-message');
+        const writeForm = document.getElementById('write-form');
+        const postList = document.getElementById('post-list');
+        const noPostsMessage = document.getElementById('no-posts');
 
-        const mockFiles = [
-            { name: "example1.pdf", description: "Example PDF File", url: "#" },
-            { name: "example2.docx", description: "Example Word Document", url: "#" },
-        ];
-
-        function displayMockFiles() {
-            mockFiles.forEach(file => {
-                const listItem = document.createElement('li');
-                listItem.className = "bg-gray-50 border border-gray-200 rounded-md p-4 flex justify-between items-center";
-                listItem.innerHTML = `
-                    <div>
-                        <p class="text-lg font-semibold text-gray-800">${file.name}</p>
-                        <p class="text-gray-600 text-sm">${file.description}</p>
-                    </div>
-                    <a href="${file.url}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">다운로드</a>
-                `;
-                fileList.appendChild(listItem);
-            });
+        let posts = [];
+        if (localStorage.getItem('posts')) {
+            posts = JSON.parse(localStorage.getItem('posts'));
         }
 
-        fileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                fileNameDisplay.textContent = `선택된 파일: ${this.files[0].name}`;
+        function displayPosts() {
+            postList.innerHTML = '<h2 class="text-xl font-semibold mb-4">최근 글</h2>';
+            if (posts.length === 0) {
+                noPostsMessage.style.display = 'block';
             } else {
-                fileNameDisplay.textContent = '';
+                noPostsMessage.style.display = 'none';
+                posts.forEach((post, index) => {
+                    const postItem = document.createElement('div');
+                    postItem.classList.add('post-item');
+                    postItem.innerHTML = `
+                        <h3>${index + 1}. ${post.title}</h3>
+                        <p>${post.content}</p>
+                    `;
+                    postList.appendChild(postItem);
+                });
             }
-        });
+        }
 
-        uploadForm.addEventListener('submit', function(event) {
+        writeForm.addEventListener('submit', (event) => {
             event.preventDefault();
-
-            const file = fileInput.files[0];
-            const description = descriptionInput.value;
-
-            if (!file) {
-                uploadMessage.textContent = "업로드할 파일을 선택해주세요.";
-                uploadMessage.classList.remove("text-yellow-600");
-                uploadMessage.classList.add("text-red-600");
+            const postContent = document.getElementById('post-content').value.trim();
+            if (postContent === '') {
+                alert('글 내용을 입력해주세요.');
                 return;
             }
-
-            uploadMessage.textContent = "파일 업로드 처리 중... (실제 업로드 기능은 구현되어 있지 않습니다)";
-            uploadMessage.classList.remove("text-red-600");
-            uploadMessage.classList.add("text-yellow-600");
-
-
-            setTimeout(() => {
-                uploadMessage.textContent = "파일 업로드 완료! (모의 데이터)";
-                uploadMessage.classList.remove("text-yellow-600");
-                uploadMessage.classList.add("text-green-600");
-
-                const listItem = document.createElement('li');
-                listItem.className = "bg-gray-50 border border-gray-200 rounded-md p-4 flex justify-between items-center";
-                listItem.innerHTML = `
-                    <div>
-                        <p class="text-lg font-semibold text-gray-800">${file.name}</p>
-                        <p class="text-gray-600 text-sm">${description}</p>
-                    </div>
-                    <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">다운로드</a>
-                `;
-                fileList.appendChild(listItem);
-
-                fileInput.value = '';
-                descriptionInput.value = '';
-                fileNameDisplay.textContent = '';
-            }, 2000);
+            const newPost = {
+                title: `새로운 글 ${posts.length + 1}`,
+                content: postContent,
+            };
+            posts.push(newPost);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            displayPosts();
+            document.getElementById('post-content').value = '';
         });
 
-        displayMockFiles();
+        displayPosts();
     </script>
 </body>
 </html>
