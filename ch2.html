@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>체크체크 중학 수학 1-2 답지</title>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>체크체크 중학 수학 1-2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,20 +11,11 @@
             text-align: center;
             margin: 0;
             padding: 20px;
-            transition: background-color 0.3s ease;
             background-color: transparent;
-        }
-        body.dark-mode {
-            background-color: #111;
-            color: #eee;
         }
         h1 {
             margin-bottom: 20px;
             color: #333;
-            transition: color 0.3s ease;
-        }
-        h1.dark-mode {
-            color: #fff;
         }
         .book-section {
             text-align: center;
@@ -38,19 +23,10 @@
             padding: 20px;
             border-radius: 10px;
             background-color: transparent;
-            transition: background-color 0.3s ease;
-        }
-        .book-section.dark-mode {
-            background-color: #333;
-            color: #eee;
         }
         .book-section h2 {
             color: #333;
-            transition: color 0.3s ease;
             margin-bottom: 20px;
-        }
-        .book-section h2.dark-mode {
-            color: #fff;
         }
         .book-info {
             display: flex;
@@ -73,21 +49,13 @@
             font-size: 1.5em;
             margin-bottom: 10px;
             color: #333;
-            transition: color 0.3s ease;
-        }
-        .book-title.dark-mode {
-            color: #fff;
         }
         .book-description {
             font-size: 0.9em;
             color: #666;
-            transition: color 0.3s ease;
             text-align: left;
             margin-bottom: 20px;
             line-height: 1.6;
-        }
-        .book-description.dark-mode {
-            color: #ddd;
         }
         .button-container {
             display: flex;
@@ -119,24 +87,6 @@
             box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
         }
-        .dark-mode .view-button {
-            background-color: #000;
-            color: #fff;
-        }
-        .dark-mode .view-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        .dark-mode .download-button {
-            background-color: #000;
-            color: #fff;
-        }
-        .dark-mode .download-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
         .go-back-button {
             position: fixed;
             top: 20px;
@@ -146,7 +96,6 @@
             border-radius: 5px;
             background-color: transparent;
             cursor: pointer;
-            transition:  color 0.3s ease;
             z-index: 10;
             color: #000;
             text-decoration: none;
@@ -154,13 +103,7 @@
             align-items: center;
         }
         .go-back-button:hover {
-             color: #333;
-        }
-        .dark-mode .go-back-button {
-            color: #fff;
-        }
-        .dark-mode .go-back-button:hover {
-            color: #ddd;
+            color: #333;
         }
         .go-back-button span {
             margin-right: 5px;
@@ -184,30 +127,9 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
             const viewButton = document.querySelector('.view-button');
             const downloadButton = document.querySelector('.download-button');
             const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                bookSection.classList.add('dark-mode');
-                bookTitle.classList.add('dark-mode');
-                bookDescription.classList.add('dark-mode');
-            }
 
             viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1HZtl5buWlRj1XnhpzzvuuatOY-BWegAs/view?usp=sharing', '_blank');
@@ -230,13 +152,12 @@
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
-    <button id="dark-mode-button" class="dark-mode-button"></button>
     <div class="book-section">
-        <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
+        <h2>책 소개</h2>
         <div class="book-info">
             <img src="https://i.postimg.cc/3Nj26YjV/1-2.jpg" alt="체크체크 중학 수학 1-2" class="book-cover">
-            <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">체크체크 중학 수학 1-2</h3>
-            <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
+            <h3 class="book-title">체크체크 중학 수학 1-2</h3>
+            <p class="book-description">
                 간결한 개념 설명과 세분화된 유형별 문제 제공, 심화 단계로 넘어가기 전 중학교 수학 기본기를 탄탄하게 완성할 수 있는 기본서!
             </p>
         </div>
@@ -247,3 +168,4 @@
     </div>
 </body>
 </html>
+
