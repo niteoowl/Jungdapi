@@ -177,24 +177,7 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
+       
 
             if (localStorage.getItem('darkMode') === 'true') {
                 body.classList.add('dark-mode');
