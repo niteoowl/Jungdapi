@@ -14,17 +14,10 @@
             transition: background-color 0.3s ease;
             background-color: transparent;
         }
-        body.dark-mode {
-            background-color: #111;
-            color: #eee;
-        }
         h1 {
             margin-bottom: 20px;
             color: #333;
             transition: color 0.3s ease;
-        }
-        h1.dark-mode {
-            color: #fff;
         }
         .book-section {
             text-align: center;
@@ -113,24 +106,6 @@
             box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
         }
-        .dark-mode .view-button {
-            background-color: #000;
-            color: #fff;
-        }
-        .dark-mode .view-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
-        .dark-mode .download-button {
-            background-color: #000;
-            color: #fff;
-        }
-        .dark-mode .download-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
         .go-back-button {
             position: fixed;
             top: 20px;
@@ -176,61 +151,17 @@
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                bookSection.classList.add('dark-mode');
-                bookTitle.classList.add('dark-mode');
-                bookDescription.classList.add('dark-mode');
-            }
-
-            viewButton.addEventListener('click', () => {
-                window.open('https://drive.google.com/file/d/1JamCbMZEV-5-ZlT5mDuL2PQXcgIVpvnU/view?usp=sharing', '_blank');
-            });
-
-            downloadButton.addEventListener('click', () => {
-                // 다운로드 링크를 직접 지정합니다.
-                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1JamCbMZEV-5-ZlT5mDuL2PQXcgIVpvnU&export=download';
-                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
-                window.location.href = downloadUrl;
-            });
-
-            goBackButton.addEventListener('click', () => {
-                window.history.back();
-            });
-        });
-    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
-    <button id="dark-mode-button" class="dark-mode-button"></button>
     <div class="book-section">
-        <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
+        <h2>책 소개</h2>
         <div class="book-info">
             <img src="https://i.postimg.cc/T25Sv5Q1/ilove.jpg" alt="I Love Grammar 1권 정답과 해설" class="book-cover">
-            <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">I Love Grammar 1권 정답과 해설</h3>
-            <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
+            <h3 class="book-title">I Love Grammar 1권 정답과 해설</h3>
+            <p class="book-description">
                  내신 완벽 대비 중학 영문법 시리즈!
             </p>
         </div>
@@ -241,3 +172,4 @@
     </div>
 </body>
 </html>
+
