@@ -126,6 +126,28 @@
             }
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewButton = document.querySelector('.view-button');
+            const downloadButton = document.querySelector('.download-button');
+            const goBackButton = document.querySelector('.go-back-button');
+
+            viewButton.addEventListener('click', () => {
+                window.open('https://drive.google.com/file/d/17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-/view?usp=sharing', '_blank');
+            });
+
+            downloadButton.addEventListener('click', () => {
+                // 다운로드 링크를 직접 지정합니다.
+                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-&export=download';
+                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
+                window.location.href = downloadUrl;
+            });
+
+            goBackButton.addEventListener('click', () => {
+                window.history.back();
+            });
+        });
+    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
