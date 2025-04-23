@@ -11,11 +11,13 @@
             text-align: center;
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s ease;
             background-color: transparent;
         }
         h1 {
             margin-bottom: 20px;
             color: #333;
+            transition: color 0.3s ease;
         }
         .book-section {
             text-align: center;
@@ -23,9 +25,11 @@
             padding: 20px;
             border-radius: 10px;
             background-color: transparent;
+            transition: background-color 0.3s ease;
         }
         .book-section h2 {
             color: #333;
+            transition: color 0.3s ease;
             margin-bottom: 20px;
         }
         .book-info {
@@ -49,10 +53,12 @@
             font-size: 1.5em;
             margin-bottom: 10px;
             color: #333;
+            transition: color 0.3s ease;
         }
         .book-description {
             font-size: 0.9em;
             color: #666;
+            transition: color 0.3s ease;
             text-align: left;
             margin-bottom: 20px;
             line-height: 1.6;
@@ -96,7 +102,7 @@
             border-radius: 5px;
             background-color: transparent;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition:  color 0.3s ease;
             z-index: 10;
             color: #000;
             text-decoration: none;
@@ -126,6 +132,32 @@
             }
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const bookSection = document.querySelector('.book-section');
+            const bookTitle = document.querySelector('.book-title');
+            const bookDescription = document.querySelector('.book-description');
+            const viewButton = document.querySelector('.view-button');
+            const downloadButton = document.querySelector('.download-button');
+            const goBackButton = document.querySelector('.go-back-button');
+
+            viewButton.addEventListener('click', () => {
+                window.open('https://drive.google.com/file/d/17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-/view?usp=sharing', '_blank');
+            });
+
+            downloadButton.addEventListener('click', () => {
+                // 다운로드 링크를 직접 지정합니다.
+                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-&export=download';
+                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
+                window.location.href = downloadUrl;
+            });
+
+            goBackButton.addEventListener('click', () => {
+                window.history.back();
+            });
+        });
+    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
@@ -134,19 +166,15 @@
     <div class="book-section">
         <h2>책 소개</h2>
         <div class="book-info">
-            <!-- 이미지를 제대로 표시하는 링크로 수정 -->
             <img src="https://i.postimg.cc/NMnpksGc/image.jpg" alt="개념+유형 라이트 중등 수학 1-1" class="book-cover">
-            <h3 class="book-title">개념+유형 중학 수학 1-1</h3>
+            <h3 class="book-title">개념+유형 라이트 중등 수학 1-1</h3>
             <p class="book-description">
                 학교 수학 개념과 유형을 완벽하게 학습할 수 있도록 구성된 수준별 맞춤 학습서!
             </p>
         </div>
         <div class="button-container">
-            <!-- 답지 링크 수정 -->
-            <button class="view-button" onclick="window.open('https://drive.google.com/file/d/17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-/view?usp=sharing', '_blank')">웹에서 보기</button>
-            <button class="download-button" onclick="window.location.href='https://drive.usercontent.google.com/uc?id=17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-&export=download
-
-'">다운로드</button>
+            <button class="view-button">웹에서 보기</button>
+            <button class="download-button">다운로드</button>
         </div>
     </div>
 </body>
