@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>바빠 고등 수학으로 연결되는 중학도형 총정리 답지</title>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>체크체크 중학 수학 1-2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -184,23 +178,15 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
             const body = document.body;
             const bookSection = document.querySelector('.book-section');
             const bookTitle = document.querySelector('.book-title');
             const bookDescription = document.querySelector('.book-description');
+            const viewButton = document.querySelector('.view-button');
+            const downloadButton = document.querySelector('.download-button');
+            const goBackButton = document.querySelector('.go-back-button');
 
-            const darkModeButton = document.getElementById('dark-mode-button');
-if (darkModeButton) {
-    darkModeButton.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        bookSection.classList.toggle('dark-mode');
-        bookTitle.classList.toggle('dark-mode');
-        bookDescription.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-    });
-}
-
+            // Dark mode 적용 상태 확인
             if (localStorage.getItem('darkMode') === 'true') {
                 body.classList.add('dark-mode');
                 bookSection.classList.add('dark-mode');
@@ -236,6 +222,7 @@ if (darkModeButton) {
             <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">바빠 고등 수학으로 연결되는 중학도형 총정리</h3>
             <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
                 바쁘다 바빠 고등수학까지 이어지는 중학도형 총정리!
+            </p>
         </div>
         <div class="button-container">
             <button class="view-button">웹에서 보기</button>
