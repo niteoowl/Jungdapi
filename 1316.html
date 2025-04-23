@@ -176,60 +176,17 @@
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                bookSection.classList.add('dark-mode');
-                bookTitle.classList.add('dark-mode');
-                bookDescription.classList.add('dark-mode');
-            }
-
-            viewButton.addEventListener('click', () => {
-                window.open('https://drive.google.com/file/d/1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV/view?usp=sharing', '_blank');
-            });
-
-            downloadButton.addEventListener('click', () => {
-                // 다운로드 링크를 직접 지정합니다.
-                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV&export=download';
-                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
-                window.location.href = downloadUrl;
-            });
-
-            goBackButton.addEventListener('click', () => {
-                window.history.back();
-            });
-        });
-    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
     <div class="book-section">
-        <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
+        <h2>책 소개</h2>
         <div class="book-info">
             <img src="https://i.postimg.cc/5NcKz42V/1316.jpg" alt="1316" class="book-cover">
-            <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">1316 GRAMMAR Level 1</h3>
-            <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
+            <h3 class="book-title">1316 GRAMMAR Level 1</h3>
+            <p class="book-description">
                 기초부터 탄탄하게 내신까지 완벽 대비! 1316
             </p>
         </div>
