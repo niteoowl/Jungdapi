@@ -14,10 +14,6 @@
             transition: background-color 0.3s ease;
             background-color: transparent;
         }
-        body.dark-mode {
-            background-color: #111;
-            color: #eee;
-        }
         h1 {
             margin-bottom: 20px;
             color: #333;
@@ -178,7 +174,6 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
             const body = document.body;
             const bookSection = document.querySelector('.book-section');
             const bookTitle = document.querySelector('.book-title');
@@ -186,22 +181,6 @@
             const viewButton = document.querySelector('.view-button');
             const downloadButton = document.querySelector('.download-button');
             const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                bookSection.classList.add('dark-mode');
-                bookTitle.classList.add('dark-mode');
-                bookDescription.classList.add('dark-mode');
-            }
 
             viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1YMqNniX7N7QaFZzOzV9CJcoywM94ibVU/view?usp=sharing', '_blank');
@@ -224,13 +203,12 @@
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
-    <button id="dark-mode-button" class="dark-mode-button"></button>
     <div class="book-section">
-        <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
+        <h2>책 소개</h2>
         <div class="book-info">
             <img src="https://i.postimg.cc/zfYPHXtH/RMP.jpg" alt="RPM 중학 수학 1-1" class="book-cover">
-            <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">개념원리 RPM 중학 수학 1-1</h3>
-            <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
+            <h3 class="book-title">개념원리 RPM 중학 수학 1-1</h3>
+            <p class="book-description">
                 유형의 완성 RPM!
             </p>
         </div>
