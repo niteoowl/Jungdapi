@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>개념유형 중학 수학 1-1 답지</title>
+    <title>개념+유형 기초탄탄 라이트 중학 수학 1-1 답지</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -126,29 +126,6 @@
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
-
-            // 웹에서 보기 버튼 클릭 시
-            viewButton.addEventListener('click', () => {
-                window.open('https://drive.google.com/file/d/17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-/view?usp=sharing', '_blank');
-            });
-
-            // 다운로드 버튼 클릭 시
-            downloadButton.addEventListener('click', () => {
-                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-&export=download';
-                window.location.href = downloadUrl;
-            });
-
-            // 뒤로가기 버튼 클릭 시
-            goBackButton.addEventListener('click', () => {
-                window.history.back();
-            });
-        });
-    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
@@ -157,15 +134,17 @@
     <div class="book-section">
         <h2>책 소개</h2>
         <div class="book-info">
-            <img src="https://i.postimg.cc/8P8wVdNc/image.png" alt="개념유형 중학 수학 1-1" class="book-cover">
-            <h3 class="book-title">개념유형 중학 수학 1-1</h3>
+            <!-- 이미지를 제대로 표시하는 링크로 수정 -->
+            <img src="https://i.postimg.cc/NMnpksGc/image.jpg" alt="개념+유형 라이트 중등 수학 1-1" class="book-cover">
+            <h3 class="book-title">개념+유형 중학 수학 1-1</h3>
             <p class="book-description">
-                중등 수학의 핵심 개념을 유형별로 정리!
+                학교 수학 개념과 유형을 완벽하게 학습할 수 있도록 구성된 수준별 맞춤 학습서!
             </p>
         </div>
         <div class="button-container">
-            <button class="view-button">웹에서 보기</button>
-            <button class="download-button">다운로드</button>
+            <!-- 답지 링크 수정 -->
+            <button class="view-button" onclick="window.open('https://drive.google.com/file/d/17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-/view?usp=sharing', '_blank')">웹에서 보기</button>
+            <button class="download-button" onclick="window.location.href='https://drive.usercontent.google.com/uc?id=17ViV4pbrEC-OfTDw10rR7mQvpPoQxhB-&export=download'">다운로드</button>
         </div>
     </div>
 </body>
