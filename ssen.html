@@ -178,39 +178,16 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const darkModeButton = document.getElementById('dark-mode-button');
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
             const viewButton = document.querySelector('.view-button');
             const downloadButton = document.querySelector('.download-button');
             const goBackButton = document.querySelector('.go-back-button');
-
-
-            darkModeButton.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                bookSection.classList.toggle('dark-mode');
-                bookTitle.classList.toggle('dark-mode');
-                bookDescription.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-            });
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                bookSection.classList.add('dark-mode');
-                bookTitle.classList.add('dark-mode');
-                bookDescription.classList.add('dark-mode');
-            }
 
             viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1PB7Bq8VO9_FMhLsLYKLMj1I1ZemGGzpF/view?usp=sharing', '_blank');
             });
 
             downloadButton.addEventListener('click', () => {
-                // 다운로드 링크를 직접 지정합니다.
                 const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1PB7Bq8VO9_FMhLsLYKLMj1I1ZemGGzpF&export=download';
-                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
                 window.location.href = downloadUrl;
             });
 
@@ -224,13 +201,12 @@
     <a href="index.html" class="go-back-button">
         <span>←</span>
     </a>
-    <button id="dark-mode-button" class="dark-mode-button"></button>
     <div class="book-section">
-        <h2 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">책 소개</h2>
+        <h2>책 소개</h2>
         <div class="book-info">
             <img src="https://i.postimg.cc/wv5kFPT5/image.jpg" alt="1316" class="book-cover">
-            <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-title">쎈 중학 수학 1-1</h3>
-            <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''} book-description">
+            <h3 class="book-title">쎈 중학 수학 1-1</h3>
+            <p class="book-description">
                 내신과 수능에 나오는 모든 문제가 다 들어 있는 “문제 기본서 쎈”.
             </p>
         </div>
