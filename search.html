@@ -394,7 +394,7 @@
                         </div>
                     `;
                     answerCard.addEventListener('click', () => {
-                        window.open(answer.link, '_blank');
+                        location.href = answer.link;
                     });
                     resultsContainer.appendChild(answerCard);
                 }
