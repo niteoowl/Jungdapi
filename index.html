@@ -201,33 +201,6 @@
             .answer-text {
                 text-align: center;
             }
-            /* 모바일 화면에서 전체 답지 섹션을 2열로 변경 */
-            .recent-answers {
-                grid-template-columns: 1fr 1fr; /* 2열로 설정 */
-                gap: 15px;
-                margin-top: 20px;
-            }
-            .answer-card {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 15px;
-                background-color: #f8f8f8;
-                border-radius: 10px;
-                transition: background-color 0.3s ease, color 0.3s ease;
-                cursor: pointer;
-                box-sizing: border-box;
-            }
-            .answer-card img {
-                width: 100%;
-                height: auto;
-                max-height: 200px;
-                object-fit: cover;
-                margin-bottom: 10px;
-            }
-            .answer-text {
-                text-align: center;
-            }
         }
 
         /* Carousel Styles */
@@ -357,38 +330,32 @@
             .answer-text {
                 text-align: center;
             }
-             /* 모바일 화면에서 전체 답지 섹션을 2열로 변경 */
-            .recent-answers {
-                grid-template-columns: 1fr 1fr; /* 2열로 설정 */
-                gap: 15px;
-                margin-top: 20px;
+             .carousel-control {
+                top: 140%;
+                transform: translateY(-140%);
             }
-            .answer-card {
-                flex-direction: column;
-                align-items: center;
-                padding: 15px;
-                background-color: #f8f8f8;
-                border-radius: 10px;
-                transition: background-color 0.3s ease, color 0.3s ease;
-                cursor: pointer;
-                box-sizing: border-box;
-            }
-            .answer-card img {
-                width: 100%;
-                height: auto;
-                max-height: 200px;
-                object-fit: cover;
-                margin-bottom: 10px;
-            }
-            .answer-text {
-                text-align: center;
+             .recent-answers {
+                grid-template-columns: 1fr; /* 모바일에서 1열로 변경 */
             }
         }
+        
+        @media (min-width: 769px) {
+            .carousel-control {
+                top: 50%;
+                transform: translateY(-50%);
+            }
+             .recent-answers {
+                grid-template-columns: repeat(2, 1fr); /* PC에서 2열로 설정 */
+                max-width: 1200px; /* 최대 너비 설정 */
+                margin: 0 auto; /* 가운데 정렬 */
+            }
+        }
+
    .request-button {
             margin-top: 20px; /* 필요에 따라 조정 */
         }
-      
-    /* Sticky Header Styles */
+
+           /* Sticky Header Styles */
         .sticky-header {
             position: fixed;
             top: 0;
@@ -433,7 +400,7 @@
     </style>
     <script>
         let currentPage = 1;
-        const recordsPerPage = 6; // 한 페이지에 보여줄 답지 수 (2x3 레이아웃 고려)
+        const recordsPerPage = 6; // 한 페이지에 표시되는 답지 수
 
         function handleSearch() {
             window.location.href = 'https://jungdapi.netlify.app/search';
@@ -570,6 +537,7 @@
                     imgSrc: '/answer3.jpg',
                     description: '2024 물리 정답',
                 },
+                 
                 
             ];
 
@@ -592,9 +560,9 @@
                     </div>
                 `;
                 answerCard.addEventListener('click', () => {
-                     window.location.href=answer.link;
+                    window.location.href=answer.link;
                 });
-recentAnswersContainer.appendChild(answerCard);
+                recentAnswersContainer.appendChild(answerCard);
             }
 
             const paginationContainer = document.getElementById('pagination');
@@ -629,9 +597,13 @@ recentAnswersContainer.appendChild(answerCard);
             const popularAnswersDivs = document.querySelectorAll('.popular-answers div');
             const searchBox = document.querySelector('.search-box');
             const carouselItems = document.querySelectorAll('.carousel-item');
-             const sectionTitles = document.querySelectorAll('.section h2');
-            const welcomeTitle = document.querySelector('h1');
+            const sectionTitles = document.querySelectorAll('.section h2');
+            const welcomeTitle =document.querySelector('h1');
             const header = document.querySelector('.sticky-header');
+            const carouselContainer = document.querySelector('.carousel-container');
+            const prevButton = document.querySelector('.carousel-control.prev');
+            const nextButton = document.querySelector('.carousel-control.next');
+
 
             searchBox.addEventListener('click', handleSearch);
             document.querySelector('.search-button').addEventListener('click', handleSearch);
@@ -652,13 +624,13 @@ recentAnswersContainer.appendChild(answerCard);
 
             carouselItems.forEach((item, index) => {
                 item.addEventListener('click', () => {
-                    window.location.href=carouselLinks[index];
+                   window.location.href=carouselLinks[index];
                 });
             });
 
             displayRecentAnswers(currentPage);
 
-             let isScrolled = false;
+            let isScrolled = false;
 
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
@@ -673,6 +645,22 @@ recentAnswersContainer.appendChild(answerCard);
                     }
                 }
             });
+
+           // Calculate and set carousel button position on load and resize
+            function setCarouselButtonPosition() {
+                const containerRect = carouselContainer.getBoundingClientRect();
+                const containerHeight = containerRect.height;
+                const buttonTop = containerRect.top + containerHeight / 2;
+
+                prevButton.style.top = `${buttonTop}px`;
+                prevButton.style.transform = 'translateY(-50%)';
+                nextButton.style.top = `${buttonTop}px`;
+                nextButton.style.transform = 'translateY(-50%)';
+            }
+
+            // Call the function on load and resize
+            window.addEventListener('load', setCarouselButtonPosition);
+            window.addEventListener('resize', setCarouselButtonPosition);
         });
     </script>
 </head>
@@ -759,4 +747,5 @@ recentAnswersContainer.appendChild(answerCard);
 </script>
 </div>
 
+</html>
 </html>
