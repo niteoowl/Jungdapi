@@ -3,190 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홈 화면에 추가</title>
-    <script>
-        // 브라우저가 PWA 기능을 지원하는지 확인합니다.
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('Service Worker 등록 성공:', registration);
-                })
-                .catch(error => {
-                    console.error('Service Worker 등록 실패:', error);
-                });
+    <title>홈 화면에 앱 추가</title>
+    <meta name="description" content="웹 사이트를 홈 화면에 앱처럼 설치하는 방법 데모입니다.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png"> <meta name="apple-mobile-web-app-capable" content="yes">  <meta name="apple-mobile-web-app-status-bar-style" content="black"> <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f4f8; /* 밝은 배경색 */
+            margin: 0;
         }
 
-        // iOS인지 확인합니다.
-        function isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent)
-                && !window.MSStream;
+        .container {
+            text-align: center;
+            background-color: #ffffff; /* 흰색 컨테이너 배경 */
+            padding: 30px;
+            border-radius: 12px; /* 둥근 테두리 */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); /* 부드러운 그림자 */
+            max-width: 90%; /* 최대 너비 제한 */
+            width: 450px;
         }
 
-        // iOS 홈 화면에 추가되었는지 확인합니다.
-        function isIOSWebApp() {
-            return ('standalone' in window.navigator) && (window.navigator.standalone);
+        h1 {
+            font-size: 28px;
+            color: #2c3e50; /* 더 어두운 제목 색상 */
+            margin-bottom: 20px;
         }
 
-        // Android인지 확인합니다.
-        function isAndroid() {
-            return /android/i.test(navigator.userAgent);
+        p {
+            font-size: 18px;
+            color: #555555; /* 약간 더 어두운 텍스트 색상 */
+            margin-bottom: 25px;
+            line-height: 1.6; /* 줄 간격 개선 */
         }
 
-        // Android 홈 화면에 추가되었는지 확인합니다.
-        function isAndroidWebApp() {
-             return window.matchMedia('(display-mode: standalone)').matches;
+        #install-button {
+            display: inline-flex; /* 아이콘과 텍스트를 나란히 배치 */
+            align-items: center; /* 아이콘과 텍스트를 수직으로 중앙 정렬 */
+            background-color: #4299e1; /* 더 밝은 파란색 */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 은은한 그림자 */
         }
 
-        window.onload = function() {
-            const addToHomeScreenButton = document.getElementById('add-to-home-screen');
-            const instructionsContainer = document.getElementById('instructions-container');
-            const closeInstructionsButton = document.getElementById('close-instructions');
-            let deferredPrompt;
+        #install-button:hover {
+            background-color: #3182ce; /* 호버 시 약간 더 어두운 파란색 */
+        }
 
-            // PWA 설치 가능 여부 이벤트를 감지합니다.
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault(); // 브라우저의 기본 설치 프롬프트를 막습니다.
-                deferredPrompt = e; // 나중에 사용할 수 있도록 저장해 둡니다.
-                // 안드로이드이고, 웹앱이 아닌 경우에만 설치 버튼을 표시합니다.
-                if (isAndroid() && !isAndroidWebApp()) {
-                    addToHomeScreenButton.style.display = 'block';
-                    addToHomeScreenButton.addEventListener('click', async () => {
-                        if (deferredPrompt) {
-                            deferredPrompt.prompt(); // 설치 프롬프트를 표시합니다.
-                            const choiceResult = await deferredPrompt.userChoice; // 사용자의 선택을 기다립니다.
-                            if (choiceResult.outcome === 'accepted') {
-                                console.log('사용자가 설치를 수락했습니다.');
-                                addToHomeScreenButton.style.display = 'none'; // 설치 후 버튼을 숨깁니다.
-                            } else {
-                                console.log('사용자가 설치를 거부했습니다.');
-                            }
-                            deferredPrompt = null; // deferredPrompt를 초기화합니다.
-                        }
-                    });
-                }
-                // iOS일 경우 홈 화면에 추가 안내를 표시합니다.
-                if (isIOS() && !isIOSWebApp()) {
-                    instructionsContainer.style.display = 'block';
-                }
-            });
+        #install-button img {
+            margin-right: 8px; /* 아이콘과 텍스트 간 간격 */
+            height: 24px; /* 아이콘 크기 조정 */
+            width: 24px;
+        }
 
-            // iOS 홈 화면 추가 안내 닫기 버튼
-            if (closeInstructionsButton) { // 버튼이 존재하는지 확인
-                closeInstructionsButton.addEventListener('click', () => {
-                    instructionsContainer.style.display = 'none';
-                });
+        #install-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #2d3748;
+            display: none; /* 처음에는 숨김 */
+            background-color: #edf2f7; /* 밝은 배경 */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0; /* 밝은 테두리 */
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
             }
-        };
-    </script>
-    <style>
-      #add-to-home-screen {
-        display: none; /* PWA 설치 가능한 경우에만 표시되도록 변경 */
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 1000;
-      }
-
-      #add-to-home-screen:hover {
-        background-color: #367c39;
-      }
-
-      #instructions-container {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        z-index: 1000;
-        width: 80%;
-        max-width: 500px;
-      }
-
-      #instructions-container p {
-        margin-bottom: 15px;
-        font-size: 16px;
-      }
-
-      #instructions-container ol {
-        list-style-position: inside;
-        margin-bottom: 15px;
-        font-size: 16px;
-      }
-
-      #instructions-container img {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-      }
-
-      #close-instructions {
-        background-color: #f44336;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 10px;
-        border-radius: 5px;
-      }
-
-      #close-instructions:hover {
-        background-color: #d32f2f;
-      }
-
-      @media (max-width: 600px) {
-        #instructions-container {
-          width: 95%;
+            h1 {
+                font-size: 24px;
+            }
+            p {
+                font-size: 16px;
+            }
+            #install-button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
         }
-      }
     </style>
 </head>
 <body>
-    <button id="add-to-home-screen">홈 화면에 추가</button>
-
-    <div id="instructions-container">
-        <p>홈 화면에 추가하려면 다음 단계를 따르세요:</p>
-        <ol>
-            <li>하단에 있는 공유 아이콘(
-                <img src="https://support.apple.com/library/content/dam/edam/applecare/images/en_US/ios/share-icon-ios-17_2x.png" alt="공유 아이콘" width="20" height="20">
-                )을 탭하세요.
-            </li>
-            <li>"홈 화면에 추가"를 탭하세요.</li>
-            <li>오른쪽 상단의 "추가"를 탭하세요.</li>
-        </ol>
-        <button id="close-instructions">닫기</button>
+    <div class="container">
+        <h1>홈 화면에 앱 추가</h1>
+        <p>이 웹 사이트를 홈 화면에 설치하여 앱처럼 사용할 수 있습니다.</p>
+        <button id="install-button">
+            <img src="https://unpkg.com/ionicons@5.5.2/dist/svg/add.svg" alt="설치 아이콘">
+            설치하기
+        </button>
+        <div id="install-message">설치가 완료되었습니다! 이제 앱처럼 사용할 수 있습니다.</div>
     </div>
 
-    <h1>내 웹사이트</h1>
-    <p>이것은 PWA 예제입니다. 홈 화면에 추가하여 앱처럼 사용할 수 있습니다.</p>
-
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js', {
-          scope: '/'
-        }).then(function(registration) {
-          console.log('Service Worker 등록 성공. Scope: ', registration.scope);
-        }).catch(function(error) {
-          console.log('Service Worker 등록 실패', error);
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        const installMessage = document.getElementById('install-message');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.style.display = 'inline-flex'; // 버튼 표시 (display:flex 에서 inline-flex 로 변경)
         });
-      }
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('사용자가 설치를 수락했습니다.');
+                    installMessage.style.display = 'block';
+                    installButton.style.display = 'none';
+                } else {
+                    console.log('사용자가 설치를 거부했습니다.');
+                }
+                deferredPrompt = null;
+            } else if (navigator.standalone) {
+                installMessage.textContent = "이미 홈 화면에 설치되어 있습니다.";
+                installMessage.style.display = 'block';
+                installButton.style.display = 'none';
+            } else {
+                // 지원하지 않는 브라우저거나, 이미 설치된 경우
+                installMessage.textContent = "브라우저가 설치를 지원하지 않거나, 이미 설치되었습니다.";
+                installMessage.style.display = 'block';
+                installButton.style.display = 'none';
+            }
+        });
+
+        // iOS PWA 확인 및 처리
+        if (navigator.standalone) {
+            installMessage.textContent = "홈 화면에 이미 설치되어 있습니다 (iOS).";
+            installMessage.style.display = 'block';
+            installButton.style.display = 'none';
+        } else if (window.matchMedia('(display-mode: standalone)').matches) {
+            installMessage.textContent = "홈 화면에 이미 설치되어 있습니다 (Android).";
+            installMessage.style.display = 'block';
+            installButton.style.display = 'none';
+        }
     </script>
 </body>
 </html>
+
