@@ -79,6 +79,7 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
             margin-bottom: 20px;
+            justify-content: center; /* 모바일 화면에서 가운데 정렬 */
         }
         .filter-container::-webkit-scrollbar {
             display: none;
@@ -96,6 +97,7 @@
             flex-shrink: 0;
             min-width: 120px;
             box-sizing: border-box;
+            margin: 5px 0; /* 상하 마진 추가 */
         }
         .filter-container select:hover {
             border-color: #aaa;
@@ -178,17 +180,18 @@
                 gap: 10px;
             }
             .filter-container {
-                flex-direction: row;
-                align-items: flex-start;
+                flex-direction: column; /* 모바일 화면에서 세로로 변경 */
+                align-items: center; /* 가운데 정렬 */
                 margin-left: 0;
                 overflow-x: auto;
                 display: flex;
             }
             .filter-container select {
-                margin-bottom: 0;
-                margin-right: 10px;
+                margin-bottom: 10px; /* 간격 추가 */
+                margin-right: 0; /* 오른쪽 마진 제거 */
                 flex-shrink: 0;
-                min-width: 120px;
+                min-width: 100%; /* 너비 100% 차지 */
+                box-sizing: border-box;
             }
             .answer-card {
                 flex-direction: row;
