@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정답이 - 빠르고 정확한 정답 검색</title>
+    <meta name="description" content="정답이 앱 다운로드하고, 빠르고 정확하게 정답을 검색하세요. 다양한 문제와 해설을 제공합니다.">
+    <meta name="keywords" content="정답, 문제, 검색, 퀴즈, 시험, 해설, 다운로드, 앱, iOS, Android">
+    <link rel="canonical" href="https://www.jungdapi.com/">
+    <meta property="og:title" content="정답이 - 빠르고 정확한 정답 검색">
+    <meta property="og:description" content="정답이 앱 다운로드하고, 빠르고 정확하게 정답을 검색하세요. 다양한 문제와 해설을 제공합니다.">
+    <meta property="og:url" content="https://www.jungdapi.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://www.jungdapi.com/images/jungdapi-logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #ffffff;
+            width: 100%;
+            padding: 25px 0;
+            box-shadow: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            box-sizing: border-box;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #4f46e5;
+        }
+        header nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        header nav ul li {
+            margin-left: 25px;
+        }
+        header nav ul li a {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        header nav ul li a:hover {
+            color: #4f46e5;
+        }
+        main {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #hero-section {
+            background-color: #ffffff;
+            padding: 60px 0;
+            border-radius: 0;
+            box-shadow: none;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+        }
+        #hero-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+        #hero-section p {
+            font-size: 20px;
+            color: #4b5563;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            box-shadow: none;
+        }
+        .download-btn img {
+            margin-right: 10px;
+            height: 24px;
+        }
+        #ios-download {
+            background-color: #ffffff;
+            color: #1f2937;
+            border: 1px solid #d1d5db;
+        }
+        #ios-download:hover {
+            background-color: #f9fafb;
+        }
+        #android-download {
+            background-color: #2b2b2b;
+            color: white;
+        }
+        #android-download:hover {
+            background-color: #000000;
+        }
+        #feature-section {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 40px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #feature-section h2 {
+            font-size: 30px;
+            margin-bottom: 30px;
+            color: #1e293b;
+        }
+        .feature-grid {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 30px;
+            padding-bottom: 20px;
+            padding-left: 100px;
+            padding-right: 100px;
+            margin-left: -100px;
+            margin-right: -100px;
+            mask-image: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 30%, rgba(255,255,255,1) 70%, rgba(255,255,255,0) 100%);
+        }
+        .feature-grid::-webkit-scrollbar {
+            display: none;
+        }
+        .feature-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            text-align: left;
+            flex: 0 0 auto;
+            width: 80%;
+            max-width: 300px;
+            scroll-snap-align: start;
+            /* 변경된 부분: 애니메이션 추가 */
+            animation: slide 10s linear infinite, fadeIn 1s ease forwards;
+            animation-timing-function: linear;
+            opacity: 0;
+        }
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .feature-card:hover {
+            transform: translateX(-10px);
+        }
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+        .feature-card p {
+            font-size: 16px;
+            color: #4b5563;
+            line-height: 1.7;
+        }
+        footer {
+            background-color: #f3f4f6;
+            width: 100%;
+            padding: 25px 0;
+            text-align: center;
+            color: #6b7280;
+            margin-top: 40px;
+            border-top: 1px solid #d1d5db;
+        }
+        #install-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #2d3748;
+            display: none;
+            background-color: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        #loading-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            z-index: 1000;
+        }
+        #loading-popup img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            /* 로딩 애니메이션 스타일 */
+            animation: rotate 2s linear infinite;
+        }
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        #completion-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 20px;
+            z-index: 1000;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        #completion-popup p {
+            margin-bottom: 20px;
+            color: #374151;
+        }
+        #completion-popup button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        #completion-popup button:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://i.postimg.cc/xj4K5r5w/001-76-Photoroom.png" alt="정답이 로고" style="height: 50px;">
+        <nav>
+            <ul>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="hero-section">
+            <h2>빠르고 정확한 정답 검색</h2>
+            <p>
+                정답이 앱으로 궁금한 문제를 즉시 검색하고, 다양한 문제와 해설을 만나보세요.
+                학생부터 전문가까지, 누구나 쉽고 편리하게 정답을 찾을 수 있습니다.
+            </p>
+            <div id="download-buttons">
+                <a id="ios-download" class="download-btn" href="#">
+                    <img src="https://i.postimg.cc/Tw09k24b/001-84.png" alt="iOS 다운로드">
+                    <span>iOS 다운로드</span>
+                </a>
+                <a id="android-download" class="download-btn" href="#">
+                    <img src="https://i.postimg.cc/gcMs8JRF/001-85.png" alt="Android 다운로드">
+                    <span>Android 다운로드</span>
+                </a>
+            </div>
+            <div id="install-message">설치가 완료되었습니다! 이제 앱처럼 사용할 수 있습니다.</div>
+        </section>
+    </main>
+    <div id="loading-popup">
+        <img src="https://i.postimg.cc/L4nNqJgD/loading-icon-animated-14.gif" alt="로딩...">
+        <p>다운로드 중...</p>
+    </div>
+    <div id="completion-popup">
+        <p>다운로드 및 설치가 완료되었습니다!</p>
+        <button id="completion-button">확인</button>
+    </div>
+    <script>
+        const iosDownloadBtn = document.getElementById('ios-download');
+        const androidDownloadBtn = document.getElementById('android-download');
+        const loadingPopup = document.getElementById('loading-popup');
+        const completionPopup = document.getElementById('completion-popup');
+        const completionButton = document.getElementById('completion-button');
+
+        function showLoading() {
+            loadingPopup.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideLoading() {
+            loadingPopup.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function showCompletion() {
+            completionPopup.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideCompletion() {
+            completionPopup.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function checkInstallStatus() {
+            if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    showCompletion();
+                }, 1500);
+                return true;
+            }
+            return false;
+        }
+
+        if (checkInstallStatus()) {
+             return;
+        }
+
+        iosDownloadBtn.addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showCompletion();
+            }, 3000);
+        });
+
+        androidDownloadBtn.addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showCompletion();
+            }, 3000);
+        });
+
+        completionButton.addEventListener('click', () => {
+            hideCompletion();
+        });
+    </script>
+</body>
+</html>
