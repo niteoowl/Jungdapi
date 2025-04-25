@@ -265,22 +265,21 @@
             <img src="https://unpkg.com/ionicons@5.5.2/dist/svg/help-circle-outline.svg" alt="도움말 아이콘">
             도움말
         </button>
-        <div id="install-message">설치가 완료되었습니다! 이제 앱처럼 사용할 수 있습니다.</div>
+        <div id="install-message">앱 설치가 완료되었습니다!</div>
         <div id="help-message">
             <button class="close-button">&times;</button>
             <h2>앱 설치 방법</h2>
             <ol>
-                <li>"설치하기" 버튼을 누르세요.</li>
+                <li>설치하기 버튼을 누르세요.</li>
                 <li>브라우저의 안내에 따라 앱을 설치하세요.</li>
                 <li>설치가 완료되면 홈 화면에서 앱을 실행할 수 있습니다.</li>
             </ol>
-            <h2>시스템 요구 사항</h2>
-            <ul>
-                <li>Android: Chrome 70 이상</li>
-                <li>iOS: Safari 14 이상</li>
-            </ul>
+            <h2>왜 '브라우저가 앱 설치를 지원하지 않습니다'라고 뜨나요?<h2>
+                 <li>접속한 브라우저가 카카오톡 등 기타 브라우저일수 있습니다. chrome/삼성 인터넷 등의 브라우저로 접속하세요.</li>
+
             <h2>추가 정보</h2>
             <p>더 궁금한 점이 있으시면 <a href="https://www.jungdapi.netliy.app" style="color: #fff; text-decoration: underline;">Jungdapi 홈페이지</a>를 방문해주세요.</p>
+            <h2>왜 </h2>
         </div>
     </main>
     <footer>
@@ -320,7 +319,7 @@
                 installButton.style.display = 'none';
                 helpButton.style.display = 'none';
             } else {
-                installMessage.textContent = "브라우저가 앱 설치를 지원하지 않습니다.";
+                installMessage.textContent = "이미 설치되었거나 브라우저가 앱 설치를 지원하지 않습니다.";
                 installMessage.style.display = 'block';
                 installButton.style.display = 'none';
             }
@@ -337,12 +336,12 @@
         });
 
         if (navigator.standalone) {
-            installMessage.textContent = "[ios] 홈 화면에 이미 설치되어 있습니다.";
+            installMessage.textContent = "[ios] 이미 설치되어 있습니다.";
             installMessage.style.display = 'block';
             installButton.style.display = 'none';
             helpButton.style.display = 'none';
         } else if (window.matchMedia('(display-mode: standalone)').matches) {
-            installMessage.textContent = "[Android] 홈 화면에 이미 설치되어 있습니다.";
+            installMessage.textContent = "[Android] 이미 설치되어 있습니다.";
             installMessage.style.display = 'block';
             installButton.style.display = 'none';
         }
