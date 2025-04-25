@@ -1,1430 +1,721 @@
-
-
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-
-    <meta name="naver-site-verification" content="cda866ce38fc48ed6ca3236d0629dc018b0735c1" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="manifest" href="/manifest.json">
-
+    <link rel="shortcut icon" href="/simbol.png" />
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="naver-site-verification" content="cda866ce38fc48ed6ca3236d0629dc018b0735c1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="pmgmMf52GPhNpbRqH99KUI-YyZrlM0nQfHiR_jF-sdA" />
-
     <title>정답이 jungdapi | 초중고 답지 공유 사이트</title>
-
     <meta name="description" content="초중고 문제집 답지를 쉽고 빠르게 다운로드하세요.">
-
     <meta name="keywords" content="정답이, 수학답지, 영어답지, 만점왕, 만점왕답지, jungdapi, 답지, 자이스토리, 마더텅, 리트윗, 쎈, RPM, 개념원리, 라이트쎈, 일품, 수능특강, 수능완성, 메가스터디, 이투스, 대성마이맥, 자이스토리 실전, 자이스토리 기출, 마더텅 기출문제집, 수능 기출의 미래, 빅데이터 수능기출, 블랙라벨, 자이백, 체크체크, 백발백중, 우공비, 숨마쿰라우데, 능률 VOCA, 워드마스터, 그래머존, 그래머인유즈, 올림포스, 리딩튜터, 수능연계교재, 교과서 개념정리, 한완수, 마플, 미래엔, 비상, 천재교육, 동아출판, 비상교육, 국어의기술, 수학의바이블, 수능길잡이, 스카이에듀, EBS 연계교재, EBS 수특, EBS 수완, 리딩파워, 리딩엣지, 공단기, 해커스, 능률, 미라클, 시나공, 한끝, 셀파, 체크체크체크, 고난도N제, 킬러문항, 수학의 정석, 영어의 기술, 과학의 원리, 백점맞는시리즈, 우등생시리즈, 천일문, 그래머트리, 수능기출문제집, 내신대비문제집, 고등수학문제집, 고등영어문제집, 고등국어문제집, 개념플러스유형, 라이트쎈, 유형라이트
 
-
-
 ">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
     <style>
-
         body {
-
             font-family: 'Inter', sans-serif;
-
             text-align: center;
-
             margin: 0;
-
             padding: 20px;
-
             transition: background-color 0.3s ease;
-
         }
-
         body.dark-mode {
-
             background-color: #111;
-
             color: #eee;
-
         }
-
         h1 {
-
             margin-bottom: 20px;
-
             color: #333;
-
         }
-
         h1.dark-mode {
-
             color: #fff;
-
         }
-
         .search-container {
-
             margin-top: 20px;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
             width: 100%;
-
         }
-
         .search-box {
-
             width: 80%;
-
             max-width: 400px;
-
             padding: 12px 40px 12px 15px;
-
             border-radius: 10px;
-
             border: 1px solid #ccc;
-
             background-image: none;
-
             background-size: 24px;
-
             background-position: right 10px center;
-
             background-repeat: no-repeat;
-
             transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-
             background-color: #fff;
-
             color: #333;
-
             box-sizing: border-box;
-
             cursor: pointer;
-
         }
-
         .search-box.dark-mode {
-
             background-color: #222;
-
             color: #eee;
-
             border-color: #555;
-
         }
-
         .search-box::placeholder {
-
             color: #999;
-
             transition: color 0.3s ease;
-
         }
-
         .search-box.dark-mode::placeholder {
-
             color: #ddd;
-
         }
-
         .search-button {
-
             position: relative;
-
             width: 35px;
-
             height: 35px;
-
             border-radius: 50%;
-
             cursor: pointer;
-
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
             margin-left: -40px;
-
             background-color: transparent;
-
         }
-
         .search-button.dark-mode {
-
             background-color: transparent;
-
         }
-
         .search-icon {
-
             width: 20px;
-
             height: 20px;
-
             opacity: 0.6;
-
         }
-
         .search-icon.dark-mode {
-
             opacity: 1;
-
             content: url("https://i.postimg.cc/V61TpLXP/image.png");
-
         }
-
         .section {
-
             text-align: left;
-
             margin-top: 40px;
-
         }
-
         .section h2 {
-
             color: #333;
-
             transition: color 0.3s ease;
-
             margin-bottom: 20px;
-
         }
-
         .section h2.dark-mode {
-
             color: #fff;
-
         }
-
         .popular-answers {
-
             display: flex;
-
             overflow-x: auto;
-
             gap: 15px;
-
             padding: 10px 0;
-
         }
-
         .popular-answers div {
-
             min-width: 150px;
-
             padding: 12px;
-
             background-color: #f8f8f8;
-
             border-radius: 10px;
-
             text-align: center;
-
             transition: background-color 0.3s ease, color 0.3s ease;
-
             white-space: nowrap;
-
             box-sizing: border-box;
-
         }
-
         .popular-answers div.dark-mode {
-
             background-color: #333;
-
             color: #eee;
-
         }
-
         .popular-answers div a {
-
             display: block;
-
             color: inherit;
-
             text-decoration: none;
-
         }
-
         .recent-answers {
-
             display: grid;
-
             grid-template-columns: 1fr;
-
             gap: 15px;
-
             margin-top: 20px;
-
         }
-
         .answer-card {
-
             display: flex;
-
             align-items: center;
-
             padding: 15px;
-
             background-color: #f8f8f8;
-
             border-radius: 10px;
-
             transition: background-color 0.3s ease, color 0.3s ease;
-
             cursor: pointer;
-
             box-sizing: border-box;
-
         }
-
         .answer-card.dark-mode {
-
             background-color: #333;
-
             color: #eee;
-
         }
-
         .answer-card img {
-
             width: 100px;
-
             height: 130px;
-
             border-radius: 10px;
-
             object-fit: cover;
-
             margin-right: 15px;
-
         }
-
         .answer-text {
-
             flex: 1;
-
             text-align: left;
-
         }
-
         .answer-text h3 {
-
             font-size: 1.1em;
-
             margin-bottom: 5px;
-
             color: #333;
-
             transition: color 0.3s ease;
-
         }
-
         .answer-text h3.dark-mode {
-
             color: #fff;
-
         }
-
         .answer-text p {
-
             font-size: 0.9em;
-
             color: #666;
-
             transition: color 0.3s ease;
-
         }
-
         .answer-text p.dark-mode {
-
             color: #ddd;
-
         }
-
         @media (max-width: 768px) {
-
             .search-box {
-
                 width: 95%;
-
                 max-width: none;
-
             }
-
             .popular-answers {
-
                 gap: 10px;
-
             }
-
             .popular-answers div {
-
                 min-width: 120px;
-
                 padding: 10px;
-
             }
-
             .answer-card {
-
                 flex-direction: column;
-
                 text-align: center;
-
             }
-
             .answer-card img {
-
                 margin-right: 0;
-
                 margin-bottom: 10px;
-
                 width: 100%;
-
                 height: auto;
-
                 max-height: 200px;
-
             }
-
             .answer-text {
-
                 text-align: center;
-
             }
-
         }
-
-
 
         /* Carousel Styles */
-
         .carousel-container {
-
             display: flex;
-
             overflow-x: auto;
-
             scroll-snap-type: x mandatory;
-
             gap: 15px;
-
             padding: 10px 0;
-
             position: relative;
-
             margin-top: 20px;
-
         }
-
         .carousel-container::-webkit-scrollbar {
-
             display: none;
-
         }
-
         .carousel-item {
-
             flex: 0 0 auto;
-
             width: 250px;
-
             height: 300px;
-
             border-radius: 10px;
-
             background-color: #f0f0f0;
-
             display: flex;
-
             flex-direction: column;
-
             justify-content: center;
-
             align-items: center;
-
             text-align: center;
-
             scroll-snap-align: start;
-
             cursor: pointer;
-
             transition: background-color 0.3s ease, color 0.3s ease;
-
             box-sizing: border-box;
-
         }
-
         .carousel-item.dark-mode {
-
             background-color: #333;
-
             color: #eee;
-
         }
-
         .carousel-item img {
-
             max-width: 100%;
-
             max-height: 200px;
-
             object-fit: contain;
-
             border-radius: 10px;
-
             margin-bottom: 10px;
-
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
         }
-
         .carousel-title {
-
             font-size: 1.2em;
-
             margin-top: 0;
-
             color: #333;
-
             transition: color 0.3s ease;
-
         }
-
         .carousel-title.dark-mode {
-
             color: #fff;
-
         }
-
         .carousel-control {
-
             position: absolute;
-
             top: 50%;
-
             transform: translateY(-50%);
-
             width: 40px;
-
             height: 40px;
-
             border-radius: 50%;
-
             background-color: rgba(0, 0, 0, 0.5);
-
             color: white;
-
             font-size: 24px;
-
             text-align: center;
-
             line-height: 40px;
-
             cursor: pointer;
-
             user-select: none;
-
             opacity: 0.7;
-
             transition: opacity 0.3s ease;
-
             z-index: 10;
-
         }
-
         .carousel-control:hover {
-
             opacity: 1;
-
         }
-
         .carousel-control.prev {
-
             left: 0;
-
         }
-
         .carousel-control.next {
-
             right: 0;
-
         }
-
         #pagination {
-
             display: flex;
-
             justify-content: center;
-
             margin-top: 20px;
-
         }
-
         #pagination button {
-
             margin: 0 5px;
-
             padding: 8px 12px;
-
             border: 1px solid #ccc;
-
             border-radius: 5px;
-
             background-color: #f4f4f4;
-
             cursor: pointer;
-
             transition: background-color 0.3s ease;
-
         }
-
         #pagination button:hover {
-
             background-color: #ddd;
-
         }
-
         #pagination button.active {
-
             background-color: #282c34;
-
             color: white;
-
             border-color: #282c34;
-
         }
-
-
 
         /* 모바일 환경 스타일 조정 */
-
         @media (max-width: 768px) {
-
             .search-box {
-
                 width: 95%;
-
                 max-width: none;
-
             }
-
             .popular-answers {
-
                 gap: 10px;
-
             }
-
             .popular-answers div {
-
                 min-width: 120px;
-
                 padding: 10px;
-
             }
-
             .answer-card {
-
                 flex-direction: column;
-
                 text-align: center;
-
             }
-
             .answer-card img {
-
                 margin-right: 0;
-
                 margin-bottom: 10px;
-
                 width: 100%;
-
                 height: auto;
-
                 max-height: 200px;
-
             }
-
             .answer-text {
-
                 text-align: center;
-
             }
-
         }
-
    .request-button {
-
             margin-top: 20px; /* 필요에 따라 조정 */
-
         }
-
       
-
     /* Sticky Header Styles */
-
         .sticky-header {
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             background-color: transparent;
-
             z-index: 100;
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             padding: 10px 20px;
-
             transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
-
             box-shadow: none;
-
             backdrop-filter: blur(0px); /* 초기 블러 효과 제거 */
-
         }
-
-
 
         .sticky-header.scrolled {
-
             background-color: rgba(255, 255, 255, 0.95);
-
             box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-
             backdrop-filter: blur(10px); /* 스크롤 시 블러 효과 적용 */
-
         }
-
-
 
         .sticky-header .logo-image {
-
             height: 40px;
-
             margin-right: 10px;
-
         }
-
-
 
         .sticky-header h1 {
-
             margin: 0;
-
             font-size: 1.2em;
-
             color: #333;
-
             transition: color 0.3s ease;
-
         }
-
         .sticky-header h1.dark-mode {
-
             color: #fff;
-
         }
-
-
 
         body {
-
             padding-top: 60px;
-
         }
-
-
 
     </style>
-
     <script>
-
         let currentPage = 1;
-
         const recordsPerPage = 3;
 
-
-
         function handleSearch() {
-
             window.location.href = 'https://jungdapi.netlify.app/search';
-
         }
-
-
 
         function displayRecentAnswers(page) {
-
             const recentAnswersContainer = document.querySelector('.recent-answers');
-
             const allAnswers = [
-
                 {
-
                     title: '개념+유형 기초탄탄 라이트 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/uhyeong',
-
                     imgSrc: 'https://i.postimg.cc/3NcNq4y7/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                 {
-
                     title: '체크체크 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/ch1',
-
                     imgSrc: 'https://i.postimg.cc/Vk1P8sjc/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                 {
-
                     title: '개념원리 RPM 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/rpm',
-
                     imgSrc: 'https://i.postimg.cc/zfYPHXtH/RMP.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                 {
-
                     title: '수력충전 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/suryeok',
-
                     imgSrc: 'https://i.postimg.cc/zD4x87tg/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                 {
-
                     title: 'I love grammar level 1',
-
                     link: 'https://jungdapi.netlify.app/ilg',
-
                     imgSrc: 'https://i.postimg.cc/T25Sv5Q1/ilove.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                
-
                 {
-
                     title: '쎈 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/ssen',
-
                     imgSrc: 'https://i.postimg.cc/wv5kFPT5/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: '라이트쎈 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/litessen',
-
                     imgSrc: 'https://i.postimg.cc/mrNhtsFK/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: '개념원리 중학 수학 1-1',
-
                     link: 'https://jungdapi.netlify.app/wonri',
-
                     imgSrc: 'https://i.postimg.cc/8P8wVdNc/image.png',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: '한끝 중학 국어 통합편 1',
-
                     link: 'https://jungdapi.netlify.app/han',
-
                     imgSrc: 'https://i.postimg.cc/c1mc73Yb/image.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: '바빠 고등 수학으로 연결되는 중학도형 총정리',
-
                     link: 'https://jungdapi.netlify.app/babba',
-
                     imgSrc: 'https://i.postimg.cc/TwSWv8r7/XL-1.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: 'Junior Reading Expert level2',
-
                     link: 'https://jungdapi.netlify.app/ex2',
-
                     imgSrc: 'https://i.postimg.cc/Kj6LBXjk/XL.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: '오투 중학 과학 1-2',
-
                     link: 'https://jungdapi.netlify.app/o2',
-
                     imgSrc: 'https://i.postimg.cc/KvJNSFP5/XL-1.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
                 },
-
                  {
-
                     title: 'READING BITE PREP (리딩바이트) 중학 영어 1',
-
                     link: 'https://jungdapi.netlify.app/bite',
-
                     imgSrc: 'https://i.postimg.cc/65XWJxWT/XL-2.jpg',
-
                     description: '클릭하여 답지를 다운로드 하세요.',
-
+                },
+                 {
+                    title: '2024 물리 답지',
+                    link: 'https://www.6.com',
+                    imgSrc: '/answer3.jpg',
+                    description: '2024 물리 정답',
+                },
+                 {
+                    title: '2024 물리 답지',
+                    link: 'https://www.6.com',
+                    imgSrc: '/answer3.jpg',
+                    description: '2024 물리 정답',
+                },
+                 {
+                    title: '2024 물리 답지',
+                    link: 'https://www.6.com',
+                    imgSrc: '/answer3.jpg',
+                    description: '2024 물리 정답',
+                },
+                 {
+                    title: '2024 물리 답지',
+                    link: 'https://www.6.com',
+                    imgSrc: '/answer3.jpg',
+                    description: '2024 물리 정답',
                 },
 
                  {
-
                     title: '2024 물리 답지',
-
                     link: 'https://www.6.com',
-
                     imgSrc: '/answer3.jpg',
-
                     description: '2024 물리 정답',
-
                 },
-
                  {
-
                     title: '2024 물리 답지',
-
                     link: 'https://www.6.com',
-
                     imgSrc: '/answer3.jpg',
-
                     description: '2024 물리 정답',
-
                 },
-
                  {
-
                     title: '2024 물리 답지',
-
                     link: 'https://www.6.com',
-
                     imgSrc: '/answer3.jpg',
-
                     description: '2024 물리 정답',
-
                 },
-
                  {
-
                     title: '2024 물리 답지',
-
                     link: 'https://www.6.com',
-
                     imgSrc: '/answer3.jpg',
-
                     description: '2024 물리 정답',
-
                 },
-
-
-
-                 {
-
-                    title: '2024 물리 답지',
-
-                    link: 'https://www.6.com',
-
-                    imgSrc: '/answer3.jpg',
-
-                    description: '2024 물리 정답',
-
-                },
-
-                 {
-
-                    title: '2024 물리 답지',
-
-                    link: 'https://www.6.com',
-
-                    imgSrc: '/answer3.jpg',
-
-                    description: '2024 물리 정답',
-
-                },
-
-                 {
-
-                    title: '2024 물리 답지',
-
-                    link: 'https://www.6.com',
-
-                    imgSrc: '/answer3.jpg',
-
-                    description: '2024 물리 정답',
-
-                },
-
-                 {
-
-                    title: '2024 물리 답지',
-
-                    link: 'https://www.6.com',
-
-                    imgSrc: '/answer3.jpg',
-
-                    description: '2024 물리 정답',
-
-                },
-
                  
-
                 
-
             ];
-
-
 
             recentAnswersContainer.innerHTML = '';
-
             const startIndex = (page - 1) * recordsPerPage;
-
             const endIndex = startIndex + recordsPerPage;
 
-
-
             for (let i = startIndex; i < endIndex && i < allAnswers.length; i++) {
-
                 const answer = allAnswers[i];
-
                 const answerCard = document.createElement('div');
-
                 answerCard.className = 'answer-card';
-
                 if (document.body.classList.contains('dark-mode')) {
-
                     answerCard.classList.add('dark-mode');
-
                 }
-
                 answerCard.innerHTML = `
-
                     <img src="${answer.imgSrc}" alt="${answer.title}">
-
                     <div class="answer-text">
-
                         <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">${answer.title}</h3>
-
                         <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">${answer.description}</p>
-
                     </div>
-
                 `;
-
                 answerCard.addEventListener('click', () => {
-
                     window.location.href=answer.link;
-
                 });
-
                 recentAnswersContainer.appendChild(answerCard);
-
             }
-
-
 
             const paginationContainer = document.getElementById('pagination');
-
             paginationContainer.innerHTML = '';
-
             const totalPages = Math.ceil(allAnswers.length / recordsPerPage);
-
             for (let i = 1; i <= totalPages; i++) {
-
                 const pageButton = document.createElement('button');
-
                 pageButton.textContent = i;
-
                 pageButton.addEventListener('click', () => {
-
                     currentPage = i;
-
                     displayRecentAnswers(currentPage);
-
                 });
-
                 if (i === page) {
-
                     pageButton.classList.add('active');
-
                 }
-
                 paginationContainer.appendChild(pageButton);
-
             }
-
         }
-
-
 
         function scrollCarousel(direction) {
-
             const container = document.querySelector('.carousel-container');
-
             const itemWidth = document.querySelector('.carousel-item').offsetWidth;
-
             const scrollAmount = direction === 'prev' ? -itemWidth : itemWidth;
-
             container.scrollBy({
-
                 left: scrollAmount,
-
                 behavior: 'smooth',
-
             });
-
         }
 
-
-
         document.addEventListener('DOMContentLoaded', () => {
-
             const body = document.body;
-
             const popularAnswersDivs = document.querySelectorAll('.popular-answers div');
-
             const searchBox = document.querySelector('.search-box');
-
             const carouselItems = document.querySelectorAll('.carousel-item');
-
             const sectionTitles = document.querySelectorAll('.section h2');
-
             const welcomeTitle = document.querySelector('h1');
-
             const header = document.querySelector('.sticky-header');
 
-
-
             searchBox.addEventListener('click', handleSearch);
-
             document.querySelector('.search-button').addEventListener('click', handleSearch);
-
             document.querySelector('.search-box').addEventListener('keydown', (event) => {
-
                 if (event.key === 'Enter') {
-
                     handleSearch();
-
                 }
-
             });
-
-
 
             const carouselLinks = [
-
                 "https://jungdapi.netlify.app/ch1",
-
                 "https://jungdapi.netlify.app/rpm",
-
                 "https://jungdapi.netlify.app/ch2",
-
                 "https://jungdapi.netlify.app/uhyeong",
-
                 "https://jungdapi.netlify.app/100bal",
-
                 "https://jungdapi.netlify.app/1316"
-
             ];
 
-
-
             carouselItems.forEach((item, index) => {
-
                 item.addEventListener('click', () => {
-
                    window.location.href=carouselLinks[index];
-
                 });
-
             });
-
-
 
             displayRecentAnswers(currentPage);
 
-
-
             let isScrolled = false;
 
-
-
 window.addEventListener('scroll', () => {
-
                 if (window.scrollY > 50) {
-
                     if (!isScrolled) {
-
                         header.classList.add('scrolled');
-
                         isScrolled = true;
-
                     }
-
                 } else {
-
                     if (isScrolled) {
-
                         header.classList.remove('scrolled');
-
                         isScrolled = false;
-
                     }
-
                 }
-
             });
-
         });
-
     </script>
-
 </head>
-
 <body>
-
     <header class="sticky-header">
-
         <img src="https://i.postimg.cc/xj4K5r5w/001-76-Photoroom.png" alt="정답창고 로고" class="logo-image">
-
     </header>
-
     <div style="margin-top: 10px;"></div> <h1>외로운 공부에<br>작은 확신을 더합니다</h1>
-
     <div class="search-container">
-
         <input type="text" class="search-box" placeholder="답지를 검색하세요.">
-
         <div class="search-button">
-
             <img src="https://i.postimg.cc/Zn46mDxH/image.png" alt="검색 아이콘" class="search-icon">
-
         </div>
-
     </div>
 
-
-
     <div class="section">
-
         <h2>과목</h2>
-
         <div class="popular-answers">
-
             <div><a href="https://www.math1.com">수학 답지</a></div>
-
             <div><a href="https://www.english1.com">영어 답지</a></div>
-
             <div><a href="https://www.science1.com">과학 답지</a></div>
-
             <div><a href="https://www.korean1.com">국어 답지</a></div>
-
         </div>
-
     </div>
 
-
-
     <div class="section">
-
         <h2>인기 답지</h2>
-
         <div class="carousel-container">
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/Vk1P8sjc/image.jpg" alt="체크체크 중학 수학 1-1 답지">
-
                 <h3 class="carousel-title">체크체크 중학 수학 1-1</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요.</p>
-
             </div>
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/zfYPHXtH/RMP.jpg" alt="개념원리 RPM 중학 수학 1-1 답지">
-
                 <h3 class="carousel-title">개념원리 RPM 중학 수학 1-1</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요.</p>
-
             </div>
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/3Nj26YjV/1-2.jpg" alt="체크체크 중학 수학 1-2 답지">
-
                 <h3 class="carousel-title">체크체크 중학 수학 1-2</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요.</p>
-
             </div>
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/3NcNq4y7/image.jpg" alt="개념+유형 중학 수학 1-1 답지">
-
                 <h3 class="carousel-title">개념+유형 중학 수학 1-1</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요</p>
-
             </div>
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/LXWQBvQ0/image.jpg" alt="100발 100중 중학 영어 1-1 답지">
-
                 <h3 class="carousel-title">100발 100중 중학 영어 1-1</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요.</p>
-
             </div>
-
             <div class="carousel-item">
-
                 <img src="https://i.postimg.cc/5NcKz42V/1316.jpg" alt="1316 GRAMMAR Level 1 답지">
-
                 <h3 class="carousel-title">1316 GRAMMAR Level 1</h3>
-
                 <p>클릭하여 답지를 다운로드 하세요.</p>
-
             </div>
-
         </div>
-
         <div class="carousel-control prev" onclick="scrollCarousel('prev')">&lt;</div>
-
         <div class="carousel-control next" onclick="scrollCarousel('next')">&gt;</div>
-
     </div>
 
-
-
     <div class="section">
-
         <h2>전체 답지</h2>
-
         <div class="recent-answers">
-
             
-
         </div>
-
         <div id="pagination">
-
-
 
  </div>
 
-
-
         </div>
-
             
-
         </div>
-
     </div>
-
 </body>
-    <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('Service Worker 등록됨:', reg.scope))
-      .catch(err => console.error('Service Worker 등록 실패:', err));
-  }
+        <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker 등록됨:', reg.scope))
+      .catch(err => console.error('Service Worker 등록 실패:', err));
+  }
     </script>
 
+    <script>    
     <script>
-
   (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
 
-
-
   ChannelIO('boot', {
-
     "pluginKey": "737e7597-292e-4d3d-b33b-6c7e988abeb3"
-
   });
-
 </script>
-
 </div>
 
-
-
-    </html>
+</html>
