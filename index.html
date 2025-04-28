@@ -700,6 +700,172 @@ window.addEventListener('scroll', () => {
         </div>
     </div>
 </body>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #download-count {
+            overflow: hidden;
+            height: auto;
+            line-height: normal;
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #000;
+            background-color: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            letter-spacing: 0.2em;
+            position: relative;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        #download-count-value {
+            position: static;
+            top: auto;
+            left: auto;
+            width: auto;
+            height: auto;
+            transition: none;
+        }
+        #download-unit {
+            font-size: 2rem;
+            color: #000;
+            margin-left: 0.5rem;
+        }
+        .popup-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        #install-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            z-index: 1000;
+            color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        #install-icon i {
+            margin-bottom: 0.25rem;
+        }
+        #speech-bubble {
+            position: absolute;
+            top: -2.5rem;
+            left: -1rem;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+        }
+        #speech-bubble::before {
+            content: "";
+            position: absolute;
+            bottom: -0.5rem;
+            left: 1rem;
+            border-top: 0.5rem solid white;
+            border-left: 0.5rem solid transparent;
+            border-right: 0.5rem solid transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div id="popup-container" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md transition-transform duration-300 ease-in-out" id="popup-content">
+            <div id="install-icon">
+                <div id="speech-bubble">눌러서 앱 설치!</div>
+            </div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Jungdapi 앱</h2>
+            <div class="flex justify-center items-center">
+                <div id="download-count">
+                    <span id="download-count-value">000,000</span>
+                </div>
+                <span id="download-unit">회</span>
+            </div>
+            <p class="text-gray-700 mb-6 text-center">
+                <b>다운로드 돌파!</b><br>
+                [기준] 2025/04/28 PM 8:21
+            </p>
+            <p class="text-gray-600 text-sm text-center mb-4">
+                항상 저희 Jungdapi를 이용해주셔서 감사합니다.<br>더 좋은 서비스로 보답하겠습니다.
+            </p>
+            <div class="popup-controls">
+                <div class="flex items-center">
+                    <input type="checkbox" id="today-not-show" class="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="today-not-show" class="text-sm text-gray-600">오늘 하루 보지 않기</label>
+                </div>
+                <button id="close-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200">
+                    닫기
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const popupContainer = document.getElementById('popup-container');
+        const popupContent = document.getElementById('popup-content');
+        const closeButton = document.getElementById('close-button');
+        const todayNotShow = document.getElementById('today-not-show');
+        const downloadCountValue = document.getElementById('download-count-value');
+        const installIcon = document.getElementById('install-icon');
+        const speechBubble = document.getElementById('speech-bubble');
+
+        function showPopup() {
+            const isTodayNotShow = localStorage.getItem('todayNotShow');
+            if (!isTodayNotShow) {
+                popupContainer.classList.remove('hidden');
+                popupContent.classList.add('scale-100');
+                popupContent.classList.remove('scale-0');
+                startDownloadCountAnimation();
+            }
+        }
+
+        function closePopup() {
+            if (todayNotShow.checked) {
+                localStorage.setItem('todayNotShow', 'true');
+            }
+            popupContainer.classList.add('hidden');
+            popupContent.classList.add('scale-0');
+            popupContent.classList.remove('scale-100');
+        }
+
+        function goToAppDownload() {
+            window.location.href = 'https://jungdapi.netlify.app/app';
+        }
+
+        closeButton.addEventListener('click', closePopup);
+        installIcon.addEventListener('click', goToAppDownload);
+        speechBubble.addEventListener('click', goToAppDownload);
+
+        function startDownloadCountAnimation() {
+            let currentValue = 0;
+            const targetValue = 214325;
+            const duration = 3000;
+            const interval = 10;
+            const steps = Math.ceil(duration / interval);
+            const increment = Math.ceil(targetValue / steps);
+
+            let animationInterval = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    currentValue = targetValue;
+                    clearInterval(animationInterval);
+                }
+                downloadCountValue.textContent = currentValue.toLocaleString();
+            }, interval);
+        }
+
+        window.onload = showPopup;
+    </script>
         <button onclick="location.href='https://jungdapi.netlify.app/app'" style="
   background-color: white;
   color: black;
