@@ -15,309 +15,327 @@
 ">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        /* 기본 바디 스타일 */
         body {
-            font-family: 'Inter', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            transition: background-color 0.3s ease;
+            font-family: 'Inter', sans-serif; /* 글꼴 설정 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            margin: 0; /* 기본 마진 제거 */
+            padding: 20px; /* 패딩 추가 */
+            transition: background-color 0.3s ease; /* 배경색 전환 애니메이션 */
         }
-        body.dark-mode {
-            background-color: #111;
-            color: #eee;
-        }
+
+        /* 제목 스타일 */
         h1 {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 20px; /* 하단 마진 */
+            color: #333; /* 글자색 */
         }
-        h1.dark-mode {
-            color: #fff;
-        }
+
+        /* 검색 컨테이너 스타일 */
         .search-container {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+            margin-top: 20px; /* 상단 마진 */
+            display: flex; /* 플렉스 박스 레이아웃 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            width: 100%; /* 너비 100% */
         }
+        /* 검색 입력 필드 스타일 */
         .search-box {
-            width: 80%;
-            max-width: 400px;
-            padding: 12px 40px 12px 15px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            background-image: none;
-            background-size: 24px;
-            background-position: right 10px center;
-            background-repeat: no-repeat;
-            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-            background-color: #fff;
-            color: #333;
-            box-sizing: border-box;
-            cursor: pointer;
+            width: 80%; /* 너비 */
+            max-width: 400px; /* 최대 너비 */
+            padding: 12px 40px 12px 15px; /* 패딩 (오른쪽에 아이콘 공간 확보) */
+            border-radius: 10px; /* 모서리 둥글게 */
+            border: 1px solid #ccc; /* 테두리 */
+            background-image: none; /* 기본 배경 이미지 제거 */
+            background-size: 24px; /* 배경 이미지 크기 */
+            background-position: right 10px center; /* 배경 이미지 위치 */
+            background-repeat: no-repeat; /* 배경 이미지 반복 안 함 */
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* 전환 애니메이션 */
+            background-color: #fff; /* 배경색 */
+            color: #333; /* 글자색 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+            cursor: pointer; /* 마우스 커서 모양 */
         }
-        .search-box.dark-mode {
-            background-color: #222;
-            color: #eee;
-            border-color: #555;
-        }
+
+        /* 검색 입력 필드 플레이스홀더 스타일 */
         .search-box::placeholder {
-            color: #999;
-            transition: color 0.3s ease;
+            color: #999; /* 플레이스홀더 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
         }
-        .search-box.dark-mode::placeholder {
-            color: #ddd;
-        }
+
+        /* 검색 버튼 스타일 */
         .search-button {
-            position: relative;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: -40px;
-            background-color: transparent;
+            position: relative; /* 상대 위치 */
+            width: 35px; /* 너비 */
+            height: 35px; /* 높이 */
+            border-radius: 50%; /* 원형 */
+            cursor: pointer; /* 마우스 커서 모양 */
+            display: flex; /* 플렉스 박스 */
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            margin-left: -40px; /* 왼쪽 마진 (검색창 위로 겹치게) */
+            background-color: transparent; /* 배경색 투명 */
         }
-        .search-button.dark-mode {
-            background-color: transparent;
-        }
+
+        /* 검색 아이콘 스타일 */
         .search-icon {
-            width: 20px;
-            height: 20px;
-            opacity: 0.6;
+            width: 20px; /* 너비 */
+            height: 20px; /* 높이 */
+            opacity: 0.6; /* 투명도 */
         }
-        .search-icon.dark-mode {
-            opacity: 1;
-            content: url("https://i.postimg.cc/V61TpLXP/image.png");
-        }
+
+        /* 섹션 스타일 */
         .section {
-            text-align: left;
-            margin-top: 40px;
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+            margin-top: 40px; /* 상단 마진 */
+            padding: 0 10px; /* 좌우 패딩 조정 */
         }
+        /* 섹션 제목 스타일 */
         .section h2 {
-            color: #333;
-            transition: color 0.3s ease;
-            margin-bottom: 20px;
+            color: #333; /* 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
+            margin-bottom: 20px; /* 하단 마진 */
         }
-        .section h2.dark-mode {
-            color: #fff;
-        }
+
+        /* 인기 답지 컨테이너 스타일 (스크롤 가능) */
         .popular-answers {
-            display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 10px 0;
+            display: flex; /* 플렉스 박스 */
+            overflow-x: auto; /* 가로 스크롤 활성화 */
+            gap: 15px; /* 요소 간 간격 */
+            padding: 10px 0; /* 상하 패딩 */
         }
+        /* 인기 답지 개별 항목 스타일 */
         .popular-answers div {
-            min-width: 150px;
-            padding: 12px;
-            background-color: #f8f8f8;
-            border-radius: 10px;
-            text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            white-space: nowrap;
-            box-sizing: border-box;
+            min-width: 150px; /* 최소 너비 */
+            padding: 12px; /* 패딩 */
+            background-color: #f8f8f8; /* 배경색 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            transition: background-color 0.3s ease, color 0.3s ease; /* 전환 애니메이션 */
+            white-space: nowrap; /* 줄바꿈 방지 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
         }
-        .popular-answers div.dark-mode {
-            background-color: #333;
-            color: #eee;
-        }
+
+        /* 인기 답지 링크 스타일 */
         .popular-answers div a {
-            display: block;
-            color: inherit;
-            text-decoration: none;
+            display: block; /* 블록 요소로 표시 */
+            color: inherit; /* 부모 요소의 색상 상속 */
+            text-decoration: none; /* 밑줄 제거 */
         }
+        /* 최근 답지 컨테이너 스타일 (그리드 레이아웃) */
         .recent-answers {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-top: 20px;
+            display: grid; /* 그리드 레이아웃 */
+            grid-template-columns: 1fr; /* 한 열로 설정 */
+            gap: 15px; /* 요소 간 간격 */
+            margin-top: 20px; /* 상단 마진 */
         }
+        /* 답지 카드 스타일 */
         .answer-card {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background-color: #f8f8f8;
-            border-radius: 10px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            cursor: pointer;
-            box-sizing: border-box;
+            display: flex; /* 플렉스 박스 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding: 15px; /* 패딩 */
+            background-color: #f8f8f8; /* 배경색 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            transition: background-color 0.3s ease, color 0.3s ease; /* 전환 애니메이션 */
+            cursor: pointer; /* 마우스 커서 모양 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
         }
-        .answer-card.dark-mode {
-            background-color: #333;
-            color: #eee;
-        }
+
+        /* 답지 카드 이미지 스타일 */
         .answer-card img {
-            width: 100px;
-            height: 130px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-right: 15px;
+            width: 100px; /* 너비 */
+            height: 130px; /* 높이 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+            margin-right: 15px; /* 오른쪽 마진 */
         }
+        /* 답지 카드 텍스트 영역 스타일 */
         .answer-text {
-            flex: 1;
-            text-align: left;
+            flex: 1; /* 남은 공간 모두 차지 */
+            text-align: left; /* 텍스트 왼쪽 정렬 */
         }
+        /* 답지 카드 제목 스타일 */
         .answer-text h3 {
-            font-size: 1.1em;
-            margin-bottom: 5px;
-            color: #333;
-            transition: color 0.3s ease;
+            font-size: 1.1em; /* 글자 크기 */
+            margin-bottom: 5px; /* 하단 마진 */
+            color: #333; /* 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
         }
-        .answer-text h3.dark-mode {
-            color: #fff;
-        }
+
+        /* 답지 카드 설명 스타일 */
         .answer-text p {
-            font-size: 0.9em;
-            color: #666;
-            transition: color 0.3s ease;
+            font-size: 0.9em; /* 글자 크기 */
+            color: #666; /* 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
         }
-        .answer-text p.dark-mode {
-            color: #ddd;
-        }
+
+        /* 모바일 환경 스타일 조정 (768px 이하) */
         @media (max-width: 768px) {
             .search-box {
-                width: 95%;
-                max-width: none;
+                width: 95%; /* 너비 */
+                max-width: none; /* 최대 너비 제한 없음 */
             }
             .popular-answers {
-                gap: 10px;
+                gap: 10px; /* 간격 */
             }
             .popular-answers div {
-                min-width: 120px;
-                padding: 10px;
+                min-width: 120px; /* 최소 너비 */
+                padding: 10px; /* 패딩 */
             }
-            .answer-card {
-                flex-direction: column;
-                text-align: center;
+            /* 모바일에서 섹션 좌우 패딩 조정 */
+            .section {
+                 padding: 0 5px; /* 모바일에서 좌우 패딩 줄임 */
             }
-            .answer-card img {
-                margin-right: 0;
-                margin-bottom: 10px;
-                width: 100%;
-                height: auto;
-                max-height: 200px;
+             .carousel-control.prev {
+                left: 5px; /* 모바일에서 왼쪽 버튼 위치 조정 */
             }
-            .answer-text {
-                text-align: center;
+            .carousel-control.next {
+                right: 5px; /* 모바일에서 오른쪽 버튼 위치 조정 */
             }
         }
 
-        /* Carousel Styles */
-        .carousel-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 15px;
-            padding: 10px 0;
-            position: relative;
-            margin-top: 20px;
+        /* 인기 답지 섹션 컨테이너 (버튼 위치 기준) */
+        .popular-answers-section {
+            position: relative; /* 자식 요소인 버튼의 절대 위치 기준 */
+            margin-top: 20px; /* 상단 마진 */
+            padding-left: 10px; /* 좌측 패딩 추가 (다른 섹션과 맞춤) */
+            padding-right: 10px; /* 우측 패딩 유지 (버튼 공간 확보) */
         }
-        .carousel-container::-webkit-scrollbar {
+
+        /* 캐러셀 항목들을 감싸는 컨테이너 (스크롤되는 부분) */
+        .carousel-items-wrapper {
+            display: flex; /* 플렉스 박스 */
+            overflow-x: auto; /* 가로 스크롤 활성화 */
+            scroll-snap-type: x mandatory; /* 스크롤 스냅 */
+            gap: 15px; /* 요소 간 간격 */
+            padding: 10px 0; /* 상하 패딩 */
+            /* 스크롤바 숨김 */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* 캐러셀 스크롤바 숨김 (웹킷 브라우저) */
+        .carousel-items-wrapper::-webkit-scrollbar {
             display: none;
         }
+
+        /* 캐러셀 개별 항목 스타일 */
         .carousel-item {
-            flex: 0 0 auto;
-            width: 250px;
-            height: 300px;
-            border-radius: 10px;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            scroll-snap-align: start;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            box-sizing: border-box;
-        }
-        .carousel-item.dark-mode {
-            background-color: #333;
-            color: #eee;
-        }
-        .carousel-item img {
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .carousel-title {
-            font-size: 1.2em;
-            margin-top: 0;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-        .carousel-title.dark-mode {
-            color: #fff;
-        }
-        .carousel-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            line-height: 40px;
-            cursor: pointer;
-            user-select: none;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-            z-index: 10;
-        }
-        .carousel-control:hover {
-            opacity: 1;
-        }
-        .carousel-control.prev {
-            left: 0;
-        }
-        .carousel-control.next {
-            right: 0;
-        }
-        #pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        #pagination button {
-            margin: 0 5px;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f4f4f4;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        #pagination button:hover {
-            background-color: #ddd;
-        }
-        #pagination button.active {
-            background-color: #282c34;
-            color: white;
-            border-color: #282c34;
+            flex: 0 0 auto; /* 크기 고정 */
+            width: 250px; /* 너비 */
+            height: 300px; /* 높이 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            background-color: #f0f0f0; /* 배경색 */
+            display: flex; /* 플렉스 박스 */
+            flex-direction: column; /* 세로 방향 정렬 */
+            justify-content: center; /* 세로 중앙 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            scroll-snap-align: start; /* 스크롤 스냅 시작점 */
+            cursor: pointer; /* 마우스 커서 모양 */
+            transition: background-color 0.3s ease, color 0.3s ease; /* 전환 애니메이션 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
         }
 
-        /* 모바일 환경 스타일 조정 */
+        /* 캐러셀 항목 이미지 스타일 */
+        .carousel-item img {
+            max-width: 100%; /* 최대 너비 */
+            max-height: 200px; /* 최대 높이 */
+            object-fit: contain; /* 이미지 비율 유지 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            margin-bottom: 10px; /* 하단 마진 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+        }
+        /* 캐러셀 항목 제목 스타일 */
+        .carousel-title {
+            font-size: 1.2em; /* 글자 크기 */
+            margin-top: 0; /* 상단 마진 제거 */
+            color: #333; /* 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
+        }
+
+        /* 캐러셀 제어 버튼 스타일 */
+        .carousel-control {
+            position: absolute; /* 절대 위치 */
+            top: 55%; /* 상단에서 55% 위치로 조정 */
+            transform: translateY(-50%); /* 세로 중앙 정렬 */
+            width: 40px; /* 너비 */
+            height: 40px; /* 높이 */
+            border-radius: 50%; /* 원형 */
+            background-color: rgba(0, 0, 0, 0.5); /* 배경색 (반투명 검정) */
+            color: white; /* 글자색 */
+            font-size: 24px; /* 글자 크기 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            line-height: 40px; /* 세로 중앙 정렬 */
+            cursor: pointer; /* 마우스 커서 모양 */
+            user-select: none; /* 텍스트 선택 방지 */
+            opacity: 0.7; /* 투명도 */
+            transition: opacity 0.3s ease; /* 투명도 전환 애니메이션 */
+            z-index: 10; /* 다른 요소 위로 표시 */
+        }
+        /* 캐러셀 제어 버튼 호버 스타일 */
+        .carousel-control:hover {
+            opacity: 1; /* 호버 시 투명도 증가 */
+        }
+        /* 이전 버튼 위치 */
+        .carousel-control.prev {
+            left: 0; /* 왼쪽 끝에 배치 */
+        }
+        /* 다음 버튼 위치 */
+        .carousel-control.next {
+            right: 0; /* 오른쪽 끝에 배치 */
+        }
+        /* 페이지네이션 컨테이너 스타일 */
+        #pagination {
+            display: flex; /* 플렉스 박스 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            margin-top: 20px; /* 상단 마진 */
+        }
+        /* 페이지네이션 버튼 스타일 */
+        #pagination button {
+            margin: 0 5px; /* 좌우 마진 */
+            padding: 8px 12px; /* 패딩 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            background-color: #f4f4f4; /* 배경색 */
+            cursor: pointer; /* 마우스 커서 모양 */
+            transition: background-color 0.3s ease; /* 배경색 전환 애니메이션 */
+        }
+        /* 페이지네이션 버튼 호버 스타일 */
+        #pagination button:hover {
+            background-color: #ddd; /* 호버 시 배경색 변경 */
+        }
+        /* 활성 페이지네이션 버튼 스타일 */
+        #pagination button.active {
+            background-color: #282c34; /* 배경색 */
+            color: white; /* 글자색 */
+            border-color: #282c34; /* 테두리 색상 */
+        }
+
+        /* 모바일 환경 스타일 조정 (768px 이하) */
         @media (max-width: 768px) {
             .search-box {
-                width: 95%;
-                max-width: none;
+                width: 95%; /* 너비 */
+                max-width: none; /* 최대 너비 제한 없음 */
             }
             .popular-answers {
-                gap: 10px;
+                gap: 10px; /* 간격 */
             }
             .popular-answers div {
-                min-width: 120px;
-                padding: 10px;
+                min-width: 120px; /* 최소 너비 */
+                padding: 10px; /* 패딩 */
             }
+            /* 모바일에서 섹션 좌우 패딩 조정 */
+            .section {
+                 padding: 0 5px; /* 모바일에서 좌우 패딩 줄임 */
+            }
+             .carousel-control.prev {
+                left: 5px; /* 모바일에서 왼쪽 버튼 위치 조정 */
+            }
+            .carousel-control.next {
+                right: 5px; /* 모바일에서 오른쪽 버튼 위치 조정 */
+            }
+            /* 전체 답지 카드 모바일 스타일 제거 - PC와 동일하게 좌우 배치 유지 */
+            /*
             .answer-card {
                 flex-direction: column;
                 text-align: center;
@@ -332,49 +350,52 @@
             .answer-text {
                 text-align: center;
             }
+            */
         }
-   .request-button {
-            margin-top: 20px; /* 필요에 따라 조정 */
+        /* 앱 다운로드 버튼 스타일 */
+        .request-button {
+            margin-top: 20px; /* 상단 여백 추가 */
         }
-      
-    /* Sticky Header Styles */
+
+        /* 스티키 헤더 스타일 */
         .sticky-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: transparent;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
-            box-shadow: none;
+            position: fixed; /* 고정 위치 */
+            top: 0; /* 상단에 고정 */
+            left: 0; /* 왼쪽에 고정 */
+            width: 100%; /* 너비 100% */
+            background-color: transparent; /* 초기 배경색 투명 */
+            z-index: 100; /* 다른 요소 위로 표시 */
+            display: flex; /* 플렉스 박스 */
+            justify-content: space-between; /* 양쪽 끝 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding: 10px 20px; /* 패딩 */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease; /* 전환 애니메이션 */
+            box-shadow: none; /* 초기 그림자 없음 */
             backdrop-filter: blur(0px); /* 초기 블러 효과 제거 */
         }
 
+        /* 스크롤 시 스티키 헤더 스타일 */
         .sticky-header.scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.95); /* 배경색 (반투명 흰색) */
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); /* 하단 그림자 */
             backdrop-filter: blur(10px); /* 스크롤 시 블러 효과 적용 */
         }
 
+        /* 스티키 헤더 로고 이미지 스타일 */
         .sticky-header .logo-image {
-            height: 40px;
-            margin-right: 10px;
+            height: 40px; /* 높이 */
+            margin-right: 10px; /* 오른쪽 마진 */
         }
 
+        /* 스티키 헤더 제목 스타일 */
         .sticky-header h1 {
-            margin: 0;
-            font-size: 1.2em;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-        .sticky-header h1.dark-mode {
-            color: #fff;
+            margin: 0; /* 마진 제거 */
+            font-size: 1.2em; /* 글자 크기 */
+            color: #333; /* 글자색 */
+            transition: color 0.3s ease; /* 색상 전환 애니메이션 */
         }
 
+        /* 바디 상단 패딩 (헤더 높이만큼) */
         body {
             padding-top: 60px;
         }
@@ -384,12 +405,15 @@
         let currentPage = 1;
         const recordsPerPage = 5;
 
+        // 검색 핸들러 함수
         function handleSearch() {
-            window.location.href = 'https://jungdapi.netlify.app/search';
+            window.location.href = 'https://jungdapi.netlify.app/search'; // 검색 페이지로 이동
         }
 
+        // 최근 답지 표시 함수
         function displayRecentAnswers(page) {
             const recentAnswersContainer = document.querySelector('.recent-answers');
+            // 전체 답지 데이터 (예시)
             const allAnswers = [
                 {
                     title: '개념+유형 기초탄탄 라이트 중학 수학 1-1',
@@ -421,7 +445,7 @@
                     imgSrc: 'https://i.postimg.cc/T25Sv5Q1/ilove.jpg',
                     description: '클릭하여 답지를 다운로드 하세요.',
                 },
-               
+
                 {
                     title: '쎈 중학 수학 1-1',
                     link: 'https://jungdapi.netlify.app/ssen',
@@ -519,28 +543,27 @@
                     imgSrc: '/answer3.jpg',
                     description: '2024 물리 정답',
                 },
-                 
-                
+
+
             ];
 
-            recentAnswersContainer.innerHTML = '';
-            const startIndex = (page - 1) * recordsPerPage;
-            const endIndex = startIndex + recordsPerPage;
+            recentAnswersContainer.innerHTML = ''; // 이전 내용 지우기
+            const startIndex = (page - 1) * recordsPerPage; // 시작 인덱스 계산
+            const endIndex = startIndex + recordsPerPage; // 끝 인덱스 계산
 
+            // 현재 페이지에 해당하는 답지 카드 생성 및 추가
             for (let i = startIndex; i < endIndex && i < allAnswers.length; i++) {
                 const answer = allAnswers[i];
                 const answerCard = document.createElement('div');
                 answerCard.className = 'answer-card';
-                if (document.body.classList.contains('dark-mode')) {
-                    answerCard.classList.add('dark-mode');
-                }
                 answerCard.innerHTML = `
                     <img src="${answer.imgSrc}" alt="${answer.title}">
                     <div class="answer-text">
-                        <h3 class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">${answer.title}</h3>
-                        <p class="${document.body.classList.contains('dark-mode') ? 'dark-mode' : ''}">${answer.description}</p>
+                        <h3>${answer.title}</h3>
+                        <p>${answer.description}</p>
                     </div>
                 `;
+                // 클릭 시 해당 링크로 이동 이벤트 리스너 추가
                 answerCard.addEventListener('click', () => {
                     window.location.href=answer.link;
                 });
@@ -548,15 +571,18 @@
             }
 
             const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-            const totalPages = Math.ceil(allAnswers.length / recordsPerPage);
+            paginationContainer.innerHTML = ''; // 이전 페이지네이션 버튼 지우기
+            const totalPages = Math.ceil(allAnswers.length / recordsPerPage); // 전체 페이지 수 계산
+            // 페이지네이션 버튼 생성 및 추가
             for (let i = 1; i <= totalPages; i++) {
                 const pageButton = document.createElement('button');
                 pageButton.textContent = i;
+                // 버튼 클릭 시 해당 페이지 표시 이벤트 리스너 추가
                 pageButton.addEventListener('click', () => {
                     currentPage = i;
                     displayRecentAnswers(currentPage);
                 });
+                // 현재 페이지 버튼에 'active' 클래스 추가
                 if (i === page) {
                     pageButton.classList.add('active');
                 }
@@ -564,16 +590,20 @@
             }
         }
 
+        // 캐러셀 스크롤 함수
         function scrollCarousel(direction) {
-            const container = document.querySelector('.carousel-container');
-            const itemWidth = document.querySelector('.carousel-item').offsetWidth;
-            const scrollAmount = direction === 'prev' ? -itemWidth : itemWidth;
+            // 스크롤 대상 컨테이너를 .carousel-items-wrapper로 변경
+            const container = document.querySelector('.carousel-items-wrapper');
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth; // 항목 너비 가져오기
+            const scrollAmount = direction === 'prev' ? -itemWidth : itemWidth; // 스크롤 양 계산
+            // 부드러운 스크롤 적용
             container.scrollBy({
                 left: scrollAmount,
                 behavior: 'smooth',
             });
         }
 
+        // DOMContentLoaded 이벤트 발생 시 실행
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
             const popularAnswersDivs = document.querySelectorAll('.popular-answers div');
@@ -583,14 +613,16 @@
             const welcomeTitle = document.querySelector('h1');
             const header = document.querySelector('.sticky-header');
 
+            // 검색 관련 이벤트 리스너 추가
             searchBox.addEventListener('click', handleSearch);
             document.querySelector('.search-button').addEventListener('click', handleSearch);
-            document.querySelector('.search-box').addEventListener('keydown', (event) => {
+            document.querySelector('.search-box').addEventListener('keydown', (event)=> {
                 if (event.key === 'Enter') {
                     handleSearch();
                 }
             });
 
+            // 캐러셀 항목 클릭 시 이동할 링크 목록
             const carouselLinks = [
                 "https://jungdapi.netlify.app/ch1",
                 "https://jungdapi.netlify.app/rpm",
@@ -600,17 +632,20 @@
                 "https://jungdapi.netlify.app/1316"
             ];
 
+            // 캐러셀 항목 클릭 이벤트 리스너 추가
             carouselItems.forEach((item, index) => {
                 item.addEventListener('click', () => {
                    window.location.href=carouselLinks[index];
                 });
             });
 
+            // 페이지 로드 시 최근 답지 표시
             displayRecentAnswers(currentPage);
 
             let isScrolled = false;
 
-window.addEventListener('scroll', () => {
+            // 스크롤 이벤트 리스너 추가 (스티키 헤더 처리)
+            window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
                     if (!isScrolled) {
                         header.classList.add('scrolled');
@@ -623,6 +658,14 @@ window.addEventListener('scroll', () => {
                     }
                 }
             });
+
+            // 캐러셀 제어 버튼 이벤트 리스너 추가
+            document.querySelector('.carousel-control.prev').addEventListener('click', () => {
+                scrollCarousel('prev');
+            });
+            document.querySelector('.carousel-control.next').addEventListener('click', () => {
+                scrollCarousel('next');
+            });
         });
     </script>
 </head>
@@ -634,7 +677,7 @@ window.addEventListener('scroll', () => {
     <div class="search-container">
         <input type="text" class="search-box" placeholder="답지를 검색하세요.">
         <div class="search-button">
-            <img src="https://i.postimg.cc/Zn46mDxH/image.png" alt="검색 아이콘" class="search-icon">
+            <img src="https://i.postimg.cc/Zn46mDxH/image.png"alt="검색 아이콘" class="search-icon">
         </div>
     </div>
 
@@ -648,9 +691,10 @@ window.addEventListener('scroll', () => {
         </div>
     </div>
 
-    <div class="section">
+    <div class="section popular-answers-section">
         <h2>인기 답지</h2>
-        <div class="carousel-container">
+        <div class="carousel-control prev">&#10094;</div>
+        <div class="carousel-items-wrapper">
             <div class="carousel-item">
                 <img src="https://i.postimg.cc/Vk1P8sjc/image.jpg" alt="체크체크 중학 수학 1-1 답지">
                 <h3 class="carousel-title">체크체크 중학 수학 1-1</h3>
@@ -682,25 +726,22 @@ window.addEventListener('scroll', () => {
                 <p>클릭하여 답지를 다운로드 하세요.</p>
             </div>
         </div>
-        <div class="carousel-control prev" onclick="scrollCarousel('prev')">&lt;</div>
-        <div class="carousel-control next" onclick="scrollCarousel('next')">&gt;</div>
+        <div class="carousel-control next">&#10095;</div>
     </div>
 
     <div class="section">
         <h2>전체 답지</h2>
         <div class="recent-answers">
-            
-        </div>
+            </div>
         <div id="pagination">
 
  </div>
 
         </div>
-            
+
         </div>
     </div>
-</body>
-        <button onclick="location.href='https://jungdapi.netlify.app/app'" style="
+    <button onclick="location.href='https://jungdapi.netlify.app/app'" style="
   background-color: white;
   color: black;
   padding: 12px 24px;
@@ -713,20 +754,20 @@ window.addEventListener('scroll', () => {
 ">
   앱 다운로드
 </button>
-        <script>
+    <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
       .then(reg => console.log('Service Worker 등록됨:', reg.scope))
       .catch(err => console.error('Service Worker 등록 실패:', err));
   }
     </script>
-<script>
+    <script>
   (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
 
   ChannelIO('boot', {
     "pluginKey": "737e7597-292e-4d3d-b33b-6c7e988abeb3"
   });
 </script>
-</div>
+
 
 </html>
