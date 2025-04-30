@@ -185,12 +185,30 @@
             .section {
                  padding: 0 5px; /* 모바일에서 좌우 패딩 줄임 */
             }
-             .carousel-control.prev {
-                left: 5px; /* 모바일에서 왼쪽 버튼 위치 조정 */
+             /* 모바일에서 캐러셀 제어 버튼 위치 조정 */
+            .carousel-control.prev {
+                left: -10px; /* 왼쪽으로 10px 이동 */
             }
             .carousel-control.next {
-                right: 5px; /* 모바일에서 오른쪽 버튼 위치 조정 */
+                right: -10px; /* 오른쪽으로 10px 이동 */
             }
+            /* 전체 답지 카드 모바일 스타일 제거 - PC와 동일하게 좌우 배치 유지 */
+            /*
+            .answer-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .answer-card img {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+            .answer-text {
+                text-align: center;
+            }
+            */
         }
 
         /* 인기 답지 섹션 컨테이너 (버튼 위치 기준) */
@@ -311,47 +329,6 @@
             border-color: #282c34; /* 테두리 색상 */
         }
 
-        /* 모바일 환경 스타일 조정 (768px 이하) */
-        @media (max-width: 768px) {
-            .search-box {
-                width: 95%; /* 너비 */
-                max-width: none; /* 최대 너비 제한 없음 */
-            }
-            .popular-answers {
-                gap: 10px; /* 간격 */
-            }
-            .popular-answers div {
-                min-width: 120px; /* 최소 너비 */
-                padding: 10px; /* 패딩 */
-            }
-            /* 모바일에서 섹션 좌우 패딩 조정 */
-            .section {
-                 padding: 0 5px; /* 모바일에서 좌우 패딩 줄임 */
-            }
-             .carousel-control.prev {
-                left: 5px; /* 모바일에서 왼쪽 버튼 위치 조정 */
-            }
-            .carousel-control.next {
-                right: 5px; /* 모바일에서 오른쪽 버튼 위치 조정 */
-            }
-            /* 전체 답지 카드 모바일 스타일 제거 - PC와 동일하게 좌우 배치 유지 */
-            /*
-            .answer-card {
-                flex-direction: column;
-                text-align: center;
-            }
-            .answer-card img {
-                margin-right: 0;
-                margin-bottom: 10px;
-                width: 100%;
-                height: auto;
-                max-height: 200px;
-            }
-            .answer-text {
-                text-align: center;
-            }
-            */
-        }
         /* 앱 다운로드 버튼 스타일 */
         .request-button {
             margin-top: 20px; /* 상단 여백 추가 */
