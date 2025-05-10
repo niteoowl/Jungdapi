@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>정답이 로그인 페이지</title>
-  <!-- Supabase 라이브러리 추가 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script> <!-- supabase 라이브러리 -->
+
   <style>
     body {
       font-family: sans-serif;
@@ -45,9 +45,9 @@
   <input type="email" id="email" placeholder="이메일" />
   <input type="password" id="password" placeholder="비밀번호" />
 
-  <button onclick="signUp()">회원가입</button>
-  <button onclick="signIn()">로그인</button>
-  <button onclick="signOut()">로그아웃</button>
+  <button id="signUpBtn">회원가입</button>
+  <button id="signInBtn">로그인</button>
+  <button id="signOutBtn">로그아웃</button>
 
   <div id="user-info"></div>
 
@@ -141,6 +141,11 @@
 
     // 새로고침 시 자동으로 로그인된 사용자 표시
     showUserInfo();
+
+    // 버튼 클릭 이벤트 리스너 추가
+    document.getElementById('signUpBtn').addEventListener('click', signUp);
+    document.getElementById('signInBtn').addEventListener('click', signIn);
+    document.getElementById('signOutBtn').addEventListener('click', signOut);
   </script>
 </body>
 </html>
