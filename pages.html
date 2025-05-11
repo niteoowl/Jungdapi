@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>소개 페이지</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>소개</h2>
+        <p>이 페이지는 로그인한 사용자만 볼 수 있습니다.</p>
+        <p id="welcome-message"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const supabaseClient = supabase.createClient(
+            'https://pmpekvogmvukbyqnkqkt.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtcGVrdm9nbXZ1a2J5cW5rcWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NTAwMDIsImV4cCI6MjA2MTIyNjAwMn0.JMD3Kr4GTRKkiuoI_QWhPXt4FDnzuW_gBSp_8qDNucc'
+        );
+
+        const welcomeMessage = document.getElementById('welcome-message');
+
+        window.addEventListener('load', async () => {
+            const { data: { user } } = await supabaseClient.auth.getSession();
+
+            if (!user) {
+                alert("로그인이 필요합니다.");
+                window.location.href = '/';
+            } else {
+                const { data: userData, error: userError } = await supabaseClient
+                    .from('users')
+                    .select('name')
+                    .eq('email', user.email);
+
+                if (userError) {
+                    console.error("Error fetching user data:", userError);
+                    alert('사용자 정보를 가져오는 데 실패했습니다.');
+                    return;
+                }
+
+                if (userData && userData.length > 0) {
+                    welcomeMessage.textContent = `환영합니다, ${userData[0].name}님!`;
+                } else {
+                    welcomeMessage.textContent = `환영합니다, ${user.email}님!`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
