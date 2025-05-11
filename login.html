@@ -1,151 +1,126 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>정답이 로그인 페이지</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script> <!-- supabase 라이브러리 -->
-
+  <meta charset="UTF-8">
+  <title>로그인 / 회원가입</title>
   <style>
     body {
       font-family: sans-serif;
-      max-width: 400px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f9f9f9;
+      background: #f5f5f5;
+      padding: 2rem;
     }
-    h1 {
-      text-align: center;
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     input {
-      display: block;
-      margin-bottom: 12px;
       width: 100%;
-      padding: 10px;
-      font-size: 1em;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
     }
     button {
-      padding: 10px 15px;
-      margin-right: 10px;
-      margin-bottom: 10px;
-      font-size: 1em;
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
     }
-    #user-info {
-      margin-top: 20px;
-      background: #e9ecef;
-      padding: 15px;
-      border-radius: 6px;
+    button:hover {
+      background: #0056b3;
+    }
+    h2 {
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
-  <h1>정답이 로그인</h1>
+  <div class="container">
+    <h2>회원가입</h2>
+    <input type="text" id="signup_name" placeholder="닉네임">
+    <input type="email" id="signup_email" placeholder="이메일">
+    <input type="password" id="signup_password" placeholder="비밀번호">
+    <button onclick="signUp()">회원가입</button>
 
-  <input type="text" id="name" placeholder="이름" />
-  <input type="email" id="email" placeholder="이메일" />
-  <input type="password" id="password" placeholder="비밀번호" />
+    <h2>로그인</h2>
+    <input type="email" id="login_email" placeholder="이메일">
+    <input type="password" id="login_password" placeholder="비밀번호">
+    <button onclick="signIn()">로그인</button>
+  </div>
 
-  <button id="signUpBtn">회원가입</button>
-  <button id="signInBtn">로그인</button>
-  <button id="signOutBtn">로그아웃</button>
-
-  <div id="user-info"></div>
-
-  <!-- Supabase 클라이언트 초기화 후, 동작 함수들 배치 -->
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    // Supabase 연결 정보 (너 프로젝트 전용)
-    const supabase = supabase.createClient(
+    // ✅ Supabase 연결
+    const supabaseClient = supabase.createClient(
       'https://pmpekvogmvukbyqnkqkt.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtcGVrdm9nbXZ1a2J5cW5rcWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU2NTAwMDIsImV4cCI6MjA2MTIyNjAwMn0.JMD3Kr4GTRKkiuoI_QWhPXt4FDnzuW_gBSp_8qDNucc'
     );
 
-    // 회원가입
     async function signUp() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const name = document.getElementById('name').value;
+      const name = document.getElementById('signup_name').value;
+      const email = document.getElementById('signup_email').value;
+      const password = document.getElementById('signup_password').value;
 
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+      const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
 
       if (signUpError) {
-        alert('회원가입 오류: ' + signUpError.message);
+        alert('회원가입 실패: ' + signUpError.message);
         return;
       }
 
-      const userId = signUpData.user?.id;
-
       // 유저 정보 users 테이블에 저장
-      const { error: insertError } = await supabase
+      const { error: insertError } = await supabaseClient
         .from('users')
-        .insert([{ id: userId, email, name }]);
+        .insert([{ email, name }]);
 
       if (insertError) {
         alert('유저 정보 저장 실패: ' + insertError.message);
         return;
       }
 
-      alert('회원가입 완료! 이메일 인증을 확인해주세요.');
-      showUserInfo();
+      alert('회원가입 성공! 이메일 인증 후 로그인하세요.');
     }
 
-    // 로그인
     async function signIn() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const email = document.getElementById('login_email').value;
+      const password = document.getElementById('login_password').value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
-      if (error) {
-        alert('로그인 실패: ' + error.message);
+      if (signInError) {
+        alert('로그인 실패: ' + signInError.message);
         return;
       }
 
-      alert('로그인 성공!');
-      showUserInfo();
-    }
+      // 닉네임 불러오기
+      const { data: userData, error: userError } = await supabaseClient
+        .from('users')
+        .select('name, email')  // 여러 컬럼을 불러오기
+        .eq('email', email);     // 이메일로 필터링
 
-    // 로그아웃
-    async function signOut() {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        alert('로그아웃 실패: ' + error.message);
-      } else {
-        alert('로그아웃 완료!');
-        document.getElementById('user-info').innerHTML = '';
+      if (userError) {
+        alert('닉네임 불러오기 실패: ' + userError.message);
+        return;
       }
+
+      // 배열로 반환되므로 첫 번째 데이터 가져오기
+      alert(`환영합니다, ${userData[0].name}님!`);
     }
-
-    // 현재 로그인된 유저 정보 표시
-    async function showUserInfo() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (error) {
-          document.getElementById('user-info').innerText = '사용자 정보를 불러올 수 없습니다.';
-          return;
-        }
-
-        document.getElementById('user-info').innerHTML = `
-          <h3>현재 로그인된 사용자</h3>
-          <p><strong>이름:</strong> ${data.name}</p>
-          <p><strong>이메일:</strong> ${user.email}</p>
-          <p><strong>UID:</strong> ${user.id}</p>
-        `;
-      }
-    }
-
-    // 새로고침 시 자동으로 로그인된 사용자 표시
-    showUserInfo();
-
-    // 버튼 클릭 이벤트 리스너 추가
-    document.getElementById('signUpBtn').addEventListener('click', signUp);
-    document.getElementById('signInBtn').addEventListener('click', signIn);
-    document.getElementById('signOutBtn').addEventListener('click', signOut);
   </script>
 </body>
 </html>
