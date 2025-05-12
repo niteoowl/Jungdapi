@@ -117,65 +117,21 @@
         .go-back-button span {
             margin-right: 5px;
         }
-        #download-status {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-
-        /* Improved Popup Styles */
-        #download-popup {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease, top 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid #ddd;
-        }
-
-        #download-popup.show {
-            opacity: 1;
-            top: 60px;
-        }
-
-        #download-popup.hide {
-            opacity: 0;
-            top: 20px;
-        }
-
-        #download-popup p {
-            margin: 0;
-            font-size: 1.1em;
-            font-weight: 500;
-            color: #222;
-        }
-
-        #download-popup.success {
-            background-color: #f0fdf4;
-            border-color: #d6f4e5;
-            color: #15803d;
-        }
-
-        #download-popup.success p {
-            color: #15803d;
-        }
-
-        #download-popup.error {
-            background-color: #fef2f2;
-            border-color: #fecaca;
-            color: #b91c1c;
-        }
-
-        #download-popup.error p {
-            color: #b91c1c;
+        @media (max-width: 768px) {
+            .book-cover {
+                width: 90%;
+                max-width: 300px;
+            }
+            .book-description {
+                text-align: center;
+            }
+            .button-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .view-button, .download-button {
+                width: 100%;
+            }
         }
     </style>
     <script>
@@ -187,14 +143,6 @@
             const viewButton = document.querySelector('.view-button');
             const downloadButton = document.querySelector('.download-button');
             const goBackButton = document.querySelector('.go-back-button');
-            const downloadStatus = document.createElement('p');
-            downloadStatus.id = 'download-status';
-            bookSection.appendChild(downloadStatus);
-
-            // 팝업 요소를 생성합니다.
-            const downloadPopup = document.createElement('div');
-            downloadPopup.id = 'download-popup';
-            document.body.appendChild(downloadPopup);
 
             viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1R_JiZ59Vc6qlaJg1n5i6tIN0fGisIY78/view?usp=sharing', '_blank');
@@ -203,46 +151,8 @@
             downloadButton.addEventListener('click', () => {
                 // 다운로드 링크를 직접 지정합니다.
                 const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1R_JiZ59Vc6qlaJg1n5i6tIN0fGisIY78&export=download';
-                downloadPopup.textContent = '다운로드 중...'; // 팝업 텍스트 설정
-                downloadPopup.classList.add('show'); // 팝업 표시
-
-                // Use a simple fetch to trigger the download and track its progress.
-                fetch(downloadUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.blob(); // Get the data as a Blob
-                })
-                .then(blob => {
-                    // Create an object URL for the Blob
-                    const url = URL.createObjectURL(blob);
-                    // Create a new anchor element
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = '100발100중_중학_영어_1-1_답지.pdf'; // 파일 이름을 지정합니다.
-                    document.body.appendChild(a);  // Append the anchor to the body
-                    a.click(); // Trigger the download
-                    document.body.removeChild(a); // Clean up by removing the anchor
-                    URL.revokeObjectURL(url); // Clean up the URL object
-
-                    downloadPopup.textContent = '다운로드 완료!'; // 팝업 텍스트 설정
-                    downloadPopup.classList.add('success');
-                    setTimeout(() => {
-                        downloadPopup.classList.remove('show'); // 2초 후에 팝업 숨김
-                        downloadPopup.classList.remove('success');
-                    }, 2000);
-
-                })
-                .catch(error => {
-                    console.error('Download error:', error);
-                    downloadPopup.textContent = '다운로드 실패!'; // 팝업 텍스트 설정
-                    downloadPopup.classList.add('error');
-                    setTimeout(() => {
-                        downloadPopup.classList.remove('show'); // 2초 후에 팝업 숨김
-                        downloadPopup.classList.remove('error');
-                    }, 2000);
-                });
+                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
+                window.location.href = downloadUrl;
             });
 
             goBackButton.addEventListener('click', () => {
