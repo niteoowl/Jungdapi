@@ -793,6 +793,7 @@
             display: flex;
             flex-direction: column;
             margin: 10px;
+            box-sizing: border-box;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
@@ -813,6 +814,21 @@
             text-align: left;
             flex: 1;
             overflow: auto;
+            padding-right: 10px;
+        }
+        #popup-text::-webkit-scrollbar {
+            width: 8px;
+        }
+        #popup-text::-webkit-scrollbar-track {
+            background-color: #f1f3f5;
+            border-radius: 10px;
+        }
+        #popup-text::-webkit-scrollbar-thumb {
+            background-color: #ced4da;
+            border-radius: 10px;
+        }
+        #popup-text::-webkit-scrollbar-thumb:hover {
+            background-color: #adb5bd;
         }
         #popup-buttons {
             display: flex;
@@ -890,6 +906,41 @@
             height: auto;
             border-radius: 12px;
             margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 로딩 스타일 */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 11;
+        }
+        #loading-spinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid #fff;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loading-text {
+            color: white;
+            font-size: 18px;
+            margin-top: 5px;
+            font-family: 'Noto Sans KR', sans-serif;
         }
     </style>
     <script>
@@ -898,10 +949,38 @@
             var closeButton = document.getElementById('popup-close');
             var todayCloseButton = document.getElementById('popup-today-close');
             var todayCloseCheckbox = todayCloseButton.querySelector('input[type="checkbox"]');
+            var loading = document.getElementById('loading');
+            var loadingText = document.getElementById('loading-text');
+
+            var messages = [
+                "열심히 로딩 중...",
+                "거의 다 왔어요!",
+                "지금 로딩 중입니다.",
+                "잠시만 기다려주세요.",
+                "데이터를 불러오는 중...",
+                "로딩이 얼마 안 남았어요.",
+                "최대한 빨리 보여드릴게요!",
+                "기다림이 길지 않아요!",
+                "로딩 중... ٩(ˊᗜˋ*)و",
+                "인내심을 가져주세요... ᕦ(ò_óˇ)ᕤ"
+            ];
+
+            var messageIndex = 0;
+            loadingText.textContent = messages[messageIndex];
+
+            // 로딩 화면 표시
+            loading.style.display = 'flex';
 
             // 팝업 표시
             if (getCookie('popup_closed') !== 'true') {
-                popup.style.display = 'flex';
+                // 3초에서 10초 사이의 랜덤한 시간 후 팝업 표시 및 로딩 화면 숨김
+                var randomDelay = Math.floor(Math.random() * 7000) + 3000; // 3000ms(3초) ~ 10000ms(10초)
+                setTimeout(function() {
+                    popup.style.display = 'flex';
+                    loading.style.display = 'none';
+                }, randomDelay);
+            } else {
+                loading.style.display = 'none';
             }
 
             // 닫기 버튼 클릭 이벤트
@@ -950,10 +1029,20 @@
             function deleteCookie(name) {
                 document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
             }
+
+            // 1초마다 로딩 텍스트 변경
+            setInterval(function() {
+                messageIndex = (messageIndex + 1) % messages.length;
+                loadingText.textContent = messages[messageIndex];
+            }, 1000);
         };
     </script>
 </head>
 <body>
+    <div id="loading">
+        <div id="loading-spinner"></div>
+        <p id="loading-text"></p>
+    </div>
     <div id="popup">
         <div id="popup-content">
             <h2 id="popup-title">Jungdapi 서비스 종료 안내</h2>
