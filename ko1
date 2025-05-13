@@ -150,7 +150,7 @@
 
             downloadButton.addEventListener('click', () => {
                 // 다운로드 링크를 직접 지정합니다.
-                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1R_JiZ59Vc6qlaJg1n5i6tIN0fGisIY78&export=download';
+                const downloadUrl = 'https://drive.usercontent.google.com/u/0/uc?id=1W6pQhoOhSwbgIPtY622KHQvgKigvV10z&export=download';
                 // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
                 window.location.href = downloadUrl;
             });
@@ -171,7 +171,7 @@
             <img src="https://i.postimg.cc/8PwxPzHq/9791173161025.jpg" alt="평가문제집 중학 국어 1-1(박영민) 정답과 해설" class="book-cover">
             <h3 class="book-title">평가문제집 중학 국어 1-1(박영민)</h3>
             <p class="book-description">
-                100발100중으로 시함 완벽대비!
+                중학 국어 완벽대비!
             </p>
         </div>
         <div class="button-container">
