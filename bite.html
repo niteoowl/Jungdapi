@@ -2,10 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="/simbol.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>READING BITE PREP (리딩바이트) 중학 영어 1 답지</title>
-    <meta name="description" content="READING BITE PREP (리딩바이트) 중학 영어 1 답지 | Jungdapi">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -117,108 +115,20 @@
         .go-back-button span {
             margin-right: 5px;
         }
-        #download-status {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-
-        /* Improved Popup Styles */
-        #download-popup {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease, top 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid #ddd;
-            display: none;
-        }
-
-        #download-popup.show {
-            display: block;
-            opacity: 1;
-            top: 60px;
-            animation: slideIn 0.3s ease forwards;
-        }
-
-        #download-popup.hide {
-            opacity: 0;
-            top: -50px;
-            animation: slideOut 0.3s ease forwards;
-            display: none;
-        }
-
-        #download-popup p {
-            margin: 0;
-            font-size: 1.1em;
-            font-weight: 500;
-            color: #222;
-            transition: color 0.2s ease;
-        }
-
-        #download-popup.success {
-            background-color: #f0fdf4;
-            border-color: #d6f4e5;
-            color: #15803d;
-        }
-
-        #download-popup.success p {
-            color: #15803d;
-        }
-
-        #download-popup.error {
-            background-color: #fef2f2;
-            border-color: #fecaca;
-            color: #b91c1c;
-        }
-
-        #download-popup.error p {
-            color: #b91c1c;
-        }
-
-        /* Progress Bar Styles */
-        #download-progress-bar {
-            width: 0%;
-            height: 10px;
-            background-color: #007bff;
-            border-radius: 5px;
-            transition: width 0.1s ease;
-            margin-top: 5px;
-            display: none;
-        }
-
-        #download-popup.progress #download-progress-bar {
-            width: 0%;
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from {
-                top: -50px;
-                opacity: 0;
+        @media (max-width: 768px) {
+            .book-cover {
+                width: 90%;
+                max-width: 300px;
             }
-            to {
-                top: 60px;
-                opacity: 1;
+            .book-description {
+                text-align: center;
             }
-        }
-
-        @keyframes slideOut {
-            from {
-                top: 60px;
-                opacity: 1;
+            .button-container {
+                flex-direction: column;
+                align-items: stretch;
             }
-            to {
-                top: -50px;
-                opacity: 0;
+            .view-button, .download-button {
+                width: 100%;
             }
         }
     </style>
@@ -232,36 +142,15 @@
             const downloadButton = document.querySelector('.download-button');
             const goBackButton = document.querySelector('.go-back-button');
 
-            // 팝업 요소를 생성합니다.
-            const downloadPopup = document.createElement('div');
-            downloadPopup.id = 'download-popup';
-            document.body.appendChild(downloadPopup);
-
             viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1Tfz9OiaMCyh-ZGWrSurbTWuhhLMHtoNK/view?usp=sharing', '_blank');
             });
 
             downloadButton.addEventListener('click', () => {
+                // 다운로드 링크를 직접 지정합니다.
                 const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1Tfz9OiaMCyh-ZGWrSurbTWuhhLMHtoNK&export=download';
-
-                downloadPopup.textContent = '다운로드 중...';
-                downloadPopup.classList.add('show');
-
-                // Initiate download
+                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
                 window.location.href = downloadUrl;
-
-                setTimeout(() => {
-                    downloadPopup.textContent = '다운로드 완료!';
-                    downloadPopup.classList.remove('progress');
-                    downloadPopup.classList.add('success');
-                    setTimeout(() => {
-                        downloadPopup.classList.remove('show', 'success');
-                        downloadPopup.classList.add('hide');
-                        setTimeout(() => {
-                            downloadPopup.remove();
-                        }, 300);
-                    }, 2000);
-                }, 3000);
             });
 
             goBackButton.addEventListener('click', () => {
