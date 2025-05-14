@@ -12,25 +12,19 @@
             text-align: center;
             margin: 0;
             padding: 20px;
-            transition: background-color 0.3s ease;
-            background-color: transparent;
         }
         h1 {
             margin-bottom: 20px;
             color: #333;
-            transition: color 0.3s ease;
         }
         .book-section {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
             border-radius: 10px;
-            background-color: transparent;
-            transition: background-color 0.3s ease;
         }
         .book-section h2 {
             color: #333;
-            transition: color 0.3s ease;
             margin-bottom: 20px;
         }
         .book-info {
@@ -54,12 +48,10 @@
             font-size: 1.5em;
             margin-bottom: 10px;
             color: #333;
-            transition: color 0.3s ease;
         }
         .book-description {
             font-size: 0.9em;
             color: #666;
-            transition: color 0.3s ease;
             text-align: left;
             margin-bottom: 20px;
             line-height: 1.6;
@@ -77,12 +69,11 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 1em;
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
             width: 200px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             background-color: #000;
             color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         .view-button:hover {
             background-color: #333;
@@ -103,8 +94,6 @@
             border-radius: 5px;
             background-color: transparent;
             cursor: pointer;
-            transition:  color 0.3s ease;
-            z-index: 10;
             color: #000;
             text-decoration: none;
             display: flex;
@@ -116,111 +105,6 @@
         .go-back-button span {
             margin-right: 5px;
         }
-        #download-status {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-
-        /* Improved Popup Styles */
-        #download-popup {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff;
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease, top 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid #ddd;
-            display: none;
-        }
-        
-        #download-popup.show {
-            display: block;
-            opacity: 1;
-            top: 60px;
-            animation: slideIn 0.3s ease forwards;
-        }
-        
-        #download-popup.hide {
-            opacity: 0;
-            top: -50px;
-            animation: slideOut 0.3s ease forwards;
-            display: none;
-        }
-
-        #download-popup p {
-            margin: 0;
-            font-size: 1.1em;
-            font-weight: 500;
-            color: #222;
-            transition: color 0.2s ease;
-        }
-
-        #download-popup.success {
-            background-color: #f0fdf4;
-            border-color: #d6f4e5;
-            color: #15803d;
-        }
-
-        #download-popup.success p {
-            color: #15803d;
-        }
-
-        #download-popup.error {
-            background-color: #fef2f2;
-            border-color: #fecaca;
-            color: #b91c1c;
-        }
-
-        #download-popup.error p {
-            color: #b91c1c;
-        }
-
-        /* Progress Bar Styles */
-        #download-progress-bar {
-            width: 0%;
-            height: 10px;
-            background-color: #007bff;
-            border-radius: 5px;
-            transition: width 0.1s ease;
-            margin-top: 5px;
-            display: none;
-        }
-
-        #download-popup.progress #download-progress-bar {
-            width: 0%;
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from {
-                top: -50px;
-                opacity: 0;
-            }
-            to {
-                top: 60px;
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                top: 60px;
-                opacity: 1;
-            }
-            to {
-                top: -50px;
-                opacity: 0;
-            }
-        }
-
         @media (max-width: 768px) {
             .book-cover {
                 width: 90%;
@@ -238,49 +122,6 @@
             }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
-            
-            // 팝업 요소를 생성합니다.
-            const downloadPopup = document.createElement('div');
-            downloadPopup.id = 'download-popup';
-            document.body.appendChild(downloadPopup);
-
-            viewButton.addEventListener('click', () => {
-                window.open('https://drive.google.com/file/d/1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV/view?usp=sharing', '_blank');
-            });
-
-            downloadButton.addEventListener('click', () => {
-                const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV&export=download';
-
-                downloadPopup.textContent = '다운로드 중...';
-                downloadPopup.classList.add('show');
-
-                // Initiate download
-                window.location.href = downloadUrl;
-
-                setTimeout(() => {
-                    downloadPopup.textContent = '다운로드 완료!';
-                    downloadPopup.classList.remove('progress');
-                    downloadPopup.classList.add('success');
-                    setTimeout(() => {
-                        downloadPopup.classList.remove('show', 'success');
-                        downloadPopup.classList.add('hide');
-                        setTimeout(() => {
-                            downloadPopup.remove();
-                        }, 300);
-                    }, 2000);
-                }, 3000);
-            });
-
-            goBackButton.addEventListener('click', () => {
-                window.history.back();
-            });
-        });
-    </script>
 </head>
 <body>
     <a href="index.html" class="go-back-button">
@@ -296,8 +137,8 @@
             </p>
         </div>
         <div class="button-container">
-            <button class="view-button">웹에서 보기</button>
-            <button class="download-button">다운로드</button>
+            <button class="view-button" onclick="window.open('https://drive.google.com/file/d/1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV/view?usp=sharing', '_blank')">웹에서 보기</button>
+            <button class="download-button" onclick="window.location.href='https://drive.usercontent.google.com/uc?id=1KJdLzOQ-dJd9Ybu6KRmpr910x5GDYlGV&export=download'">다운로드</button>
         </div>
     </div>
 </body>
