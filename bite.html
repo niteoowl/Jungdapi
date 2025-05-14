@@ -9,174 +9,255 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            text-align: center;
             margin: 0;
-            padding: 20px;
-            transition: background-color 0.3s ease;
-            background-color: transparent;
-        }
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-        .book-section {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: transparent;
-            transition: background-color 0.3s ease;
-        }
-        .book-section h2 {
-            color: #333;
-            transition: color 0.3s ease;
-            margin-bottom: 20px;
-        }
-        .book-info {
+            padding: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-50px);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-header {
             margin-bottom: 20px;
         }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
         .book-cover {
-            width: 200px;
+            width: 100%;
+            max-width: 300px;
             height: auto;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
         }
+
         .book-cover:hover {
             transform: translateY(-5px);
         }
+
         .book-title {
-            font-size: 1.5em;
+            font-size: 1.2em;
             margin-bottom: 10px;
             color: #333;
-            transition: color 0.3s ease;
         }
+
         .book-description {
             font-size: 0.9em;
-            color: #666;
-            transition: color 0.3s ease;
-            text-align: left;
-            margin-bottom: 20px;
+            color: #555;
             line-height: 1.6;
+            text-align: left;
+            margin-bottom: 25px;
         }
-        .button-container {
+
+        .modal-footer {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
         }
+
         .view-button, .download-button {
-            padding: 12px 25px;
+            padding: 14px 30px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em;
             transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-            width: 200px;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            background-color: #000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .view-button {
+            background-color: #007bff;
             color: #fff;
         }
+
         .view-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+            background-color: #0056b3;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
             transform: translateY(-2px);
         }
+
+        .download-button {
+            background-color: #28a745;
+            color: #fff;
+        }
+
         .download-button:hover {
-            background-color: #333;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+            background-color: #218838;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
             transform: translateY(-2px);
         }
-        .go-back-button {
-            position: fixed;
+
+        .close-button {
+            position: absolute;
             top: 20px;
-            left: 20px;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: transparent;
+            right: 20px;
+            font-size: 2em;
+            color: #888;
             cursor: pointer;
-            transition:  color 0.3s ease;
-            z-index: 10;
-            color: #000;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
+            transition: color 0.3s ease;
+            border: none;
+            background: none;
+            padding: 0;
+            line-height: 1;
         }
-        .go-back-button:hover {
-             color: #333;
+
+        .close-button:hover {
+            color: #333;
         }
-        .go-back-button span {
-            margin-right: 5px;
+
+        #download-status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #333;
         }
+
         @media (max-width: 768px) {
-            .book-cover {
-                width: 90%;
-                max-width: 300px;
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            .modal-header h2 {
+                font-size: 1.5em;
             }
             .book-description {
-                text-align: center;
-            }
-            .button-container {
-                flex-direction: column;
-                align-items: stretch;
+                font-size: 0.85em;
             }
             .view-button, .download-button {
-                width: 100%;
+                font-size: 1em;
+                padding: 12px 25px;
             }
         }
     </style>
+</head>
+<body>
+    <button id="view-answer-button" class="view-button">답지 보기</button>
+
+    <div id="answer-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-modal-button" class="close-button">&times;</button>
+            <div class="modal-header">
+                <h2>책 소개</h2>
+            </div>
+            <div class="modal-body">
+                <img src="https://i.postimg.cc/65XWJxWT/XL-2.jpg" alt="READING BITE PREP 중학 영어 1" class="book-cover">
+                <h3 class="book-title">READING BITE PREP 중학 영어 1</h3>
+                <p class="book-description">
+                    중학교에 들어가기 전에 효과적으로 독해 실력을 강화하는 중학 독해서!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="view-book-button" class="view-button">웹에서 보기</button>
+                <button id="download-book-button" class="download-button">다운로드</button>
+                <p id="download-status"></p>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            const bookSection = document.querySelector('.book-section');
-            const bookTitle = document.querySelector('.book-title');
-            const bookDescription = document.querySelector('.book-description');
-            const viewButton = document.querySelector('.view-button');
-            const downloadButton = document.querySelector('.download-button');
-            const goBackButton = document.querySelector('.go-back-button');
+            const viewAnswerButton = document.getElementById('view-answer-button');
+            const answerModal = document.getElementById('answer-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+            const viewBookButton = document.getElementById('view-book-button');
+            const downloadBookButton = document.getElementById('download-book-button');
+            const downloadStatus = document.getElementById('download-status');
 
-            viewButton.addEventListener('click', () => {
+            viewAnswerButton.addEventListener('click', () => {
+                answerModal.classList.add('show');
+            });
+
+            closeModalButton.addEventListener('click', () => {
+                answerModal.classList.remove('show');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === answerModal) {
+                    answerModal.classList.remove('show');
+                }
+            });
+
+            viewBookButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1Tfz9OiaMCyh-ZGWrSurbTWuhhLMHtoNK/view?usp=sharing', '_blank');
             });
 
-            downloadButton.addEventListener('click', () => {
-                // 다운로드 링크를 직접 지정합니다.
+            downloadBookButton.addEventListener('click', () => {
                 const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1Tfz9OiaMCyh-ZGWrSurbTWuhhLMHtoNK&export=download';
-                // 현재 창에서 다운로드 링크로 이동하여 다운로드를 시작합니다.
-                window.location.href = downloadUrl;
-            });
+                downloadStatus.textContent = '다운로드 중...';
 
-            goBackButton.addEventListener('click', () => {
-                window.history.back();
+                fetch(downloadUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'READING_BITE_PREP_중학_영어_1_답지.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        downloadStatus.textContent = '다운로드 완료!';
+                    })
+                    .catch(error => {
+                        console.error('Download error:', error);
+                        downloadStatus.textContent = '다운로드 실패!';
+                    });
             });
         });
     </script>
-</head>
-<body>
-    <a href="index.html" class="go-back-button">
-        <span>←</span>
-    </a>
-    <div class="book-section">
-        <h2>책 소개</h2>
-        <div class="book-info">
-            <img src="https://i.postimg.cc/65XWJxWT/XL-2.jpg" alt="READING BITE PREP 중학 영어 1" class="book-cover">
-            <h3 class="book-title">READING BITE PREP 중학 영어 1</h3>
-            <p class="book-description">
-                중학교에 들어가기 전에 효과적으로 독해 실력을 강화하는 중학 독해서!
-            </p>
-        </div>
-        <div class="button-container">
-            <button class="view-button">웹에서 보기</button>
-            <button class="download-button">다운로드</button>
-        </div>
-    </div>
 </body>
 </html>
