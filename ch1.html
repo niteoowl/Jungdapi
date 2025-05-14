@@ -5,259 +5,287 @@
     <link rel="shortcut icon" href="/simbol.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>체크체크 중학 수학 1-1 답지</title>
+    <meta name="description" content="체크체크 중학 수학 1-1 답지 | Jungdapi">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             text-align: center;
-            width: 90%;
-            max-width: 500px;
-            transform: translateY(-50px);
-            opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+            background-color: transparent;
         }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal.show .modal-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .modal-header {
+        h1 {
             margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
             color: #333;
-            font-size: 1.8em;
-            margin-bottom: 10px;
+            transition: color 0.3s ease;
         }
-
-        .modal-body {
+        .book-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+        }
+        .book-section h2 {
+            color: #333;
+            transition: color 0.3s ease;
             margin-bottom: 20px;
         }
-
+        .book-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
         .book-cover {
-            width: 100%;
-            max-width: 300px;
+            width: 200px;
             height: auto;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
-
         .book-cover:hover {
             transform: translateY(-5px);
         }
-
         .book-title {
-            font-size: 1.2em;
+            font-size: 1.5em;
             margin-bottom: 10px;
             color: #333;
+            transition: color 0.3s ease;
         }
-
         .book-description {
             font-size: 0.9em;
-            color: #555;
-            line-height: 1.6;
+            color: #666;
+            transition: color 0.3s ease;
             text-align: left;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
-
-        .modal-footer {
+        .button-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
         }
-
         .view-button, .download-button {
-            padding: 14px 30px;
+            padding: 12px 25px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
+            width: 200px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .view-button {
-            background-color: #007bff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: #000;
             color: #fff;
         }
-
         .view-button:hover {
-            background-color: #0056b3;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            background-color: #333;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
         }
-
-        .download-button {
-            background-color: #28a745;
-            color: #fff;
-        }
-
         .download-button:hover {
-            background-color: #218838;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            background-color: #333;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
             transform: translateY(-2px);
         }
-
-        .close-button {
-            position: absolute;
+        .go-back-button {
+            position: fixed;
             top: 20px;
-            right: 20px;
-            font-size: 2em;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.3s ease;
+            left: 20px;
+            padding: 10px 15px;
             border: none;
-            background: none;
-            padding: 0;
-            line-height: 1;
+            border-radius: 5px;
+            background-color: transparent;
+            cursor: pointer;
+            transition:  color 0.3s ease;
+            z-index: 10;
+            color: #000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
         }
-
-        .close-button:hover {
-            color: #333;
+        .go-back-button:hover {
+             color: #333;
         }
-
+        .go-back-button span {
+            margin-right: 5px;
+        }
         #download-status {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 0.9em;
             color: #333;
+            transition: color 0.3s ease;
         }
 
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                padding: 20px;
+        /* Improved Popup Styles */
+        #download-popup {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease, top 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #ddd;
+            display: none;
+        }
+
+        #download-popup.show {
+            display: block;
+            opacity: 1;
+            top: 60px;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        #download-popup.hide {
+            opacity: 0;
+            top: -50px;
+            animation: slideOut 0.3s ease forwards;
+            display: none;
+        }
+
+        #download-popup p {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #222;
+            transition: color 0.2s ease;
+        }
+
+        #download-popup.success {
+            background-color: #f0fdf4;
+            border-color: #d6f4e5;
+            color: #15803d;
+        }
+
+        #download-popup.success p {
+            color: #15803d;
+        }
+
+        #download-popup.error {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+
+        #download-popup.error p {
+            color: #b91c1c;
+        }
+
+        /* Progress Bar Styles */
+        #download-progress-bar {
+            width: 0%;
+            height: 10px;
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: width 0.1s ease;
+            margin-top: 5px;
+            display: none;
+        }
+
+        #download-popup.progress #download-progress-bar {
+            width: 0%;
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                top: -50px;
+                opacity: 0;
             }
-            .modal-header h2 {
-                font-size: 1.5em;
+            to {
+                top: 60px;
+                opacity: 1;
             }
-            .book-description {
-                font-size: 0.85em;
+        }
+
+        @keyframes slideOut {
+            from {
+                top: 60px;
+                opacity: 1;
             }
-            .view-button, .download-button {
-                font-size: 1em;
-                padding: 12px 25px;
+            to {
+                top: -50px;
+                opacity: 0;
             }
         }
     </style>
-</head>
-<body>
-    <button id="view-answer-button" class="view-button">답지 보기</button>
-
-    <div id="answer-modal" class="modal">
-        <div class="modal-content">
-            <button id="close-modal-button" class="close-button">&times;</button>
-            <div class="modal-header">
-                <h2>책 소개</h2>
-            </div>
-            <div class="modal-body">
-                <img src="https://i.postimg.cc/Vk1P8sjc/image.jpg" alt="체크체크 중학 수학 1-1" class="book-cover">
-                <h3 class="book-title">체크체크 중학 수학 1-1</h3>
-                <p class="book-description">
-                    간결한 개념 설명과 세분화된 유형별 문제 제공, 심화 단계로 넘어가기 전 중학교 수학 기본기를 탄탄하게 완성할 수 있는 기본서!
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button id="view-book-button" class="view-button">웹에서 보기</button>
-                <button id="download-book-button" class="download-button">다운로드</button>
-                <p id="download-status"></p>
-            </div>
-        </div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const viewAnswerButton = document.getElementById('view-answer-button');
-            const answerModal = document.getElementById('answer-modal');
-            const closeModalButton = document.getElementById('close-modal-button');
-            const viewBookButton = document.getElementById('view-book-button');
-            const downloadBookButton = document.getElementById('download-book-button');
-            const downloadStatus = document.getElementById('download-status');
+            const body = document.body;
+            const bookSection = document.querySelector('.book-section');
+            const bookTitle = document.querySelector('.book-title');
+            const bookDescription = document.querySelector('.book-description');
+            const viewButton = document.querySelector('.view-button');
+            const downloadButton = document.querySelector('.download-button');
+            const goBackButton = document.querySelector('.go-back-button');
 
-            viewAnswerButton.addEventListener('click', () => {
-                answerModal.classList.add('show');
-            });
+            // 팝업 요소를 생성합니다.
+            const downloadPopup = document.createElement('div');
+            downloadPopup.id = 'download-popup';
+            document.body.appendChild(downloadPopup);
 
-            closeModalButton.addEventListener('click', () => {
-                answerModal.classList.remove('show');
-            });
-
-            window.addEventListener('click', (event) => {
-                if (event.target === answerModal) {
-                    answerModal.classList.remove('show');
-                }
-            });
-
-            viewBookButton.addEventListener('click', () => {
+            viewButton.addEventListener('click', () => {
                 window.open('https://drive.google.com/file/d/1GHBNhFzaldjPhdWN36KVsmYcQ-n9bMBp/view?usp=sharing', '_blank');
             });
 
-            downloadBookButton.addEventListener('click', () => {
+            downloadButton.addEventListener('click', () => {
                 const downloadUrl = 'https://drive.usercontent.google.com/uc?id=1GHBNhFzaldjPhdWN36KVsmYcQ-n9bMBp&export=download';
-                downloadStatus.textContent = '다운로드 중...';
 
-                fetch(downloadUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.blob();
-                    })
-                    .then(blob => {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = '체크체크_중학_수학_1-1_답지.pdf';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
+                downloadPopup.textContent = '다운로드 중...';
+                downloadPopup.classList.add('show');
 
-                        downloadStatus.textContent = '다운로드 완료!';
-                    })
-                    .catch(error => {
-                        console.error('Download error:', error);
-                        downloadStatus.textContent = '다운로드 실패!';
-                    });
+                // Initiate download
+                window.location.href = downloadUrl;
+
+                setTimeout(() => {
+                    downloadPopup.textContent = '다운로드 완료!';
+                    downloadPopup.classList.remove('progress');
+                    downloadPopup.classList.add('success');
+                    setTimeout(() => {
+                        downloadPopup.classList.remove('show', 'success');
+                        downloadPopup.classList.add('hide');
+                        setTimeout(() => {
+                            downloadPopup.remove();
+                        }, 300);
+                    }, 2000);
+                }, 3000);
+            });
+
+            goBackButton.addEventListener('click', () => {
+                window.history.back();
             });
         });
     </script>
+</head>
+<body>
+    <a href="index.html" class="go-back-button">
+        <span>←</span>
+    </a>
+    <div class="book-section">
+        <h2>책 소개</h2>
+        <div class="book-info">
+            <img src="https://i.postimg.cc/Vk1P8sjc/image.jpg" alt="체크체크 중학 수학 1-1" class="book-cover">
+            <h3 class="book-title">체크체크 중학 수학 1-1</h3>
+            <p class="book-description">
+                 간결한 개념 설명과 세분화된 유형별 문제 제공, 심화 단계로 넘어가기 전 중학교 수학 기본기를 탄탄하게 완성할 수 있는 기본서!
+        </div>
+        <div class="button-container">
+            <button class="view-button">웹에서 보기</button>
+            <button class="download-button">다운로드</button>
+        </div>
+    </div>
 </body>
 </html>
