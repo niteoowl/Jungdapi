@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT 스타일 웹사이트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f0f0;
+            /* Removed overflow: hidden; to allow main-content scrollbar to be visible */
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: #f7f7f8;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            overflow-y: auto; /* Allow sidebar to scroll if content overflows */
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 10px; /* Added margin */
+        }
+
+        .sidebar-header h1 {
+            margin-left: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #10a37f;
+            margin-top: 0; /* Added */
+            margin-bottom: 0; /* Added */
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+            border-radius: 5px;
+        }
+
+        .sidebar-menu li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-menu li.active {
+            background-color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li img {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Chat History Styles */
+        .chat-history {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0; /* Added margin */
+            flex-grow: 1; /* Allow history to take up space */
+            overflow-y: auto; /* Make history list scrollable if needed */
+        }
+
+        .chat-history li {
+             padding: 8px 10px; /* Adjusted padding */
+             cursor: pointer;
+             margin-bottom: 5px; /* Added margin */
+             background-color: #e9e9eb; /* Slightly different background */
+             border-radius: 5px;
+             font-size: 14px;
+             color: #333;
+             white-space: nowrap; /* Prevent text wrapping */
+             overflow: hidden; /* Hide overflowing text */
+             text-overflow: ellipsis; /* Show ellipsis for overflow */
+             transition: background-color 0.2s ease;
+        }
+
+        .chat-history li:hover {
+            background-color: #d0d0d0;
+        }
+
+        .chat-history li.active {
+             background-color: #d0d0d0; /* Highlight active chat */
+             font-weight: 600;
+        }
+
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            position: relative; /* Needed for absolute/fixed positioning of children */
+            overflow-y: auto; /* Added auto to make main content scrollable */
+            /* Removed overflow: hidden; */
+            padding-bottom: 80px; /* Ensure space for fixed input at the bottom */
+
+            /* Custom Scrollbar Styles - Moved from .chat-container */
+            /* For Chrome, Safari, and Opera */
+            &::-webkit-scrollbar {
+                width: 6px; /* width of the scrollbar - made slightly thinner */
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent; /* Transparent track */
+                border-radius: 0; /* No rounded corners */
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #a0a0a0; /* Simple grey color for the thumb */
+                border-radius: 0; /* No rounded corners */
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: #808080; /* Slightly darker grey on hover */
+            }
+
+            /* For Firefox (basic styling) */
+            scrollbar-width: thin; /* "auto" or "thin" */
+            scrollbar-color: #a0a0a0 transparent; /* thumb and track color */
+        }
+
+        #initialText {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 20px;
+            padding-top: 20px; /* Added padding top */
+            box-sizing: border-box; /* Include padding in width */
+            align-self: center; /* Center the initial text */
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            flex-grow: 1;
+            /* Removed overflow-y: auto; */
+            padding: 0 20px; /* Add horizontal padding */
+            box-sizing: border-box; /* Include padding in width */
+            align-self: center; /* Center the chat container */
+        }
+
+        .message {
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            align-self: flex-start;
+            position: relative;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background-color: #f7f7f8; /* Changed background color */
+            align-self: flex-end;
+            border-radius: 999px; /* Made corners fully rounded */
+             /* Removed border-top-right-radius: 0; */
+        }
+
+        .message.ai {
+            background-color: transparent;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        /* Arrow styling - Removed for user message */
+        .message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .message.user::before {
+            display: none; /* Hide arrow for user message */
+        }
+
+        .message.ai::before {
+            display: none;
+        }
+
+        .input-container {
+            display: flex;
+            /* Adjusted left position to make it shorter */
+            left: 300px; /* Increased left value */
+            right: 20px; /* Distance from right edge */
+            /* Removed width: auto; and max-width */
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding: 5px;
+            align-items: center;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed; /* Fix position */
+            bottom: 20px; /* Distance from bottom */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            z-index: 10; /* Ensure it's above chat messages */
+        }
+
+        .input-container input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 20px 0 0 20px;
+            /* Removed fixed width */
+        }
+
+        .input-container button {
+            background-color: #fff;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .input-container button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Functions and Suggestions - Kept original styling */
+        .functions-wrapper {
+            display: none;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .functions-item {
+            background-color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 16px;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .functions-item:hover {
+            background-color: #10a37f;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .suggestions {
+            display: none;
+            gap: 15px;
+            margin-bottom: 0;
+            justify-content: center;
+        }
+
+        .suggestion-item {
+            background-color: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .suggestion-item:hover {
+            background-color: #10a37f;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+         /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px; /* Collapse sidebar on smaller screens */
+                padding: 10px;
+            }
+            .sidebar-header h1 {
+                display: none; /* Hide title */
+            }
+             .sidebar-menu li span {
+                 display: none; /* Hide text */
+             }
+             .sidebar-menu li img {
+                 margin-right: 0; /* Remove margin */
+             }
+             .sidebar-menu li {
+                 justify-content: center; /* Center icons */
+             }
+            .input-container {
+                left: 100px; /* Adjust left position for collapsed sidebar + padding */
+                right: 20px; /* Keep right position */
+                 /* Removed max-width */
+            }
+             .main-content {
+                 padding-bottom: 100px; /* Increase bottom padding for smaller screens */
+             }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png" alt="ChatGPT 로고" width="30">
+            <h1>ChatGPT</h1>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" alt="Message">
+                <span>채팅</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" alt="Sora">
+                <span>Sora</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/book.svg" alt="Library">
+                <span>라이브러리</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/code.svg" alt="HTML/CSS">
+                <span>HTML/CSS</span>
+            </li>
+             <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
+                <span>유튜브 영상</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" alt="GPT 음색">
+                <span>GPT 음색</span>
+            </li>
+        </ul>
+        <ul class="chat-history" id="chatHistory">
+            </ul>
+        <div class="sidebar-menu">
+            <li id="newChatButton">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" alt="새 채팅">
+                <span>새 채팅</span>
+            </li>
+        </div>
+    </div>
+    <div class="main-content">
+        <div id="initialText">무엇을 도와드릴까요?</div>
+        <div class="chat-container" id="chatContainer">
+            </div>
+        </div>
+
+    <div class="input-container">
+        <input type="text" id="promptInput" placeholder="무엇이든 물어보세요.">
+        <button id="sendButton">
+            <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/send.svg" alt="Send">
+        </button>
+    </div>
+
+
+    <script>
+        const promptInput = document.getElementById('promptInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatContainer = document.getElementById('chatContainer');
+        const initialTextElement = document.getElementById('initialText');
+        const chatHistoryElement = document.getElementById('chatHistory'); // Get the history list element
+        const newChatButton = document.getElementById('newChatButton'); // Get the new chat button
+        const apiKey = 'AIzaSyCIg1Hlmhm4ZYPi6TtPBqkhXsJJsdXJfWY'; // 여기에 실제 API 키를 넣으세요.
+
+        // Array to store chat history data
+        let chatHistory = [];
+        // Variable to track the index of the currently active chat thread
+        let currentChatIndex = -1;
+
+        // Save chat history and current index to localStorage
+        function saveChatHistory() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            localStorage.setItem('currentChatIndex', currentChatIndex);
+        }
+
+        // Load chat history and current index from localStorage
+        function loadChatHistory() {
+            const savedHistory = localStorage.getItem('chatHistory');
+            const savedIndex = localStorage.getItem('currentChatIndex');
+
+            if (savedHistory) {
+                chatHistory = JSON.parse(savedHistory);
+                displayChatHistory(); // Display loaded history in the sidebar
+
+                if (savedIndex !== null && chatHistory[savedIndex]) {
+                    currentChatIndex = parseInt(savedIndex, 10);
+                    loadChatThread(currentChatIndex); // Load the last active chat thread
+                } else {
+                     // If no valid index saved or chatHistory is empty, start fresh
+                    startNewChat();
+                }
+            } else {
+                 // If no history saved, start fresh
+                startNewChat();
+            }
+        }
+
+        // Display chat history in the sidebar
+        function displayChatHistory() {
+            chatHistoryElement.innerHTML = ''; // Clear current history display
+            chatHistory.forEach((historyItem, index) => {
+                const listItem = document.createElement('li');
+                // Display the first user message as the history item summary
+                const firstUserMessage = historyItem.messages.find(msg => msg.role === 'user');
+                const summaryText = firstUserMessage ? firstUserMessage.text : '새 대화';
+
+                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : ''); // Truncate for summary
+                listItem.dataset.index = index; // Store index for loading full conversation
+
+                // Add active class if this is the current chat
+                if (index === currentChatIndex) {
+                    listItem.classList.add('active');
+                }
+
+                listItem.addEventListener('click', () => {
+                    loadChatThread(index); // Load the clicked conversation
+                });
+                chatHistoryElement.appendChild(listItem);
+            });
+        }
+
+        // Load a specific chat thread into the main chat area
+        function loadChatThread(index) {
+            if (index >= 0 && index < chatHistory.length) {
+                currentChatIndex = index;
+                chatContainer.innerHTML = ''; // Clear current chat display
+                initialTextElement.style.display = 'none'; // Hide initial text
+
+                const threadMessages = chatHistory[currentChatIndex].messages;
+                threadMessages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', message.role);
+                    messageElement.innerHTML = message.role === 'user' ? autoFormatText(message.text) : formatApiResponse(message.text);
+                    chatContainer.appendChild(messageElement);
+                });
+
+                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight; // Scroll to bottom
+                saveChatHistory(); // Save the current index
+                displayChatHistory(); // Update sidebar active state
+            }
+        }
+
+        // Start a new chat conversation
+        function startNewChat() {
+            chatContainer.innerHTML = ''; // Clear current chat display
+            initialTextElement.style.display = 'block'; // Show initial text
+            currentChatIndex = -1; // No active chat thread initially
+            saveChatHistory(); // Save the updated index
+            displayChatHistory(); // Update sidebar (no active item)
+        }
+
+
+        promptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+        newChatButton.addEventListener('click', startNewChat); // Add event listener to new chat button
+
+
+        function sendMessage() {
+            const prompt = promptInput.value;
+            if (!prompt.trim()) {
+                 // Use a simple message box instead of alert
+                showMessageBox("질문을 입력해주세요.");
+                return;
+            }
+
+            if (initialTextElement) {
+                initialTextElement.style.display = 'none';
+            }
+
+            // If no active chat thread, create a new one
+            if (currentChatIndex === -1) {
+                chatHistory.push({ messages: [] });
+                currentChatIndex = chatHistory.length - 1;
+            }
+
+            const userMessageElement = document.createElement('div');
+            userMessageElement.classList.add('message', 'user');
+            userMessageElement.innerHTML = autoFormatText(prompt); // Apply text formatting
+            chatContainer.appendChild(userMessageElement);
+            promptInput.value = '';
+            document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+
+            // Add user message to the current history thread
+            chatHistory[currentChatIndex].messages.push({ role: 'user', text: prompt });
+            saveChatHistory(); // Save history after adding user message
+            displayChatHistory(); // Update sidebar display (adds new item if it's the first message of a new thread)
+
+
+            getGeminiResponse(prompt);
+        }
+
+        async function getGeminiResponse(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            const data = {
+                "contents": [{
+                    "parts": [{"text": prompt}]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const responseData = await response.json();
+                // Check if candidates and parts exist before accessing text
+                const responseText = responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0] ? responseData.candidates[0].content.parts[0].text : "응답을 받을 수 없습니다.";
+
+
+                const aiMessageElement = document.createElement('div');
+                aiMessageElement.classList.add('message', 'ai');
+                aiMessageElement.innerHTML = formatApiResponse(responseText); // Apply formatApiResponse
+                chatContainer.appendChild(aiMessageElement);
+                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+
+                // Add AI message to the current history thread
+                 if (currentChatIndex !== -1) {
+                     chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
+                     saveChatHistory(); // Save history after adding AI message
+                 }
+
+
+            } catch (error) {
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('message', 'error');
+                errorMessage.textContent = `오류 발생: ${error.message}`;
+                chatContainer.appendChild(errorMessage);
+                console.error("Error:", error);
+            }
+        }
+
+        function autoFormatText(text) {
+            // Implement text formatting rules here.
+            // e.g., fix punctuation, remove unnecessary spaces, convert markdown
+            let formattedText = text;
+
+            /* Removed specific punctuation/space/bracket formatting as it might interfere with user input display */
+            /* Keeping basic markdown and newline conversion */
+
+            // 3. Simple markdown conversion (example): ** -> <strong>, _ -> <em>
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');  // Add style to bold tag
+            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');      // Add style to em tag
+
+            // 5. Handle newlines: Convert newline characters to <br> tags
+            formattedText = formattedText.replace(/\n/g, '<br>');
+
+            return formattedText; // Removed trim()
+        }
+
+        function formatApiResponse(text) {
+            // Define rules to convert API response text to HTML.
+            // Handle bullet points, blockquotes, code blocks, etc.
+            let formattedText = text;
+
+             // Bullet points (*) handling:
+            formattedText = formattedText.replace(/^\*\s(.*?)$/gm, '<li>$1</li>');
+            if (formattedText.includes('<li>')) {
+                formattedText = '<ul>' + formattedText + '</ul>';
+            }
+
+            // Bold text (**...**)
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
+
+            // In-line code (`)
+            formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+
+
+            // Blockquote (>)
+            formattedText = formattedText.replace(/^>\s(.*?)$/gm, '<blockquote>$1</blockquote>');
+
+            // Code blocks (```)
+            formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+
+            // Newline characters
+            formattedText = formattedText.replace(/\n/g, '<br>');
+
+            return formattedText;
+        }
+
+        // Simple message box function
+        function showMessageBox(message) {
+            const messageBox = document.createElement('div');
+            messageBox.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #ffc107;
+                color: #333;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 100;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            `;
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+            setTimeout(() => {
+                document.body.removeChild(messageBox);
+            }, 3000); // Remove after 3 seconds
+        }
+
+        // Load chat history when the page loads
+        window.onload = loadChatHistory;
+
+    </script>
+</body>
+</html>
