@@ -13,18 +13,67 @@
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" rel="preload" as="image">
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" rel="preload" as="image">
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/send.svg" rel="preload" as="image">
+     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" rel="preload" as="image">
+
 
     <style>
         body {
             margin: 0;
             font-family: 'Inter', sans-serif; /* 폰트 설정 */
-            display: flex; /* Flexbox를 사용하여 레이아웃 구성 */
-            height: 100vh; /* 전체 뷰포트 높이 사용 */
             background-color: #f0f0f0; /* 배경색 설정 */
+            display: flex; /* Flexbox 사용하여 전체 레이아웃 구성 */
+            flex-direction: column; /* 세로 방향 배치 */
+            min-height: 100vh; /* 최소 뷰포트 높이 */
         }
 
+        /* 헤더 스타일 */
+        header {
+            display: flex; /* Flexbox 사용하여 내부 요소 배치 */
+            align-items: center; /* 세로 가운데 정렬 */
+            justify-content: space-between; /* 요소들을 양 끝으로 정렬 */
+            padding: 10px 20px; /* 내부 패딩 */
+            background-color: #fff; /* 배경색 */
+            border-bottom: 1px solid #e0e0e0; /* 하단 테두리 */
+            flex-shrink: 0; /* 헤더가 줄어들지 않도록 함 */
+        }
+
+        .logo {
+            flex-grow: 1; /* 남은 공간 모두 차지하여 로고를 중앙으로 밀어냄 */
+            text-align: center; /* 로고 이미지 가운데 정렬 */
+        }
+
+        .logo img {
+             height: 40px; /* 로고 높이 설정 */
+             width: auto; /* 비율 유지 */
+             max-width: 100%; /* 최대 너비 설정 */
+             border-radius: 5px; /* 테두리 둥글게 */
+        }
+
+        /* 모바일 메뉴 버튼 스타일 */
+        .menu-button {
+            display: none; /* 기본적으로 숨김 (PC 환경) */
+            background: none; /* 배경 제거 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            padding: 5px; /* 패딩 */
+        }
+
+        .menu-button img {
+            width: 24px; /* 아이콘 너비 */
+            height: 24px; /* 아이콘 높이 */
+        }
+
+        /* 앱 컨테이너 (사이드바 + 메인 콘텐츠) */
+        .app-container {
+            display: flex; /* Flexbox 사용하여 사이드바와 메인 콘텐츠 배치 */
+            flex-grow: 1; /* 남은 공간 모두 차지 */
+            position: relative; /* 자식 요소의 absolute/fixed 위치 기준 */
+            overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+        }
+
+        /* 사이드바 스타일 */
         .sidebar {
-            width: 240px; /* 사이드바 기본 너비 */
+            width: 240px; /* 사이드바 기본 너비 (PC 환경) */
             background-color: #f7f7f8; /* 사이드바 배경색 */
             padding: 20px; /* 내부 패딩 */
             display: flex; /* Flexbox 사용하여 내부 요소 배치 */
@@ -32,26 +81,7 @@
             border-right: 1px solid #e0e0e0; /* 오른쪽 테두리 */
             flex-shrink: 0; /* 사이드바가 줄어들지 않도록 함 */
             overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
-        }
-
-        .sidebar-header {
-            display: flex; /* Flexbox 사용하여 로고 가운데 정렬 */
-            align-items: center; /* 세로 가운데 정렬 */
-            justify-content: center; /* 가로 가운데 정렬 */
-            padding-bottom: 20px; /* 하단 패딩 */
-            border-bottom: 1px solid #e0e0e0; /* 하단 테두리 */
-            margin-bottom: 10px; /* 하단 마진 */
-        }
-
-        .sidebar-header img {
-             height: 40px; /* 로고 높이 설정 */
-             width: auto; /* 비율 유지 */
-             max-width: 100%; /* 최대 너비 설정 */
-             border-radius: 5px; /* 테두리 둥글게 */
-        }
-
-        .sidebar-header h1 {
-            display: none; /* h1 태그 숨김 */
+            transition: transform 0.3s ease; /* 슬라이드 애니메이션 */
         }
 
         .sidebar-menu {
@@ -116,6 +146,7 @@
              background-color: #d0d0d0; /* 활성 상태 배경색 */
              font-weight: 600; /* 활성 상태 폰트 굵기 */
         }
+
 
         .main-content {
             flex-grow: 1; /* 남은 공간 모두 차지 */
@@ -221,8 +252,6 @@
             margin: 0; /* 마진 제거 */
             padding: 0; /* 패딩 제거 */
             list-style: none; /* 목록 스타일 제거 */
-            /* display: inline-block; /* 또는 block 등 필요에 따라 설정 */
-            /* width: 100%; /* 필요에 따라 너비 설정 */
         }
          .message.ai p {
              margin-bottom: 1em; /* 단락 아래 간격 추가 */
@@ -303,7 +332,7 @@
             display: flex; /* Flexbox 사용하여 입력창과 버튼 정렬 */
             position: fixed; /* 하단 고정 */
             bottom: 20px; /* 하단에서 20px 위 */
-            left: 300px; /* 사이드바 너비 + 여백 조정 */
+            left: 260px; /* 사이드바 너비 + 여백 조정 */
             right: 20px; /* 오른쪽 여백 유지 */
             border: 1px solid #ccc; /* 테두리 */
             border-radius: 25px; /* 테두리 둥글게 */
@@ -391,42 +420,70 @@
 
          /* 반응형 디자인 조정 */
         @media (max-width: 768px) {
+            /* 모바일 환경에서 메뉴 버튼 표시 */
+            .menu-button {
+                display: block;
+            }
+
+            /* 모바일 환경에서 사이드바 숨김 및 오버레이 설정 */
             .sidebar {
-                width: 60px; /* 작은 화면에서 사이드바 너비 축소 */
-                padding: 10px; /* 패딩 조정 */
+                position: fixed; /* 화면에 고정 */
+                top: 60px; /* 헤더 높이만큼 아래로 내림 */
+                left: 0;
+                bottom: 0;
+                width: 240px; /* 사이드바 너비 */
+                transform: translateX(-100%); /* 기본적으로 왼쪽으로 숨김 */
+                z-index: 20; /* 다른 요소 위에 표시 */
+                border-right: none; /* 오른쪽 테두리 제거 */
+                box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* 그림자 추가 */
             }
-            .sidebar-header h1 {
-                display: none; /* 제목 숨김 */
+
+            /* 사이드바 열렸을 때 스타일 */
+            .sidebar.sidebar-open {
+                transform: translateX(0); /* 화면 안으로 이동 */
             }
+
+             /* 모바일 환경에서 사이드바 메뉴 텍스트 숨김 */
              .sidebar-menu li span {
-                 display: none; /* 텍스트 숨김 */
+                 display: inline-block; /* 텍스트 다시 표시 */
              }
              .sidebar-menu li img {
-                 margin-right: 0; /* 마진 제거 */
+                 margin-right: 8px; /* 마진 복원 */
              }
-             .sidebar-menu li {
-                 justify-content: center; /* 아이콘 가운데 정렬 */
-             }
-            .input-container {
-                left: 80px; /* 축소된 사이드바 너비 + 여백 */
-                right: 10px; /* 오른쪽 여백 조정 */
-                bottom: 10px; /* 하단 여백 조정 */
+
+
+            /* 모바일 환경에서 메인 콘텐츠 너비 조정 */
+            .main-content {
+                width: 100%; /* 전체 너비 사용 */
+                padding-bottom: 80px; /* 하단 입력창 공간 확보 */
             }
-             .main-content {
-                 padding-bottom: 80px; /* 하단 입력창을 위한 공간 확보 (작은 화면) */
-             }
-             .chat-container {
-                 padding: 0 10px; /* 좌우 패딩 조정 */
-             }
+
+            /* 모바일 환경에서 입력창 위치 조정 */
+            .input-container {
+                left: 10px; /* 왼쪽 여백 */
+                right: 10px; /* 오른쪽 여백 */
+                bottom: 10px; /* 하단 여백 */
+            }
+
+             /* 사이드바가 열렸을 때 메인 콘텐츠에 오버레이 추가 (선택 사항) */
+             /* .app-container.sidebar-open .main-content::before {
+                 content: '';
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 right: 0;
+                 bottom: 0;
+                 background-color: rgba(0, 0, 0, 0.5);
+                 z-index: 15;
+             } */
         }
 
          @media (max-width: 480px) {
              .sidebar {
-                 width: 50px; /* 더 작은 화면에서 사이드바 너비 더 축소 */
-                 padding: 5px; /* 패딩 조정 */
+                 width: 200px; /* 더 작은 화면에서 사이드바 너비 조정 */
              }
              .input-container {
-                 left: 65px; /* 더 축소된 사이드바 너비 + 여백 */
+                 left: 5px; /* 왼쪽 여백 더 축소 */
                  right: 5px; /* 오른쪽 여백 더 축소 */
                  bottom: 5px; /* 하단 여백 더 축소 */
                  padding: 3px; /* 입력창 패딩 조정 */
@@ -455,54 +512,70 @@
              }
          }
 
+         /* PC 환경에서 사이드바가 열려있을 때 메인 콘텐츠 및 입력창 위치 조정 */
+         @media (min-width: 769px) {
+             .input-container {
+                 left: 280px; /* 사이드바 너비 + 여백 */
+             }
+         }
+
 
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header">
+    <header>
+        <button class="menu-button" id="menuButton">
+             <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" alt="Menu">
+        </button>
+        <div class="logo">
             <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고">
         </div>
-        <ul class="sidebar-menu">
-            <li class="active">
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" alt="Message">
-                <span>채팅</span>
-            </li>
-            <li>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" alt="Sora">
-                <span>Sora</span>
-            </li>
-            <li>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/book.svg" alt="Library">
-                <span>라이브러리</span>
-            </li>
-            <li>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/code.svg" alt="HTML/CSS">
-                <span>HTML/CSS</span>
-            </li>
-             <li>
-                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
-                <span>유튜브 영상</span>
-            </li>
-            <li>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" alt="GPT 음색">
-                <span>GPT 음색</span>
-            </li>
-        </ul>
-        <ul class="chat-history" id="chatHistory">
+        <div style="width: 24px;"></div> </header>
+
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" alt="Message">
+                    <span>채팅</span>
+                </li>
+                <li>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" alt="Sora">
+                    <span>Sora</span>
+                </li>
+                <li>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/book.svg" alt="Library">
+                    <span>라이브러리</span>
+                </li>
+                <li>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/code.svg" alt="HTML/CSS">
+                    <span>HTML/CSS</span>
+                </li>
+                 <li>
+                     <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
+                    <span>유튜브 영상</span>
+                </li>
+                <li>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" alt="GPT 음색">
+                    <span>GPT 음색</span>
+                </li>
             </ul>
-        <div class="sidebar-menu">
-            <li id="newChatButton">
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" alt="새 채팅">
-                <span>새 채팅</span>
-            </li>
-        </div>
-    </div>
-    <div class="main-content">
-        <div id="initialText">무엇을 도와드릴까요?</div>
-        <div class="chat-container" id="chatContainer">
+            <ul class="chat-history" id="chatHistory">
+                </ul>
+            <div class="sidebar-menu">
+                <li id="newChatButton">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" alt="새 채팅">
+                    <span>새 채팅</span>
+                </li>
             </div>
         </div>
+        <div class="main-content">
+            <div id="initialText">무엇을 도와드릴까요?</div>
+            <div class="chat-container" id="chatContainer">
+                </div>
+            </div>
+    </div>
+
 
     <div class="input-container">
         <input type="text" id="promptInput" placeholder="무엇이든 물어보세요.">
@@ -519,6 +592,8 @@
         const initialTextElement = document.getElementById('initialText');
         const chatHistoryElement = document.getElementById('chatHistory'); // 채팅 기록 목록 요소
         const newChatButton = document.getElementById('newChatButton'); // 새 채팅 버튼
+        const menuButton = document.getElementById('menuButton'); // 모바일 메뉴 버튼
+        const sidebar = document.getElementById('sidebar'); // 사이드바
         // TODO: Replace with your actual API key
         const apiKey = 'AIzaSyCIg1Hlmhm4ZYPi6TtPBqkhXsJJsdXJfWY'; // 여기에 실제 API 키를 넣으세요.
 
@@ -574,6 +649,10 @@
 
                 listItem.addEventListener('click', () => {
                     loadChatThread(index); // 클릭한 대화 로드
+                    // 모바일에서 채팅 스레드 로드 후 사이드바 닫기
+                    if (window.innerWidth <= 768) {
+                         sidebar.classList.remove('sidebar-open');
+                    }
                 });
                 chatHistoryElement.appendChild(listItem);
             });
@@ -609,6 +688,10 @@
             currentChatIndex = -1; // 활성 채팅 스레드 없음
             saveChatHistory(); // 업데이트된 인덱스 저장
             displayChatHistory(); // 사이드바 업데이트 (활성 항목 없음)
+             // 모바일에서 새 채팅 시작 후 사이드바 닫기
+             if (window.innerWidth <= 768) {
+                 sidebar.classList.remove('sidebar-open');
+             }
         }
 
         // 맨 아래로 스크롤하는 함수
@@ -633,6 +716,10 @@
         sendButton.addEventListener('click', sendMessage);
         // 새 채팅 버튼 클릭 감지
         newChatButton.addEventListener('click', startNewChat);
+        // 모바일 메뉴 버튼 클릭 감지
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open'); // 사이드바 클래스 토글
+        });
 
 
         function sendMessage() {
@@ -679,10 +766,24 @@
             const headers = {
                 'Content-Type': 'application/json'
             };
+
+            // 현재 채팅 기록을 포함하여 API 호출 (대화 히스토리 전달)
+            const contents = chatHistory[currentChatIndex].messages.map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'model', // Gemini API는 'model' 역할을 사용
+                parts: [{ text: msg.text }]
+            }));
+
+             // 마지막 메시지가 사용자의 메시지인지 확인하고 AI 응답을 위한 빈 메시지 추가
+             if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
+                 contents.push({
+                     role: 'model',
+                     parts: [{ text: '' }] // AI 응답을 위한 빈 메시지
+                 });
+             }
+
+
             const data = {
-                "contents": [{
-                    "parts": [{"text": prompt}]
-                }]
+                "contents": contents
             };
 
             try {
@@ -708,7 +809,12 @@
 
                 // AI 메시지를 현재 기록 스레드에 추가
                  if (currentChatIndex !== -1) {
-                     chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
+                     // 마지막 메시지가 AI 응답을 위한 빈 메시지인 경우 업데이트
+                     if (chatHistory[currentChatIndex].messages.length > 0 && chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].role === 'ai' && chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].text === '') {
+                          chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].text = responseText;
+                     } else {
+                         chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
+                     }
                      saveChatHistory(); // AI 메시지 추가 후 기록 저장
                  }
 
@@ -828,7 +934,7 @@
             // 단락 처리 (연속된 <br> 두 개를 새로운 단락으로 간주)
             formattedText = formattedText.replace(/<br>\s*<br>/g, '</p><p>');
             // 첫 번째 <br> 또는 텍스트 시작 전에 <p> 태그 추가
-            if (formattedText.trim().length > 0 && !formattedText.trim().startsWith('<p>')) {
+            if (formattedText.trim().length > 0 && !formattedText.trim().startsWith('<p>') && !formattedText.trim().startsWith('<pre>') && !formattedText.trim().startsWith('<blockquote>') && !formattedText.trim().startsWith('<ul>') && !formattedText.trim().startsWith('<table>')) {
                  formattedText = '<p>' + formattedText;
             }
              // 마지막 <br> 또는 텍스트 끝에 </p> 태그 추가
