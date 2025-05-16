@@ -13,7 +13,8 @@
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" rel="preload" as="image">
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" rel="preload" as="image">
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/send.svg" rel="preload" as="image">
-     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus.svg" rel="preload" as="image">
 
 
     <style>
@@ -35,6 +36,11 @@
             background-color: #fff; /* 배경색 */
             border-bottom: 1px solid #e0e0e0; /* 하단 테두리 */
             flex-shrink: 0; /* 헤더가 줄어들지 않도록 함 */
+            position: fixed; /* 헤더 고정 */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 30; /* 다른 요소 위에 표시 */
         }
 
         .logo {
@@ -63,12 +69,30 @@
             height: 24px; /* 아이콘 높이 */
         }
 
+        /* 새 채팅 버튼 (헤더) 스타일 */
+        .new-chat-header-button {
+            background: none; /* 배경 제거 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            padding: 5px; /* 패딩 */
+            display: none; /* 기본적으로 숨김 (PC 환경) */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .new-chat-header-button img {
+            width: 24px; /* 아이콘 너비 */
+            height: 24px; /* 아이콘 높이 */
+        }
+
+
         /* 앱 컨테이너 (사이드바 + 메인 콘텐츠) */
         .app-container {
             display: flex; /* Flexbox 사용하여 사이드바와 메인 콘텐츠 배치 */
             flex-grow: 1; /* 남은 공간 모두 차지 */
             position: relative; /* 자식 요소의 absolute/fixed 위치 기준 */
             overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+            margin-top: 60px; /* 고정 헤더 높이만큼 공간 확보 */
         }
 
         /* 사이드바 스타일 */
@@ -82,6 +106,12 @@
             flex-shrink: 0; /* 사이드바가 줄어들지 않도록 함 */
             overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
             transition: transform 0.3s ease; /* 슬라이드 애니메이션 */
+            /* 사이드바 고정 */
+            position: fixed;
+            top: 60px; /* 헤더 높이만큼 아래로 내림 */
+            bottom: 0;
+            left: 0;
+            z-index: 20; /* 다른 요소 위에 표시 */
         }
 
         .sidebar-menu {
@@ -156,6 +186,7 @@
             position: relative; /* 자식 요소의 absolute/fixed 위치 기준 */
             overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
             padding-bottom: 80px; /* 하단 입력창을 위한 공간 확보 */
+            margin-left: 240px; /* 고정된 사이드바 너비만큼 왼쪽 마진 추가 */
         }
 
         /* 스크롤바 스타일 */
@@ -456,6 +487,7 @@
             .main-content {
                 width: 100%; /* 전체 너비 사용 */
                 padding-bottom: 80px; /* 하단 입력창 공간 확보 */
+                margin-left: 0; /* 모바일에서는 사이드바가 오버레이되므로 마진 제거 */
             }
 
             /* 모바일 환경에서 입력창 위치 조정 */
@@ -463,6 +495,11 @@
                 left: 10px; /* 왼쪽 여백 */
                 right: 10px; /* 오른쪽 여백 */
                 bottom: 10px; /* 하단 여백 */
+            }
+
+            /* 모바일 환경에서 헤더 새 채팅 버튼 표시 */
+            .new-chat-header-button {
+                display: flex; /* 모바일에서 표시 */
             }
 
              /* 사이드바가 열렸을 때 메인 콘텐츠에 오버레이 추가 (선택 사항) */
@@ -530,7 +567,10 @@
         <div class="logo">
             <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고">
         </div>
-        <div style="width: 24px;"></div> </header>
+        <button class="new-chat-header-button" id="newChatHeaderButton">
+            <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus.svg" alt="새 채팅">
+        </button>
+    </header>
 
     <div class="app-container">
         <div class="sidebar" id="sidebar">
@@ -591,7 +631,8 @@
         const chatContainer = document.getElementById('chatContainer');
         const initialTextElement = document.getElementById('initialText');
         const chatHistoryElement = document.getElementById('chatHistory'); // 채팅 기록 목록 요소
-        const newChatButton = document.getElementById('newChatButton'); // 새 채팅 버튼
+        const newChatButton = document.getElementById('newChatButton'); // 사이드바 새 채팅 버튼
+        const newChatHeaderButton = document.getElementById('newChatHeaderButton'); // 헤더 새 채팅 버튼
         const menuButton = document.getElementById('menuButton'); // 모바일 메뉴 버튼
         const sidebar = document.getElementById('sidebar'); // 사이드바
         // TODO: Replace with your actual API key
@@ -633,29 +674,31 @@
         // 사이드바에 채팅 기록 표시
         function displayChatHistory() {
             chatHistoryElement.innerHTML = ''; // 현재 기록 표시 지우기
-            chatHistory.forEach((historyItem, index) => {
+            // chatHistory 배열을 역순으로 순회하여 최신 채팅이 위에 오도록 함
+            for (let i = chatHistory.length - 1; i >= 0; i--) {
+                const historyItem = chatHistory[i];
                 const listItem = document.createElement('li');
                 // 첫 번째 사용자 메시지를 기록 항목 요약으로 표시
                 const firstUserMessage = historyItem.messages.find(msg => msg.role === 'user');
                 const summaryText = firstUserMessage ? firstUserMessage.text : '새 대화';
 
                 listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : ''); // 요약을 위해 자르기
-                listItem.dataset.index = index; // 전체 대화 로드를 위한 인덱스 저장
+                listItem.dataset.index = i; // 전체 대화 로드를 위한 인덱스 저장
 
                 // 현재 채팅인 경우 active 클래스 추가
-                if (index === currentChatIndex) {
+                if (i === currentChatIndex) {
                     listItem.classList.add('active');
                 }
 
                 listItem.addEventListener('click', () => {
-                    loadChatThread(index); // 클릭한 대화 로드
+                    loadChatThread(parseInt(listItem.dataset.index, 10)); // 클릭한 대화 로드 (문자열이므로 숫자로 변환)
                     // 모바일에서 채팅 스레드 로드 후 사이드바 닫기
                     if (window.innerWidth <= 768) {
                          sidebar.classList.remove('sidebar-open');
                     }
                 });
                 chatHistoryElement.appendChild(listItem);
-            });
+            }
         }
 
         // 특정 채팅 스레드를 메인 채팅 영역에 로드
@@ -681,11 +724,13 @@
             }
         }
 
-        // 새 채팅 시작
+        // 새 채팅 시작 (화면만 초기화)
         function startNewChat() {
             chatContainer.innerHTML = ''; // 현재 채팅 표시 지우기
             initialTextElement.style.display = 'block'; // 초기 텍스트 표시
             currentChatIndex = -1; // 활성 채팅 스레드 없음
+            // chatHistory.push({ messages: [] }); // 이 줄을 제거하여 새 채팅 시 바로 기록에 추가되지 않도록 함
+            // currentChatIndex = chatHistory.length - 1; // 이 줄도 제거
             saveChatHistory(); // 업데이트된 인덱스 저장
             displayChatHistory(); // 사이드바 업데이트 (활성 항목 없음)
              // 모바일에서 새 채팅 시작 후 사이드바 닫기
@@ -714,8 +759,10 @@
 
         // 전송 버튼 클릭 감지
         sendButton.addEventListener('click', sendMessage);
-        // 새 채팅 버튼 클릭 감지
+        // 사이드바 새 채팅 버튼 클릭 감지
         newChatButton.addEventListener('click', startNewChat);
+        // 헤더 새 채팅 버튼 클릭 감지
+        newChatHeaderButton.addEventListener('click', startNewChat); // 새 버튼에 이벤트 리스너 추가
         // 모바일 메뉴 버튼 클릭 감지
         menuButton.addEventListener('click', () => {
             sidebar.classList.toggle('sidebar-open'); // 사이드바 클래스 토글
@@ -767,21 +814,15 @@
                 'Content-Type': 'application/json'
             };
 
-            // 현재 채팅 기록을 포함하여 API 호출 (대화 히스토리 전달)
+            // 현재 채팅 기록을 포함하여 API 호출
+            // API는 'user'와 'model' 역할을 번갈아 가며 기대합니다.
+            // chatHistory의 'user'는 'user'로, 'ai'는 'model'로 매핑합니다.
             const contents = chatHistory[currentChatIndex].messages.map(msg => ({
                 role: msg.role === 'user' ? 'user' : 'model', // Gemini API는 'model' 역할을 사용
                 parts: [{ text: msg.text }]
             }));
 
-             // 마지막 메시지가 사용자의 메시지인지 확인하고 AI 응답을 위한 빈 메시지 추가
-             if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
-                 contents.push({
-                     role: 'model',
-                     parts: [{ text: '' }] // AI 응답을 위한 빈 메시지
-                 });
-             }
-
-
+            // API 요청 본문 데이터 구성
             const data = {
                 "contents": contents
             };
@@ -794,7 +835,10 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    // 오류 발생 시 응답 본문을 읽어서 콘솔에 출력
+                    const errorBody = await response.text();
+                    console.error("HTTP error details:", errorBody);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${errorBody}`);
                 }
                 const responseData = await response.json();
                 // 응답 데이터에서 텍스트 추출 및 예외 처리
@@ -809,12 +853,7 @@
 
                 // AI 메시지를 현재 기록 스레드에 추가
                  if (currentChatIndex !== -1) {
-                     // 마지막 메시지가 AI 응답을 위한 빈 메시지인 경우 업데이트
-                     if (chatHistory[currentChatIndex].messages.length > 0 && chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].role === 'ai' && chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].text === '') {
-                          chatHistory[currentChatIndex].messages[chatHistory[currentChatIndex].messages.length - 1].text = responseText;
-                     } else {
-                         chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
-                     }
+                     chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
                      saveChatHistory(); // AI 메시지 추가 후 기록 저장
                  }
 
@@ -828,7 +867,7 @@
                 errorMessage.classList.add('message', 'error');
                 errorMessage.textContent = `오류 발생: ${error.message}`;
                 chatContainer.appendChild(errorMessage);
-                console.error("Error:", error);
+                console.error("Error:", error); // 일반 오류 로깅
                 // 맨 아래로 스크롤
                 scrollToBottom();
             }
@@ -900,7 +939,7 @@
                     } else {
                         // 구분선 처리 (---)
                         if (line.replace(/\|/g, '').replace(/-/g, '').trim() === '') {
-                            // 구분선은 건너뜀
+                            // 구분선은 건너뛰음
                         } else {
                             // 데이터 행 처리
                              const dataCells = line.split('|').slice(1, -1).map(cell => `<td>${cell.trim()}</td>`).join('');
