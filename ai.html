@@ -3,343 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT 스타일 웹사이트</title>
+    <title>SUPPLE AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/book.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/code.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" rel="preload" as="image">
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/send.svg" rel="preload" as="image">
+
     <style>
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            height: 100vh;
-            background-color: #f0f0f0;
-            /* Removed overflow: hidden; to allow main-content scrollbar to be visible */
+            font-family: 'Inter', sans-serif; /* 폰트 설정 */
+            display: flex; /* Flexbox를 사용하여 레이아웃 구성 */
+            height: 100vh; /* 전체 뷰포트 높이 사용 */
+            background-color: #f0f0f0; /* 배경색 설정 */
         }
 
         .sidebar {
-            width: 240px;
-            background-color: #f7f7f8;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #e0e0e0;
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
-            overflow-y: auto; /* Allow sidebar to scroll if content overflows */
+            width: 240px; /* 사이드바 기본 너비 */
+            background-color: #f7f7f8; /* 사이드바 배경색 */
+            padding: 20px; /* 내부 패딩 */
+            display: flex; /* Flexbox 사용하여 내부 요소 배치 */
+            flex-direction: column; /* 세로 방향 배치 */
+            border-right: 1px solid #e0e0e0; /* 오른쪽 테두리 */
+            flex-shrink: 0; /* 사이드바가 줄어들지 않도록 함 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
         }
 
         .sidebar-header {
-            display: flex;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 10px; /* Added margin */
+            display: flex; /* Flexbox 사용하여 로고 가운데 정렬 */
+            align-items: center; /* 세로 가운데 정렬 */
+            justify-content: center; /* 가로 가운데 정렬 */
+            padding-bottom: 20px; /* 하단 패딩 */
+            border-bottom: 1px solid #e0e0e0; /* 하단 테두리 */
+            margin-bottom: 10px; /* 하단 마진 */
+        }
+
+        .sidebar-header img {
+             height: 40px; /* 로고 높이 설정 */
+             width: auto; /* 비율 유지 */
+             max-width: 100%; /* 최대 너비 설정 */
+             border-radius: 5px; /* 테두리 둥글게 */
         }
 
         .sidebar-header h1 {
-            margin-left: 8px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #10a37f;
-            margin-top: 0; /* Added */
-            margin-bottom: 0; /* Added */
+            display: none; /* h1 태그 숨김 */
         }
 
         .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex-grow: 1;
+            list-style: none; /* 목록 스타일 제거 */
+            padding: 0; /* 패딩 제거 */
+            margin: 0; /* 마진 제거 */
+            flex-grow: 1; /* 남은 공간 모두 차지 */
         }
 
         .sidebar-menu li {
-            padding: 10px 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.2s ease;
-            border-radius: 5px;
+            padding: 10px 0; /* 상하 패딩 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            display: flex; /* Flexbox 사용하여 아이콘과 텍스트 정렬 */
+            align-items: center; /* 세로 가운데 정렬 */
+            transition: background-color 0.2s ease; /* 배경색 변경 애니메이션 */
+            border-radius: 5px; /* 테두리 둥글게 */
         }
 
         .sidebar-menu li:hover {
-            background-color: #f0f0f0;
+            background-color: #f0f0f0; /* 호버 시 배경색 변경 */
         }
 
         .sidebar-menu li.active {
-            background-color: #e0e0e0;
-            font-weight: 600;
+            background-color: #e0e0e0; /* 활성 상태 배경색 */
+            font-weight: 600; /* 활성 상태 폰트 굵기 */
         }
 
         .sidebar-menu li img {
-            margin-right: 8px;
-            width: 20px;
-            height: 20px;
+            margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
+            width: 20px; /* 아이콘 너비 */
+            height: 20px; /* 아이콘 높이 */
         }
 
-        /* Chat History Styles */
+        /* 채팅 기록 스타일 */
         .chat-history {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0; /* Added margin */
-            flex-grow: 1; /* Allow history to take up space */
-            overflow-y: auto; /* Make history list scrollable if needed */
+            list-style: none; /* 목록 스타일 제거 */
+            padding: 0; /* 패딩 제거 */
+            margin: 10px 0; /* 상하 마진 */
+            flex-grow: 1; /* 남은 공간 차지 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
         }
 
         .chat-history li {
-             padding: 8px 10px; /* Adjusted padding */
-             cursor: pointer;
-             margin-bottom: 5px; /* Added margin */
-             background-color: #e9e9eb; /* Slightly different background */
-             border-radius: 5px;
-             font-size: 14px;
-             color: #333;
-             white-space: nowrap; /* Prevent text wrapping */
-             overflow: hidden; /* Hide overflowing text */
-             text-overflow: ellipsis; /* Show ellipsis for overflow */
-             transition: background-color 0.2s ease;
+             padding: 8px 10px; /* 내부 패딩 */
+             cursor: pointer; /* 마우스 오버 시 커서 변경 */
+             margin-bottom: 5px; /* 하단 마진 */
+             background-color: #e9e9eb; /* 배경색 */
+             border-radius: 5px; /* 테두리 둥글게 */
+             font-size: 14px; /* 폰트 크기 */
+             color: #333; /* 글자색 */
+             white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+             overflow: hidden; /* 넘치는 텍스트 숨김 */
+             text-overflow: ellipsis; /* 넘치는 텍스트 ...으로 표시 */
+             transition: background-color 0.2s ease; /* 배경색 변경 애니메이션 */
         }
 
         .chat-history li:hover {
-            background-color: #d0d0d0;
+            background-color: #d0d0d0; /* 호버 시 배경색 변경 */
         }
 
         .chat-history li.active {
-             background-color: #d0d0d0; /* Highlight active chat */
-             font-weight: 600;
+             background-color: #d0d0d0; /* 활성 상태 배경색 */
+             font-weight: 600; /* 활성 상태 폰트 굵기 */
         }
-
 
         .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            position: relative; /* Needed for absolute/fixed positioning of children */
-            overflow-y: auto; /* Added auto to make main content scrollable */
-            /* Removed overflow: hidden; */
-            padding-bottom: 80px; /* Ensure space for fixed input at the bottom */
-
-            /* Custom Scrollbar Styles - Moved from .chat-container */
-            /* For Chrome, Safari, and Opera */
-            &::-webkit-scrollbar {
-                width: 6px; /* width of the scrollbar - made slightly thinner */
-            }
-
-            &::-webkit-scrollbar-track {
-                background: transparent; /* Transparent track */
-                border-radius: 0; /* No rounded corners */
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: #a0a0a0; /* Simple grey color for the thumb */
-                border-radius: 0; /* No rounded corners */
-            }
-
-            &::-webkit-scrollbar-thumb:hover {
-                background: #808080; /* Slightly darker grey on hover */
-            }
-
-            /* For Firefox (basic styling) */
-            scrollbar-width: thin; /* "auto" or "thin" */
-            scrollbar-color: #a0a0a0 transparent; /* thumb and track color */
+            flex-grow: 1; /* 남은 공간 모두 차지 */
+            display: flex; /* Flexbox 사용하여 내부 요소 배치 */
+            flex-direction: column; /* 세로 방향 배치 */
+            background-color: #fff; /* 배경색 */
+            position: relative; /* 자식 요소의 absolute/fixed 위치 기준 */
+            overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+            padding-bottom: 80px; /* 하단 입력창을 위한 공간 확보 */
         }
 
+        /* 스크롤바 스타일 */
+        .main-content::-webkit-scrollbar {
+            width: 6px; /* 스크롤바 너비 */
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent; /* 스크롤바 트랙 투명 */
+            border-radius: 0; /* 둥근 모서리 없음 */
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #a0a0a0; /* 스크롤바 썸 색상 */
+            border-radius: 0; /* 둥근 모서리 없음 */
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #808080; /* 호버 시 스크롤바 썸 색상 */
+        }
+
+        /* Firefox용 스크롤바 스타일 */
+        .main-content {
+            scrollbar-width: thin; /* 스크롤바 너비 */
+            scrollbar-color: #a0a0a0 transparent; /* 스크롤바 썸 및 트랙 색상 */
+        }
+
+
         #initialText {
-            width: 100%;
-            max-width: 800px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #222;
-            margin-bottom: 20px;
-            padding-top: 20px; /* Added padding top */
-            box-sizing: border-box; /* Include padding in width */
-            align-self: center; /* Center the initial text */
+            width: 100%; /* 너비 설정 */
+            max-width: 800px; /* 최대 너비 설정 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            font-size: 24px; /* 폰트 크기 */
+            font-weight: bold; /* 폰트 굵기 */
+            color: #222; /* 글자색 */
+            margin-bottom: 20px; /* 하단 마진 */
+            padding-top: 20px; /* 상단 패딩 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+            align-self: center; /* 부모 요소 내에서 가운데 정렬 */
         }
 
         .chat-container {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-            flex-grow: 1;
-            /* Removed overflow-y: auto; */
-            padding: 0 20px; /* Add horizontal padding */
-            box-sizing: border-box; /* Include padding in width */
-            align-self: center; /* Center the chat container */
+            width: 100%; /* 너비 설정 */
+            max-width: 800px; /* 최대 너비 설정 */
+            display: flex; /* Flexbox 사용하여 내부 요소 배치 */
+            flex-direction: column; /* 세로 방향 배치 */
+            margin-top: 20px; /* 상단 마진 */
+            flex-grow: 1; /* 남은 공간 차지 */
+            padding: 0 20px; /* 좌우 패딩 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+            align-self: center; /* 부모 요소 내에서 가운데 정렬 */
         }
 
         .message {
-            padding: 12px 20px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            color: #333;
-            background-color: #fff;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            align-self: flex-start;
-            position: relative;
-            max-width: 80%;
-            word-wrap: break-word;
+            padding: 12px 20px; /* 내부 패딩 */
+            border-radius: 20px; /* 테두리 둥글게 */
+            margin-bottom: 20px; /* 하단 마진 */
+            font-size: 16px; /* 폰트 크기 */
+            color: #333; /* 글자색 */
+            background-color: #fff; /* 배경색 */
+            align-self: flex-start; /* 왼쪽 정렬 (기본) */
+            position: relative; /* 자식 요소의 absolute/fixed 위치 기준 */
+            max-width: 80%; /* 최대 너비 */
+            word-wrap: break-word; /* 긴 단어 줄바꿈 */
         }
 
         .message.user {
-            background-color: #f7f7f8; /* Changed background color */
-            align-self: flex-end;
-            border-radius: 999px; /* Made corners fully rounded */
-             /* Removed border-top-right-radius: 0; */
+            background-color: #f7f7f8; /* 사용자 메시지 배경색 */
+            align-self: flex-end; /* 오른쪽 정렬 */
+            border-radius: 999px; /* 사용자 메시지 둥근 모서리 */
+            padding: 8px 20px; /* 사용자 메시지 패딩 조정 */
         }
 
         .message.ai {
-            background-color: transparent;
-            align-self: flex-start;
-            border-top-left-radius: 0;
-            padding: 0;
-            box-shadow: none;
+            background-color: transparent; /* AI 메시지 배경색 투명 */
+            align-self: flex-start; /* 왼쪽 정렬 */
+            border-top-left-radius: 0; /* 좌상단 모서리 둥글기 제거 */
+            padding: 0; /* AI 메시지 패딩 제거 */
+            box-shadow: none; /* 그림자 효과 제거 */
+            width: 100%; /* AI 메시지 너비 100% */
+            max-width: 100%; /* AI 메시지 최대 너비 100% */
         }
 
-        /* Arrow styling - Removed for user message */
-        .message::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            width: 0;
-            height: 0;
+        /* AI 메시지 내부 요소 스타일 초기화 */
+        .message.ai b,
+        .message.ai strong,
+        .message.ai em,
+        .message.ai code,
+        .message.ai ul,
+        .message.ai blockquote,
+        .message.ai pre,
+        .message.ai li,
+        .message.ai p { /* p 태그 추가 */
+            margin: 0; /* 마진 제거 */
+            padding: 0; /* 패딩 제거 */
+            list-style: none; /* 목록 스타일 제거 */
+            /* display: inline-block; /* 또는 block 등 필요에 따라 설정 */
+            /* width: 100%; /* 필요에 따라 너비 설정 */
+        }
+         .message.ai p {
+             margin-bottom: 1em; /* 단락 아래 간격 추가 */
+         }
+
+
+        /* AI 응답 서식 개선 */
+        .message.ai pre {
+            background-color: #2d2d2d; /* 코드 블록 배경색 */
+            color: #f8f8f2; /* 코드 블록 글자색 */
+            padding: 15px; /* 코드 블록 내부 패딩 */
+            border-radius: 8px; /* 코드 블록 테두리 둥글게 */
+            overflow-x: auto; /* 내용이 넘칠 경우 가로 스크롤 */
+            margin-top: 10px; /* 상단 마진 */
+            margin-bottom: 10px; /* 하단 마진 */
         }
 
-        .message.user::before {
-            display: none; /* Hide arrow for user message */
+        .message.ai code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* 코드 폰트 */
+            font-size: 0.9em; /* 코드 폰트 크기 */
+            background-color: #e9e9eb; /* 인라인 코드 배경색 */
+            padding: 2px 5px; /* 인라인 코드 패딩 */
+            border-radius: 4px; /* 인라인 코드 테두리 둥글게 */
+            color: #c7254e; /* 인라인 코드 글자색 */
         }
 
-        .message.ai::before {
-            display: none;
+         .message.ai pre code {
+             background-color: transparent; /* 코드 블록 내부 코드 배경색 투명 */
+             padding: 0; /* 코드 블록 내부 코드 패딩 제거 */
+             color: #f8f8f2; /* 코드 블록 내부 코드 글자색 */
+         }
+
+        .message.ai blockquote {
+            border-left: 4px solid #ccc; /* 인용구 왼쪽 테두리 */
+            padding-left: 10px; /* 인용구 왼쪽 패딩 */
+            color: #666; /* 인용구 글자색 */
+            margin-top: 10px; /* 상단 마진 */
+            margin-bottom: 10px; /* 하단 마진 */
         }
+
+        .message.ai table {
+            border-collapse: collapse; /* 테이블 테두리 합침 */
+            width: 100%; /* 테이블 너비 100% */
+            margin-top: 10px; /* 상단 마진 */
+            margin-bottom: 10px; /* 하단 마진 */
+        }
+
+        .message.ai th,
+        .message.ai td {
+            border: 1px solid #ddd; /* 테이블 셀 테두리 */
+            padding: 8px; /* 테이블 셀 패딩 */
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+        }
+
+        .message.ai th {
+            background-color: #f2f2f2; /* 테이블 헤더 배경색 */
+            font-weight: bold; /* 테이블 헤더 폰트 굵기 */
+        }
+
+        .message.ai tr:nth-child(even) {
+            background-color: #f9f9f9; /* 짝수 행 배경색 */
+        }
+
+        .message.ai ul {
+            margin-top: 10px; /* 상단 마진 */
+            margin-bottom: 10px; /* 하단 마진 */
+            padding-left: 20px; /* 왼쪽 패딩 (블릿 포함) */
+            list-style: disc; /* 블릿 스타일 */
+        }
+
+        .message.ai ul li {
+            margin-bottom: 5px; /* 목록 항목 하단 마진 */
+            list-style: disc; /* 목록 항목 블릿 스타일 */
+        }
+
 
         .input-container {
-            display: flex;
-            /* Adjusted left position to make it shorter */
-            left: 300px; /* Increased left value */
-            right: 20px; /* Distance from right edge */
-            /* Removed width: auto; and max-width */
-            border: 1px solid #ccc;
-            border-radius: 25px;
-            padding: 5px;
-            align-items: center;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: fixed; /* Fix position */
-            bottom: 20px; /* Distance from bottom */
-            box-sizing: border-box; /* Include padding and border in element's total width and height */
-            z-index: 10; /* Ensure it's above chat messages */
+            display: flex; /* Flexbox 사용하여 입력창과 버튼 정렬 */
+            position: fixed; /* 하단 고정 */
+            bottom: 20px; /* 하단에서 20px 위 */
+            left: 300px; /* 사이드바 너비 + 여백 조정 */
+            right: 20px; /* 오른쪽 여백 유지 */
+            border: 1px solid #ccc; /* 테두리 */
+            border-radius: 25px; /* 테두리 둥글게 */
+            padding: 5px; /* 내부 패딩 */
+            align-items: center; /* 세로 가운데 정렬 */
+            background-color: #fff; /* 배경색 */
+            box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+            z-index: 10; /* 다른 요소 위에 표시 */
         }
 
         .input-container input {
-            flex-grow: 1;
-            border: none;
-            outline: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            border-radius: 20px 0 0 20px;
-            /* Removed fixed width */
+            flex-grow: 1; /* 남은 공간 모두 차지 */
+            border: none; /* 테두리 제거 */
+            outline: none; /* 포커스 시 아웃라인 제거 */
+            padding: 10px 15px; /* 내부 패딩 */
+            font-size: 16px; /* 폰트 크기 */
+            border-radius: 20px 0 0 20px; /* 좌측 둥근 모서리 */
         }
 
         .input-container button {
-            background-color: #fff;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            border-radius: 50%;
-            margin-right: 5px;
+            background-color: #fff; /* 배경색 */
+            border: none; /* 테두리 제거 */
+            padding: 8px; /* 내부 패딩 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            border-radius: 50%; /* 원형 버튼 */
+            margin-right: 5px; /* 오른쪽 마진 */
+            display: flex; /* Flexbox 사용하여 아이콘 가운데 정렬 */
+            justify-content: center; /* 가로 가운데 정렬 */
+            align-items: center; /* 세로 가운데 정렬 */
         }
 
         .input-container button img {
-            width: 24px;
-            height: 24px;
+            width: 24px; /* 아이콘 너비 */
+            height: 24px; /* 아이콘 높이 */
         }
 
-        /* Functions and Suggestions - Kept original styling */
+        /* 함수 및 제안 (기존 스타일 유지) */
         .functions-wrapper {
-            display: none;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
+            display: none; /* 기본 숨김 */
+            gap: 15px; /* 요소 간 간격 */
+            margin-top: 20px; /* 상단 마진 */
+            justify-content: center; /* 가운데 정렬 */
         }
 
         .functions-item {
-            background-color: #fff;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-            font-size: 16px;
-            color: #333;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff; /* 배경색 */
+            padding: 12px 24px; /* 내부 패딩 */
+            border-radius: 25px; /* 테두리 둥글게 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; /* 변경 애니메이션 */
+            font-size: 16px; /* 폰트 크기 */
+            color: #333; /* 글자색 */
+            border: 1px solid #e0e0e0; /* 테두리 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
         }
 
         .functions-item:hover {
-            background-color: #10a37f;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #10a37f; /* 호버 시 배경색 변경 */
+            color: white; /* 호버 시 글자색 변경 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 */
         }
 
         .suggestions {
-            display: none;
-            gap: 15px;
-            margin-bottom: 0;
-            justify-content: center;
+            display: none; /* 기본 숨김 */
+            gap: 15px; /* 요소 간 간격 */
+            margin-bottom: 0; /* 하단 마진 */
+            justify-content: center; /* 가운데 정렬 */
         }
 
         .suggestion-item {
-            background-color: #f0f0f0;
-            padding: 8px 16px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-size: 14px;
-            color: #555;
+            background-color: #f0f0f0; /* 배경색 */
+            padding: 8px 16px; /* 내부 패딩 */
+            border-radius: 15px; /* 테두리 둥글게 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            transition: background-color 0.2s ease, color 0.2s ease; /* 변경 애니메이션 */
+            font-size: 14px; /* 폰트 크기 */
+            color: #555; /* 글자색 */
         }
 
         .suggestion-item:hover {
-            background-color: #10a37f;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #10a37f; /* 호버 시 배경색 변경 */
+            color: white; /* 호버 시 글자색 변경 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 효과 */
         }
 
-         /* Responsive adjustments */
+         /* 반응형 디자인 조정 */
         @media (max-width: 768px) {
             .sidebar {
-                width: 60px; /* Collapse sidebar on smaller screens */
-                padding: 10px;
+                width: 60px; /* 작은 화면에서 사이드바 너비 축소 */
+                padding: 10px; /* 패딩 조정 */
             }
             .sidebar-header h1 {
-                display: none; /* Hide title */
+                display: none; /* 제목 숨김 */
             }
              .sidebar-menu li span {
-                 display: none; /* Hide text */
+                 display: none; /* 텍스트 숨김 */
              }
              .sidebar-menu li img {
-                 margin-right: 0; /* Remove margin */
+                 margin-right: 0; /* 마진 제거 */
              }
              .sidebar-menu li {
-                 justify-content: center; /* Center icons */
+                 justify-content: center; /* 아이콘 가운데 정렬 */
              }
             .input-container {
-                left: 100px; /* Adjust left position for collapsed sidebar + padding */
-                right: 20px; /* Keep right position */
-                 /* Removed max-width */
+                left: 80px; /* 축소된 사이드바 너비 + 여백 */
+                right: 10px; /* 오른쪽 여백 조정 */
+                bottom: 10px; /* 하단 여백 조정 */
             }
              .main-content {
-                 padding-bottom: 100px; /* Increase bottom padding for smaller screens */
+                 padding-bottom: 80px; /* 하단 입력창을 위한 공간 확보 (작은 화면) */
+             }
+             .chat-container {
+                 padding: 0 10px; /* 좌우 패딩 조정 */
              }
         }
+
+         @media (max-width: 480px) {
+             .sidebar {
+                 width: 50px; /* 더 작은 화면에서 사이드바 너비 더 축소 */
+                 padding: 5px; /* 패딩 조정 */
+             }
+             .input-container {
+                 left: 65px; /* 더 축소된 사이드바 너비 + 여백 */
+                 right: 5px; /* 오른쪽 여백 더 축소 */
+                 bottom: 5px; /* 하단 여백 더 축소 */
+                 padding: 3px; /* 입력창 패딩 조정 */
+             }
+             .input-container input {
+                 padding: 8px 10px; /* 입력 필드 패딩 조정 */
+                 font-size: 14px; /* 폰트 크기 조정 */
+             }
+             .input-container button img {
+                 width: 20px; /* 버튼 아이콘 크기 조정 */
+                 height: 20px; /* 버튼 아이콘 크기 조정 */
+             }
+             .main-content {
+                 padding-bottom: 70px; /* 하단 입력창 공간 조정 */
+             }
+             .chat-container {
+                 padding: 0 5px; /* 좌우 패딩 더 축소 */
+             }
+             .message {
+                 padding: 10px 15px; /* 메시지 패딩 조정 */
+                 font-size: 14px; /* 메시지 폰트 크기 조정 */
+                 margin-bottom: 15px; /* 메시지 하단 마진 조정 */
+             }
+             .message.user {
+                 padding: 6px 15px; /* 사용자 메시지 패딩 조정 */
+             }
+         }
+
 
     </style>
 </head>
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png" alt="ChatGPT 로고" width="30">
-            <h1>ChatGPT</h1>
+            <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고">
         </div>
         <ul class="sidebar-menu">
             <li class="active">
@@ -359,7 +481,7 @@
                 <span>HTML/CSS</span>
             </li>
              <li>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
+                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
                 <span>유튜브 영상</span>
             </li>
             <li>
@@ -395,144 +517,164 @@
         const sendButton = document.getElementById('sendButton');
         const chatContainer = document.getElementById('chatContainer');
         const initialTextElement = document.getElementById('initialText');
-        const chatHistoryElement = document.getElementById('chatHistory'); // Get the history list element
-        const newChatButton = document.getElementById('newChatButton'); // Get the new chat button
+        const chatHistoryElement = document.getElementById('chatHistory'); // 채팅 기록 목록 요소
+        const newChatButton = document.getElementById('newChatButton'); // 새 채팅 버튼
+        // TODO: Replace with your actual API key
         const apiKey = 'AIzaSyCIg1Hlmhm4ZYPi6TtPBqkhXsJJsdXJfWY'; // 여기에 실제 API 키를 넣으세요.
 
-        // Array to store chat history data
+        // 채팅 기록 데이터를 저장할 배열
         let chatHistory = [];
-        // Variable to track the index of the currently active chat thread
+        // 현재 활성화된 채팅 스레드의 인덱스
         let currentChatIndex = -1;
 
-        // Save chat history and current index to localStorage
+        // 채팅 기록 및 현재 인덱스를 localStorage에 저장
         function saveChatHistory() {
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
             localStorage.setItem('currentChatIndex', currentChatIndex);
         }
 
-        // Load chat history and current index from localStorage
+        // localStorage에서 채팅 기록 및 현재 인덱스 로드
         function loadChatHistory() {
             const savedHistory = localStorage.getItem('chatHistory');
             const savedIndex = localStorage.getItem('currentChatIndex');
 
             if (savedHistory) {
                 chatHistory = JSON.parse(savedHistory);
-                displayChatHistory(); // Display loaded history in the sidebar
+                displayChatHistory(); // 로드된 기록을 사이드바에 표시
 
                 if (savedIndex !== null && chatHistory[savedIndex]) {
                     currentChatIndex = parseInt(savedIndex, 10);
-                    loadChatThread(currentChatIndex); // Load the last active chat thread
+                    loadChatThread(currentChatIndex); // 마지막 활성 채팅 스레드 로드
                 } else {
-                     // If no valid index saved or chatHistory is empty, start fresh
+                     // 유효한 인덱스가 없거나 chatHistory가 비어 있으면 새 채팅 시작
                     startNewChat();
                 }
             } else {
-                 // If no history saved, start fresh
+                 // 저장된 기록이 없으면 새 채팅 시작
                 startNewChat();
             }
         }
 
-        // Display chat history in the sidebar
+        // 사이드바에 채팅 기록 표시
         function displayChatHistory() {
-            chatHistoryElement.innerHTML = ''; // Clear current history display
+            chatHistoryElement.innerHTML = ''; // 현재 기록 표시 지우기
             chatHistory.forEach((historyItem, index) => {
                 const listItem = document.createElement('li');
-                // Display the first user message as the history item summary
+                // 첫 번째 사용자 메시지를 기록 항목 요약으로 표시
                 const firstUserMessage = historyItem.messages.find(msg => msg.role === 'user');
                 const summaryText = firstUserMessage ? firstUserMessage.text : '새 대화';
 
-                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : ''); // Truncate for summary
-                listItem.dataset.index = index; // Store index for loading full conversation
+                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : ''); // 요약을 위해 자르기
+                listItem.dataset.index = index; // 전체 대화 로드를 위한 인덱스 저장
 
-                // Add active class if this is the current chat
+                // 현재 채팅인 경우 active 클래스 추가
                 if (index === currentChatIndex) {
                     listItem.classList.add('active');
                 }
 
                 listItem.addEventListener('click', () => {
-                    loadChatThread(index); // Load the clicked conversation
+                    loadChatThread(index); // 클릭한 대화 로드
                 });
                 chatHistoryElement.appendChild(listItem);
             });
         }
 
-        // Load a specific chat thread into the main chat area
+        // 특정 채팅 스레드를 메인 채팅 영역에 로드
         function loadChatThread(index) {
             if (index >= 0 && index < chatHistory.length) {
                 currentChatIndex = index;
-                chatContainer.innerHTML = ''; // Clear current chat display
-                initialTextElement.style.display = 'none'; // Hide initial text
+                chatContainer.innerHTML = ''; // 현재 채팅 표시 지우기
+                initialTextElement.style.display = 'none'; // 초기 텍스트 숨김
 
                 const threadMessages = chatHistory[currentChatIndex].messages;
                 threadMessages.forEach(message => {
                     const messageElement = document.createElement('div');
                     messageElement.classList.add('message', message.role);
+                    // AI 메시지는 formatApiResponse 함수를 사용하여 서식 적용
                     messageElement.innerHTML = message.role === 'user' ? autoFormatText(message.text) : formatApiResponse(message.text);
                     chatContainer.appendChild(messageElement);
                 });
 
-                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight; // Scroll to bottom
-                saveChatHistory(); // Save the current index
-                displayChatHistory(); // Update sidebar active state
+                // 로드 후 맨 아래로 스크롤
+                scrollToBottom();
+                saveChatHistory(); // 현재 인덱스 저장
+                displayChatHistory(); // 사이드바 활성 상태 업데이트
             }
         }
 
-        // Start a new chat conversation
+        // 새 채팅 시작
         function startNewChat() {
-            chatContainer.innerHTML = ''; // Clear current chat display
-            initialTextElement.style.display = 'block'; // Show initial text
-            currentChatIndex = -1; // No active chat thread initially
-            saveChatHistory(); // Save the updated index
-            displayChatHistory(); // Update sidebar (no active item)
+            chatContainer.innerHTML = ''; // 현재 채팅 표시 지우기
+            initialTextElement.style.display = 'block'; // 초기 텍스트 표시
+            currentChatIndex = -1; // 활성 채팅 스레드 없음
+            saveChatHistory(); // 업데이트된 인덱스 저장
+            displayChatHistory(); // 사이드바 업데이트 (활성 항목 없음)
+        }
+
+        // 맨 아래로 스크롤하는 함수
+        function scrollToBottom() {
+             const mainContent = document.querySelector('.main-content');
+             mainContent.scrollTo({
+                 top: mainContent.scrollHeight, // 스크롤 가능한 전체 높이
+                 behavior: 'smooth' // 부드러운 스크롤 효과
+             });
         }
 
 
+        // 입력 필드에서 Enter 키 감지
         promptInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault();
-                sendMessage();
+                event.preventDefault(); // 기본 Enter 동작 방지
+                sendMessage(); // 메시지 전송
             }
         });
 
+        // 전송 버튼 클릭 감지
         sendButton.addEventListener('click', sendMessage);
-        newChatButton.addEventListener('click', startNewChat); // Add event listener to new chat button
+        // 새 채팅 버튼 클릭 감지
+        newChatButton.addEventListener('click', startNewChat);
 
 
         function sendMessage() {
             const prompt = promptInput.value;
             if (!prompt.trim()) {
-                 // Use a simple message box instead of alert
+                 // 메시지 상자 사용하여 질문 입력 요청
                 showMessageBox("질문을 입력해주세요.");
                 return;
             }
 
             if (initialTextElement) {
-                initialTextElement.style.display = 'none';
+                initialTextElement.style.display = 'none'; // 초기 텍스트 숨김
             }
 
-            // If no active chat thread, create a new one
+            // 활성 채팅 스레드가 없으면 새로 생성
             if (currentChatIndex === -1) {
                 chatHistory.push({ messages: [] });
                 currentChatIndex = chatHistory.length - 1;
             }
 
+            // 사용자 메시지 표시
             const userMessageElement = document.createElement('div');
             userMessageElement.classList.add('message', 'user');
-            userMessageElement.innerHTML = autoFormatText(prompt); // Apply text formatting
+            userMessageElement.innerHTML = autoFormatText(prompt); // 텍스트 서식 적용
             chatContainer.appendChild(userMessageElement);
-            promptInput.value = '';
-            document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+            promptInput.value = ''; // 입력 필드 초기화
 
-            // Add user message to the current history thread
+            // 사용자 메시지를 현재 기록 스레드에 추가
             chatHistory[currentChatIndex].messages.push({ role: 'user', text: prompt });
-            saveChatHistory(); // Save history after adding user message
-            displayChatHistory(); // Update sidebar display (adds new item if it's the first message of a new thread)
+            saveChatHistory(); // 사용자 메시지 추가 후 기록 저장
+            displayChatHistory(); // 사이드바 표시 업데이트 (새 스레드의 첫 메시지인 경우 새 항목 추가)
 
 
+            // 맨 아래로 스크롤
+            scrollToBottom();
+
+            // Gemini API 호출
             getGeminiResponse(prompt);
         }
 
         async function getGeminiResponse(prompt) {
+            // TODO: Replace with your actual API endpoint and model
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             const headers = {
                 'Content-Type': 'application/json'
@@ -554,81 +696,153 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseData = await response.json();
-                // Check if candidates and parts exist before accessing text
+                // 응답 데이터에서 텍스트 추출 및 예외 처리
                 const responseText = responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0] ? responseData.candidates[0].content.parts[0].text : "응답을 받을 수 없습니다.";
 
 
+                // AI 메시지 표시
                 const aiMessageElement = document.createElement('div');
                 aiMessageElement.classList.add('message', 'ai');
-                aiMessageElement.innerHTML = formatApiResponse(responseText); // Apply formatApiResponse
+                aiMessageElement.innerHTML = formatApiResponse(responseText); // 응답 서식 적용
                 chatContainer.appendChild(aiMessageElement);
-                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
 
-                // Add AI message to the current history thread
+                // AI 메시지를 현재 기록 스레드에 추가
                  if (currentChatIndex !== -1) {
                      chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
-                     saveChatHistory(); // Save history after adding AI message
+                     saveChatHistory(); // AI 메시지 추가 후 기록 저장
                  }
+
+                // 맨 아래로 스크롤
+                scrollToBottom();
 
 
             } catch (error) {
+                // 오류 메시지 표시
                 const errorMessage = document.createElement('div');
                 errorMessage.classList.add('message', 'error');
                 errorMessage.textContent = `오류 발생: ${error.message}`;
                 chatContainer.appendChild(errorMessage);
                 console.error("Error:", error);
+                // 맨 아래로 스크롤
+                scrollToBottom();
             }
         }
 
+        // 사용자 입력 텍스트 자동 서식 함수 (필요에 따라 추가 규칙 구현)
         function autoFormatText(text) {
-            // Implement text formatting rules here.
-            // e.g., fix punctuation, remove unnecessary spaces, convert markdown
             let formattedText = text;
 
-            /* Removed specific punctuation/space/bracket formatting as it might interfere with user input display */
-            /* Keeping basic markdown and newline conversion */
+            // 간단한 마크다운 변환 (예: ** -> <strong>, _ -> <em>)
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');  // 볼드체 스타일 추가
+            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');      // 이탤릭체 스타일 추가
 
-            // 3. Simple markdown conversion (example): ** -> <strong>, _ -> <em>
-            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');  // Add style to bold tag
-            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');      // Add style to em tag
-
-            // 5. Handle newlines: Convert newline characters to <br> tags
-            formattedText = formattedText.replace(/\n/g, '<br>');
-
-            return formattedText; // Removed trim()
-        }
-
-        function formatApiResponse(text) {
-            // Define rules to convert API response text to HTML.
-            // Handle bullet points, blockquotes, code blocks, etc.
-            let formattedText = text;
-
-             // Bullet points (*) handling:
-            formattedText = formattedText.replace(/^\*\s(.*?)$/gm, '<li>$1</li>');
-            if (formattedText.includes('<li>')) {
-                formattedText = '<ul>' + formattedText + '</ul>';
-            }
-
-            // Bold text (**...**)
-            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
-
-            // In-line code (`)
-            formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
-
-
-            // Blockquote (>)
-            formattedText = formattedText.replace(/^>\s(.*?)$/gm, '<blockquote>$1</blockquote>');
-
-            // Code blocks (```)
-            formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-
-            // Newline characters
+            // 줄바꿈 문자 <br> 태그로 변환
             formattedText = formattedText.replace(/\n/g, '<br>');
 
             return formattedText;
         }
 
-        // Simple message box function
+        // AI 응답 텍스트 서식 함수 (마크다운 등을 HTML로 변환)
+        function formatApiResponse(text) {
+            let formattedText = text;
+
+            // 코드 블록 (```) 변환 (가장 먼저 처리하여 내부 ` 등이 변환되지 않도록 함)
+            formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+
+            // 인라인 코드 (`) 변환
+            formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            // 볼드체 (**...**) 변환
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
+
+            // 목록 (*) 변환
+            // 각 줄의 시작에 * 가 있으면 목록 항목으로 변환
+            formattedText = formattedText.split('\n').map(line => {
+                if (line.trim().startsWith('* ')) {
+                    return '<li>' + line.trim().substring(2).trim() + '</li>';
+                }
+                return line;
+            }).join('\n');
+            // li 태그가 있는 경우 ul 태그로 감싸기
+            if (formattedText.includes('<li>')) {
+                 // ul 태그가 이미 감싸고 있지 않은 경우에만 추가
+                 if (!formattedText.trim().startsWith('<ul>') || !formattedText.trim().endsWith('</ul>')) {
+                     formattedText = '<ul>' + formattedText + '</ul>';
+                 }
+            }
+
+
+            // 인용구 (>) 변환
+            formattedText = formattedText.replace(/^>\s(.*?)$/gm, '<blockquote>$1</blockquote>');
+
+            // 테이블 변환 (간단한 구현)
+            // 헤더와 구분선, 데이터 행을 감지하여 테이블 구조로 변환
+            const lines = formattedText.split('\n');
+            let inTable = false;
+            let tableHtml = '';
+            let processedLines = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('|') && line.endsWith('|')) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableHtml += '<table>';
+                        // 헤더 행 처리
+                        const headerCells = line.split('|').slice(1, -1).map(cell => `<th>${cell.trim()}</th>`).join('');
+                        tableHtml += `<thead><tr>${headerCells}</tr></thead><tbody>`;
+                    } else {
+                        // 구분선 처리 (---)
+                        if (line.replace(/\|/g, '').replace(/-/g, '').trim() === '') {
+                            // 구분선은 건너뜀
+                        } else {
+                            // 데이터 행 처리
+                             const dataCells = line.split('|').slice(1, -1).map(cell => `<td>${cell.trim()}</td>`).join('');
+                            tableHtml += `<tr>${dataCells}</tr>`;
+                        }
+                    }
+                } else {
+                    if (inTable) {
+                        inTable = false;
+                        tableHtml += '</tbody></table>';
+                        processedLines.push(tableHtml);
+                        tableHtml = '';
+                    }
+                    processedLines.push(line);
+                }
+            }
+            // 테이블이 마지막에 끝나는 경우 처리
+            if (inTable) {
+                 tableHtml += '</tbody></table>';
+                 processedLines.push(tableHtml);
+            }
+
+            formattedText = processedLines.join('\n');
+
+
+            // 줄바꿈 문자 <br> 태그로 변환 (코드 블록 내부 제외)
+            // pre 태그 내부의 줄바꿈은 변환하지 않도록 처리
+            formattedText = formattedText.replace(/(?<!<\/code>)\n(?!<pre>)/g, '<br>');
+
+
+            // 단락 처리 (연속된 <br> 두 개를 새로운 단락으로 간주)
+            formattedText = formattedText.replace(/<br>\s*<br>/g, '</p><p>');
+            // 첫 번째 <br> 또는 텍스트 시작 전에 <p> 태그 추가
+            if (formattedText.trim().length > 0 && !formattedText.trim().startsWith('<p>')) {
+                 formattedText = '<p>' + formattedText;
+            }
+             // 마지막 <br> 또는 텍스트 끝에 </p> 태그 추가
+            if (formattedText.trim().length > 0 && !formattedText.trim().endsWith('</p>') && !formattedText.trim().endsWith('</code>') && !formattedText.trim().endsWith('</blockquote>') && !formattedText.trim().endsWith('</ul>') && !formattedText.trim().endsWith('</table>') && !formattedText.trim().endsWith('</pre>')) {
+                 formattedText = formattedText + '</p>';
+            }
+             // 비어 있는 p 태그 제거
+             formattedText = formattedText.replace(/<p>\s*<\/p>/g, '');
+
+
+            return formattedText;
+        }
+
+        // 간단한 메시지 상자 함수
         function showMessageBox(message) {
             const messageBox = document.createElement('div');
             messageBox.style.cssText = `
@@ -636,21 +850,24 @@
                 top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                background-color: #ffc107;
-                color: #333;
-                padding: 10px 20px;
-                border-radius: 5px;
-                z-index: 100;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                background-color: #e80000; /* 경고 색상 */
+                color: #ffffff; /* 글자색 */
+                padding: 10px 20px; /* 내부 패딩 */
+                border-radius: 5px; /* 테두리 둥글게 */
+                z-index: 100; /* 다른 요소 위에 표시 */
+                font-size: 14px; /* 폰트 크기 */
             `;
             messageBox.textContent = message;
             document.body.appendChild(messageBox);
+            // 3초 후 메시지 상자 제거
             setTimeout(() => {
-                document.body.removeChild(messageBox);
-            }, 3000); // Remove after 3 seconds
+                if (document.body.contains(messageBox)) {
+                     document.body.removeChild(messageBox);
+                }
+            }, 3000);
         }
 
-        // Load chat history when the page loads
+        // 페이지 로드 시 채팅 기록 로드
         window.onload = loadChatHistory;
 
     </script>
