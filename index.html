@@ -756,220 +756,138 @@
 
 
 
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>자동 팝업창</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>SUPPLE 팝업</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* 팝업창 스타일 */
-        #popup {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            font-family: 'Noto Sans KR', sans-serif;
+            min-height: 100vh;
+            margin: 0;
         }
-        #popup-content {
-            background-color: #ffffff;
-            padding: 20px;
+
+        #supple-popup {
+            background-color: #fff;
             border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .popup-header {
+            padding: 24px;
             text-align: center;
-            width: 95%;
-            max-width: 550px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-            animation: fadeIn 0.3s ease-out;
-            max-height: 80vh;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            margin: 10px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        #popup-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
+
+        .popup-header h2 {
+            font-size: 20px;
+            font-weight: 600;
             color: #2c3e50;
-            text-align: left;
+            margin-bottom: 12px;
         }
-        #popup-text {
-            font-size: 16px;
-            line-height: 1.7;
+
+        .popup-header p {
+            font-size: 14px;
+            color: #7f8c8d;
             margin-bottom: 20px;
-            color: #495057;
-            text-align: left;
-            flex: 1;
-            overflow: auto;
         }
-        #popup-buttons {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-top: 25px;
-            flex-shrink: 0;
+
+        .popup-content {
+            text-align: center;
         }
-        #popup-close {
-            padding: 12px 25px;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
+
+        .popup-content a {
+            display: inline-block;
+            background-color: #e80000;
+            color: #fff;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 30px;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 5px 11px rgba(0, 0, 0, 0.1);
-            background-color: #007bff;
-            border-radius: 25px;
+            text-decoration: none;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
         }
-        #popup-close:hover {
-            background-color: #0056b3;
-            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+
+        .popup-content a:hover {
+            background-color: #c0392b;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-        #popup-close:active {
-            background-color: #004080;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transform: translateY(1px);
-        }
-        #popup-today-close {
+
+        .popup-footer {
             display: flex;
-            align-items: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .popup-footer button {
+            flex: 1;
+            padding: 16px;
+            text-align: center;
+            color: #7f8c8d;
+            background-color: transparent;
+            border: none;
             cursor: pointer;
-            color: #868e96;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            margin-right: auto;
+            transition: background-color 0.3s ease;
+            font-size: 14px;
         }
-        #popup-today-close input[type="checkbox"] {
-            margin-right: 8px;
-            position: relative;
-            cursor: pointer;
-            width: 20px;
-            height: 20px;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            border: 2px solid #adb5bd;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
+
+        .popup-footer button:hover {
+            background-color: #ecf0f1;
         }
-        #popup-today-close input[type="checkbox"]:checked {
-            background-color: #007bff;
-            border-color: #007bff;
+
+        .popup-footer button:first-child {
+            border-right: 1px solid #e0e0e0;
+            border-bottom-left-radius: 12px;
         }
-        #popup-today-close input[type="checkbox"]:checked::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(45deg);
-            width: 6px;
-            height: 12px;
-            border: solid white;
-            border-width: 0 3px 3px 0;
-        }
-        #popup-today-close input[type="checkbox"]:focus {
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-        .popup-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            margin-bottom: 20px;
+
+        .popup-footer button:last-child {
+            border-bottom-right-radius: 12px;
         }
     </style>
-    <script>
-        window.onload = function() {
-            var popup = document.getElementById('popup');
-            var closeButton = document.getElementById('popup-close');
-            var todayCloseButton = document.getElementById('popup-today-close');
-            var todayCloseCheckbox = todayCloseButton.querySelector('input[type="checkbox"]');
-
-            // 팝업 표시
-            if (getCookie('popup_closed') !== 'true') {
-                popup.style.display = 'flex';
-            }
-
-            // 닫기 버튼 클릭 이벤트
-            closeButton.onclick = function() {
-                if (todayCloseCheckbox.checked) {
-                    setCookie('popup_closed', 'true', 1);
-                } else {
-                    deleteCookie('popup_closed');
-                }
-                popup.style.display = 'none';
-            };
-
-            // 오늘 하루 보지 않기 버튼 클릭 이벤트
-            todayCloseButton.onclick = function() {
-                todayCloseCheckbox.checked = !todayCloseCheckbox.checked;
-            };
-
-            // 쿠키 설정 함수
-            function setCookie(name, value, days) {
-                var expires = "";
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                    expires = "; expires=" + date.toUTCString();
-                }
-                document.cookie = name + "=" + (value || "") + expires + "; path=/";
-            }
-
-            // 쿠키 가져오기 함수
-            function getCookie(name) {
-                var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) === ' ') {
-                        c = c.substring(1, c.length);
-                    }
-                    if (c.indexOf(nameEQ) === 0) {
-                        return c.substring(nameEQ.length, c.length);
-                    }
-                }
-                return null;
-            }
-
-            // 쿠키 삭제 함수
-            function deleteCookie(name) {
-                document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-            }
-        };
-    </script>
 </head>
-<body>
-    <div id="popup">
-        <div id="popup-content">
-            <h2 id="popup-title">Jungdapi AI 출시 안내</h2>
-            <p id="popup-text">
-                최신 모델을 사용한 Jungdapi AI가 출시되었습니다.<br><br>
-                Jubgdapi AI는 최신형 OCR 기술로 사진 문제풀이 서비스, 또한 4o수준의 글쓰기 실력으로 과제를 도와줍니다.<br><br>
-                Jungdapi AI의 가격은 PLUS 3900원/월 PREMIUM 9800원/월로 책정될 예정입니다.<br><br>
-                감사합니다.
-            </p>
-            <div id="popup-buttons">
-                <label id="popup-today-close">
-                    <input type="checkbox"> 오늘 하루 보지 않기
-                </label>
-                <button id="popup-close">닫기</button>
-            </div>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div id="supple-popup" class="bg-white rounded-lg shadow-xl">
+        <div class="popup-header">
+            <h2>나만의 AI 파트너, SUPPLE이 출시되었어요!</h2>
+            <p>지금 바로 SUPPLE을 만나보세요.</p>
+        </div>
+        <div class="popup-content">
+            <a href="jungdpai.netlify.app/supple">바로가기</a>
+        </div>
+        <div class="popup-footer">
+            <button id="close-button">닫기</button>
+            <button id="dont-show-again">오늘 하루 보지 않기</button>
         </div>
     </div>
+
+    <script>
+        const popup = document.getElementById('supple-popup');
+        const closeButton = document.getElementById('close-button');
+        const dontShowAgainButton = document.getElementById('dont-show-again');
+
+        if (localStorage.getItem('hidePopup') === 'true') {
+            popup.style.display = 'none';
+        }
+
+        closeButton.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        dontShowAgainButton.addEventListener('click', () => {
+            localStorage.setItem('hidePopup', 'true');
+            popup.style.display = 'none';
+        });
+    </script>
 </body>
 </html>
