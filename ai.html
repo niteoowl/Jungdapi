@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPPLE AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide-static@latest"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden; /* Prevent body scroll, main-content handles scrolling */
+        }
+
+        /* Styles for when the sidebar is open on mobile */
+        body.sidebar-open .sidebar {
+            transform: translateX(0); /* Slide in the sidebar */
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: #f7f7f8;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            overflow-y: auto;
+            z-index: 20; /* Ensure sidebar is above main content */
+            /* Mobile styles for sidebar */
+            @media (max-width: 768px) {
+                position: fixed; /* Fix position for sliding effect */
+                top: 0;
+                left: 0;
+                height: 100vh; /* Full height */
+                transform: translateX(-100%); /* Initially hide off-screen */
+                transition: transform 0.3s ease-in-out; /* Smooth slide transition */
+                width: 200px; /* Slightly smaller width on mobile */
+            }
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 10px;
+             /* Hide sidebar header logo on mobile as it moves to main content header */
+            @media (max-width: 768px) {
+                display: none;
+            }
+        }
+
+        .sidebar-header img {
+             height: 40px;
+             width: auto;
+             max-width: 100%;
+             border-radius: 5px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+            border-radius: 5px;
+        }
+
+        .sidebar-menu li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-menu li.active {
+            background-color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li img {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Hide menu text on collapsed mobile sidebar */
+        @media (max-width: 768px) {
+             body:not(.sidebar-open) .sidebar-menu li span {
+                 display: none;
+             }
+             body:not(.sidebar-open) .sidebar-menu li img {
+                 margin-right: 0; /* Remove margin when text is hidden */
+             }
+             body:not(.sidebar-open) .sidebar-menu li {
+                 justify-content: center; /* Center icons when text is hidden */
+             }
+        }
+
+
+        /* Chat History Styles */
+        .chat-history {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .chat-history li {
+             padding: 8px 10px;
+             cursor: pointer;
+             margin-bottom: 5px;
+             background-color: #e9e9eb;
+             border-radius: 5px;
+             font-size: 14px;
+             color: #333;
+             white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             transition: background-color 0.2s ease;
+        }
+
+        .chat-history li:hover {
+            background-color: #d0d0d0;
+        }
+
+        .chat-history li.active {
+             background-color: #d0d0d0;
+             font-weight: 600;
+        }
+
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            position: relative;
+            overflow-y: auto;
+            padding-bottom: 80px; /* Space for fixed input */
+            /* Adjust left margin when sidebar is open on mobile */
+            @media (max-width: 768px) {
+                 margin-left: 0; /* No margin when sidebar is hidden */
+                 transition: margin-left 0.3s ease-in-out;
+            }
+        }
+
+        /* Custom Scrollbar Styles */
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 0;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: #a0a0a0;
+            border-radius: 0;
+        }
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #808080;
+        }
+        .main-content {
+            scrollbar-width: thin;
+            scrollbar-color: #a0a0a0 transparent;
+        }
+
+        /* Mobile Header for Logo and Menu Button */
+        .mobile-header {
+            display: none; /* Hidden by default on desktop */
+            align-items: center;
+            justify-content: space-between; /* Space out logo and button */
+            padding: 10px 20px;
+            background-color: #fff; /* Match main content background */
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0; /* Prevent shrinking */
+            @media (max-width: 768px) {
+                display: flex; /* Show on mobile */
+                justify-content: center; /* Center logo */
+                position: relative; /* For absolute positioning of button */
+            }
+        }
+
+        .mobile-header .menu-button {
+            display: none; /* Hidden by default on desktop */
+             background: none;
+             border: none;
+             cursor: pointer;
+             padding: 0;
+             position: absolute; /* Position button absolutely */
+             left: 10px; /* Position on the left */
+             top: 50%; /* Vertically center */
+             transform: translateY(-50%);
+             z-index: 10; /* Ensure button is clickable */
+            @media (max-width: 768px) {
+                display: block; /* Show on mobile */
+            }
+        }
+
+         .mobile-header .menu-button img {
+             width: 24px;
+             height: 24px;
+         }
+
+
+        .mobile-header .supple-logo-mobile {
+             height: 30px; /* Adjust size for mobile header */
+             width: auto;
+             max-width: 150px; /* Max width for logo */
+             @media (min-width: 769px) {
+                 display: none; /* Hide on desktop */
+             }
+        }
+
+
+        #initialText {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 20px;
+            padding-top: 20px;
+            box-sizing: border-box;
+            align-self: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            flex-grow: 1;
+            padding: 0 20px;
+            box-sizing: border-box;
+            align-self: center;
+        }
+
+        .message {
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            font-size: 16px;
+            color: #333;
+            background-color: #fff;
+            align-self: flex-start;
+            position: relative;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background-color: #f7f7f8;
+            align-self: flex-end;
+            border-radius: 999px;
+        }
+
+        .message.ai {
+            background-color: transparent;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        /* Add CSS rules to remove default margins/padding for elements within .message.ai */
+        .message.ai b,
+        .message.ai strong,
+        .message.ai em,
+        .message.ai code {
+            margin: 0;
+            padding: 0;
+        }
+
+        .message.ai ul,
+        .message.ai blockquote,
+        .message.ai pre {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .message.ai li {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .message.user::before,
+        .message.ai::before {
+            display: none;
+        }
+
+        .input-container {
+            display: flex;
+            left: 300px; /* Desktop left position */
+            right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            padding: 5px;
+            align-items: center;
+            background-color: #fff;
+            position: fixed;
+            bottom: 20px;
+            box-sizing: border-box;
+            z-index: 10;
+            /* Adjust left position for mobile when sidebar is closed */
+            @media (max-width: 768px) {
+                left: 20px; /* Adjust left for mobile */
+                right: 20px;
+            }
+        }
+
+        .input-container input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .input-container button {
+            background-color: #fff;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .input-container button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Functions and Suggestions - Kept original styling */
+        .functions-wrapper {
+            display: none;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .functions-item {
+            background-color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 16px;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .functions-item:hover {
+            background-color: #10a37f;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .suggestions {
+            display: none;
+            gap: 15px;
+            margin-bottom: 0;
+            justify-content: center;
+        }
+
+        .suggestion-item {
+            background-color: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .suggestion-item:hover {
+            background-color: #10a37f;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+         /* Overlay to close sidebar when clicking outside on mobile */
+        .sidebar-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 15; /* Below sidebar, above main content */
+            @media (max-width: 768px) {
+                body.sidebar-open & {
+                    display: block; /* Show when sidebar is open */
+                }
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고 (데스크톱)">
+            </div>
+        <ul class="sidebar-menu">
+            <li class="active">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" alt="Message">
+                <span>채팅</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" alt="Sora">
+                <span>Sora</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/book.svg" alt="Library">
+                <span>라이브러리</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/code.svg" alt="HTML/CSS">
+                <span>HTML/CSS</span>
+            </li>
+             <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="유튜브 영상">
+                <span>유튜브 영상</span>
+            </li>
+            <li>
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/mic.svg" alt="GPT 음색">
+                <span>GPT 음색</span>
+            </li>
+        </ul>
+        <ul class="chat-history" id="chatHistory">
+            </ul>
+        <div class="sidebar-menu">
+            <li id="newChatButton">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/plus-circle.svg" alt="새 채팅">
+                <span>새 채팅</span>
+            </li>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="mobile-header">
+             <button class="menu-button" id="menuButton">
+                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" alt="메뉴 열기">
+             </button>
+             <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고 (모바일)" class="supple-logo-mobile">
+             <div></div>
+        </div>
+
+        <div id="initialText">무엇을 도와드릴까요?</div>
+        <div class="chat-container" id="chatContainer">
+            </div>
+        </div>
+
+    <div class="input-container">
+        <input type="text" id="promptInput" placeholder="무엇이든 물어보세요.">
+        <button id="sendButton">
+            <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/send.svg" alt="Send">
+        </button>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+    <script>
+        const promptInput = document.getElementById('promptInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatContainer = document.getElementById('chatContainer');
+        const initialTextElement = document.getElementById('initialText');
+        const chatHistoryElement = document.getElementById('chatHistory');
+        const newChatButton = document.getElementById('newChatButton');
+        const menuButton = document.getElementById('menuButton'); // Get the menu button
+        const sidebar = document.querySelector('.sidebar'); // Get the sidebar
+        const sidebarOverlay = document.getElementById('sidebarOverlay'); // Get the overlay
+        const apiKey = 'AIzaSyCIg1Hlmhm4ZYPi6TtPBqkhXsJJsdXJfWY'; // 여기에 실제 API 키를 넣으세요.
+
+        let chatHistory = [];
+        let currentChatIndex = -1;
+
+        function saveChatHistory() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            localStorage.setItem('currentChatIndex', currentChatIndex);
+        }
+
+        function loadChatHistory() {
+            const savedHistory = localStorage.getItem('chatHistory');
+            const savedIndex = localStorage.getItem('currentChatIndex');
+
+            if (savedHistory) {
+                chatHistory = JSON.parse(savedHistory);
+                displayChatHistory();
+
+                if (savedIndex !== null && chatHistory[savedIndex]) {
+                    currentChatIndex = parseInt(savedIndex, 10);
+                    loadChatThread(currentChatIndex);
+                } else {
+                    startNewChat();
+                }
+            } else {
+                startNewChat();
+            }
+        }
+
+        function displayChatHistory() {
+            chatHistoryElement.innerHTML = '';
+            chatHistory.forEach((historyItem, index) => {
+                const listItem = document.createElement('li');
+                const firstUserMessage = historyItem.messages.find(msg => msg.role === 'user');
+                const summaryText = firstUserMessage ? firstUserMessage.text : '새 대화';
+
+                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : '');
+                listItem.dataset.index = index;
+
+                if (index === currentChatIndex) {
+                    listItem.classList.add('active');
+                }
+
+                listItem.addEventListener('click', () => {
+                    loadChatThread(index);
+                    closeSidebar(); // Close sidebar after selecting a chat on mobile
+                });
+                chatHistoryElement.appendChild(listItem);
+            });
+        }
+
+        function loadChatThread(index) {
+            if (index >= 0 && index < chatHistory.length) {
+                currentChatIndex = index;
+                chatContainer.innerHTML = '';
+                initialTextElement.style.display = 'none';
+
+                const threadMessages = chatHistory[currentChatIndex].messages;
+                threadMessages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', message.role);
+                    messageElement.innerHTML = message.role === 'user' ? autoFormatText(message.text) : formatApiResponse(message.text);
+                    chatContainer.appendChild(messageElement);
+                });
+
+                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+                saveChatHistory();
+                displayChatHistory();
+            }
+        }
+
+        function startNewChat() {
+            chatContainer.innerHTML = '';
+            initialTextElement.style.display = 'block';
+            currentChatIndex = -1;
+            saveChatHistory();
+            displayChatHistory();
+            closeSidebar(); // Close sidebar when starting a new chat on mobile
+        }
+
+
+        promptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+        newChatButton.addEventListener('click', startNewChat);
+
+        // Event listener for the menu button to toggle sidebar
+        menuButton.addEventListener('click', () => {
+            document.body.classList.toggle('sidebar-open');
+        });
+
+        // Event listener for the overlay to close sidebar
+        sidebarOverlay.addEventListener('click', () => {
+            closeSidebar();
+        });
+
+        // Function to close the sidebar
+        function closeSidebar() {
+             document.body.classList.remove('sidebar-open');
+        }
+
+
+        function sendMessage() {
+            const prompt = promptInput.value;
+            if (!prompt.trim()) {
+                showMessageBox("질문을 입력해주세요.");
+                return;
+            }
+
+            if (initialTextElement) {
+                initialTextElement.style.display = 'none';
+            }
+
+            if (currentChatIndex === -1) {
+                chatHistory.push({ messages: [] });
+                currentChatIndex = chatHistory.length - 1;
+            }
+
+            const userMessageElement = document.createElement('div');
+            userMessageElement.classList.add('message', 'user');
+            userMessageElement.innerHTML = autoFormatText(prompt);
+            chatContainer.appendChild(userMessageElement);
+            promptInput.value = '';
+            document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+
+            chatHistory[currentChatIndex].messages.push({ role: 'user', text: prompt });
+            saveChatHistory();
+            displayChatHistory();
+
+
+            getGeminiResponse(prompt);
+        }
+
+        async function getGeminiResponse(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            const data = {
+                "contents": [{
+                    "parts": [{"text": prompt}]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const responseData = await response.json();
+                const responseText = responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0] ? responseData.candidates[0].content.parts[0].text : "응답을 받을 수 없습니다.";
+
+
+                const aiMessageElement = document.createElement('div');
+                aiMessageElement.classList.add('message', 'ai');
+                aiMessageElement.innerHTML = formatApiResponse(responseText);
+                chatContainer.appendChild(aiMessageElement);
+                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
+
+                 if (currentChatIndex !== -1) {
+                     chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
+                     saveChatHistory();
+                 }
+
+
+            } catch (error) {
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('message', 'error');
+                errorMessage.textContent = `오류 발생: ${error.message}`;
+                chatContainer.appendChild(errorMessage);
+                console.error("Error:", error);
+            }
+        }
+
+        function autoFormatText(text) {
+            let formattedText = text;
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');
+            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');
+            formattedText = formattedText.replace(/\n/g, '<br>');
+            return formattedText;
+        }
+
+        function formatApiResponse(text) {
+            let formattedText = text;
+
+            formattedText = formattedText.replace(/^\*\s(.*?)$/gm, '<li>$1</li>');
+            if (formattedText.includes('<li>')) {
+                formattedText = '<ul>' + formattedText + '</ul>';
+            }
+
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
+            formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+            formattedText = formattedText.replace(/^>\s(.*?)$/gm, '<blockquote>$1</blockquote>');
+            formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            formattedText = formattedText.replace(/\n/g, '<br>');
+
+            return formattedText;
+        }
+
+        function showMessageBox(message) {
+            const messageBox = document.createElement('div');
+            messageBox.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #ffc107;
+                color: #333;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 100;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            `;
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+            setTimeout(() => {
+                document.body.removeChild(messageBox);
+            }, 3000);
+        }
+
+        window.onload = loadChatHistory;
+
+    </script>
+</body>
+</html>
