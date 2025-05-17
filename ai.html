@@ -154,6 +154,7 @@
              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
         }
 
+
         /* PC Header with fixed logo */
         .pc-header {
             display: none; /* Hidden by default, shown on PC */
@@ -473,7 +474,7 @@
         /* Initial text styling */
         #initialText {
             width: 100%;
-            max-width: 800px;
+            max-width: 90%; /* Adjusted max-width */
             text-align: center;
             font-size: 32px; /* Increased font size */
             font-weight: bold;
@@ -488,7 +489,7 @@
         /* Example conversations styling */
         .example-conversations {
             width: 100%;
-            max-width: 600px; /* Adjusted max-width */
+            max-width: 60%; /* Adjusted max-width to 60% */
             display: flex;
             flex-direction: column;
             align-items: center; /* Center the examples */
@@ -509,7 +510,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            width: 100%;
+            width: 100%; /* Ensure ul takes full width of its container */
         }
 
         .example-conversations li {
@@ -548,7 +549,7 @@
         /* Chat container styling */
         .chat-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 90%; /* Adjusted max-width */
             display: flex;
             flex-direction: column;
             margin-top: 20px;
@@ -568,7 +569,8 @@
             background-color: #fff;
             align-self: flex-start;
             position: relative;
-            max-width: 80%;
+            max-width: 95%; /* Adjusted max-width */
+            width: auto; /* Allow width to be determined by content */
             word-wrap: break-word;
         }
 
@@ -1168,6 +1170,7 @@
             const settings = {
                 darkMode: darkModeToggle.checked
             };
+            // Save settings object as a JSON string
             localStorage.setItem('settings', JSON.stringify(settings));
         }
 
@@ -1176,8 +1179,15 @@
             const savedSettings = localStorage.getItem('settings');
             if (savedSettings) {
                 const settings = JSON.parse(savedSettings);
-                darkModeToggle.checked = settings.darkMode;
-                applyDarkMode(settings.darkMode);
+                // Check if darkMode setting exists and is a boolean
+                if (typeof settings.darkMode === 'boolean') {
+                    darkModeToggle.checked = settings.darkMode;
+                    applyDarkMode(settings.darkMode);
+                } else {
+                    // Default to light mode if setting is invalid
+                    darkModeToggle.checked = false;
+                    applyDarkMode(false);
+                }
             } else {
                 // Default settings if none are saved
                 darkModeToggle.checked = false;
@@ -1643,7 +1653,7 @@
              // Basic Table Handling (simplified)
              // This is a very basic attempt. Full markdown table parsing is complex.
              // Assumes a simple header and rows separated by |
-            formattedText = formattedText.replace(/^(.*?\|.*?\|.*?)<br>[-|\s]+<br>((?:.*?\|.*?\|.*?<br>)*)/gm, (match, headerRow, dataRows) => {
+            formattedText = formattedText.replace(/^(.*?\|.*?\|.*?)<br>[-|\s]+<br>((?:(?:.*?\|.*?\|.*?)(?:<br>|$))*)/gm, (match, headerRow, dataRows) => {
                  const headerCells = headerRow.split('|').map(cell => `<th>${cell.trim()}</th>`).join('');
                  let tableHtml = `<table><thead><tr>${headerCells}</tr></thead><tbody>`;
                  const rows = dataRows.split('<br>').filter(row => row.trim() !== '');
