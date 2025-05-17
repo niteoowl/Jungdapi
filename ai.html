@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUPPLE AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lucide-static@latest"></script>
     <style>
         body {
             margin: 0;
@@ -13,14 +12,50 @@
             display: flex;
             height: 100vh;
             background-color: #f0f0f0;
-            overflow: hidden; /* Prevent body scroll, main-content handles scrolling */
+            overflow: hidden; /* Prevent body scroll */
         }
 
-        /* Styles for when the sidebar is open on mobile */
-        body.sidebar-open .sidebar {
-            transform: translateX(0); /* Slide in the sidebar */
+        /* PC Header with fixed logo */
+        .pc-header {
+            display: none; /* Hidden by default on mobile */
+            position: fixed;
+            top: 0;
+            left: 0; /* Span full width on PC */
+            right: 0;
+            height: 60px; /* Define header height */
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: center; /* Center logo horizontally */
+            align-items: center;
+            z-index: 10; /* Ensure header is above main content */
         }
 
+        .pc-header img {
+            height: 40px; /* Logo size */
+            width: auto;
+        }
+
+        /* Show PC header on larger screens */
+        @media (min-width: 769px) {
+            .pc-header {
+                display: flex; /* Show on PC */
+            }
+             /* Adjust main content padding for fixed header and margin for sidebar */
+             .main-content {
+                 padding-top: 60px; /* Add space for the fixed header */
+                 margin-left: 240px; /* Add margin for the sidebar */
+             }
+             /* Adjust input container position for fixed header and sidebar */
+             .input-container {
+                 bottom: 20px; /* Keep bottom position */
+                 left: 260px; /* Adjust left position to be right of sidebar + padding */
+                 right: 20px; /* Keep right position */
+             }
+        }
+
+
+        /* Sidebar styles */
         .sidebar {
             width: 240px;
             background-color: #f7f7f8;
@@ -30,37 +65,81 @@
             border-right: 1px solid #e0e0e0;
             flex-shrink: 0;
             overflow-y: auto;
-            z-index: 20; /* Ensure sidebar is above main content */
-            /* Mobile styles for sidebar */
-            @media (max-width: 768px) {
-                position: fixed; /* Fix position for sliding effect */
-                top: 0;
-                left: 0;
-                height: 100vh; /* Full height */
-                transform: translateX(-100%); /* Initially hide off-screen */
-                transition: transform 0.3s ease-in-out; /* Smooth slide transition */
-                width: 200px; /* Slightly smaller width on mobile */
+            transition: transform 0.3s ease; /* Smooth transition for mobile */
+            z-index: 20; /* Ensure sidebar is above content/overlay */
+        }
+
+        /* PC Sidebar positioning */
+        @media (min-width: 769px) {
+            .sidebar {
+                position: fixed; /* Fix sidebar position */
+                top: 60px; /* Position below the fixed header */
+                bottom: 0; /* Extend to the bottom */
+                left: 0; /* Align to the left */
+                height: auto; /* Allow height to be determined by top/bottom */
+                transform: translateX(0); /* Ensure it's visible */
+                box-shadow: none; /* Remove mobile shadow */
+                border-top: 1px solid #e0e0e0; /* Add top border for PC */
             }
         }
 
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 10px;
-             /* Hide sidebar header logo on mobile as it moves to main content header */
-            @media (max-width: 768px) {
-                display: none;
+
+        /* Mobile sidebar positioning */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%); /* Hide sidebar off-screen by default */
+                box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Add shadow when open */
+                padding-top: 60px; /* Add padding for mobile header space */
+            }
+            .sidebar.open {
+                transform: translateX(0); /* Slide in when open */
             }
         }
+
+
+        .sidebar-header {
+             display: none; /* Hidden by default on PC */
+             align-items: center;
+             justify-content: center; /* Center logo horizontally within sidebar */
+             padding-bottom: 20px;
+             border-bottom: 1px solid #e0e0e0;
+             margin-bottom: 10px;
+        }
+
+        /* Show sidebar header on mobile */
+        @media (max-width: 768px) {
+            .sidebar-header {
+                display: flex; /* Show on mobile */
+                position: fixed; /* Fix header inside sidebar */
+                top: 0;
+                left: 0;
+                width: 100%; /* Full width of sidebar */
+                height: 60px; /* Define header height */
+                background-color: #f7f7f8; /* Match sidebar background */
+                z-index: 25; /* Ensure it's above sidebar content */
+                padding-top: 0; /* Remove padding top */
+                padding-bottom: 0; /* Remove padding bottom */
+                border-bottom: none; /* Remove border */
+            }
+             .sidebar-header img {
+                 height: 30px; /* Smaller logo on mobile header */
+             }
+        }
+
 
         .sidebar-header img {
              height: 40px;
              width: auto;
              max-width: 100%;
              border-radius: 5px;
+        }
+
+        .sidebar-header h1 {
+            display: none;
         }
 
         .sidebar-menu {
@@ -94,18 +173,18 @@
             height: 20px;
         }
 
-        /* Hide menu text on collapsed mobile sidebar */
-        @media (max-width: 768px) {
-             body:not(.sidebar-open) .sidebar-menu li span {
-                 display: none;
+        /* Mobile sidebar menu item text */
+         @media (max-width: 768px) {
+             .sidebar-menu li span {
+                 display: none; /* Hide text */
              }
-             body:not(.sidebar-open) .sidebar-menu li img {
-                 margin-right: 0; /* Remove margin when text is hidden */
+             .sidebar-menu li img {
+                 margin-right: 0; /* Remove margin */
              }
-             body:not(.sidebar-open) .sidebar-menu li {
-                 justify-content: center; /* Center icons when text is hidden */
+             .sidebar-menu li {
+                 justify-content: center; /* Center icons */
              }
-        }
+         }
 
 
         /* Chat History Styles */
@@ -140,90 +219,43 @@
              font-weight: 600;
         }
 
-
+        /* Main content area */
         .main-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             background-color: #fff;
             position: relative;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow main content to scroll */
             padding-bottom: 80px; /* Space for fixed input */
-            /* Adjust left margin when sidebar is open on mobile */
-            @media (max-width: 768px) {
-                 margin-left: 0; /* No margin when sidebar is hidden */
-                 transition: margin-left 0.3s ease-in-out;
-            }
+            /* Removed overflow: hidden; */
         }
 
         /* Custom Scrollbar Styles */
         .main-content::-webkit-scrollbar {
             width: 6px;
         }
+
         .main-content::-webkit-scrollbar-track {
             background: transparent;
             border-radius: 0;
         }
+
         .main-content::-webkit-scrollbar-thumb {
             background: #a0a0a0;
             border-radius: 0;
         }
+
         .main-content::-webkit-scrollbar-thumb:hover {
             background: #808080;
         }
+
         .main-content {
             scrollbar-width: thin;
             scrollbar-color: #a0a0a0 transparent;
         }
 
-        /* Mobile Header for Logo and Menu Button */
-        .mobile-header {
-            display: none; /* Hidden by default on desktop */
-            align-items: center;
-            justify-content: space-between; /* Space out logo and button */
-            padding: 10px 20px;
-            background-color: #fff; /* Match main content background */
-            border-bottom: 1px solid #e0e0e0;
-            flex-shrink: 0; /* Prevent shrinking */
-            @media (max-width: 768px) {
-                display: flex; /* Show on mobile */
-                justify-content: center; /* Center logo */
-                position: relative; /* For absolute positioning of button */
-            }
-        }
-
-        .mobile-header .menu-button {
-            display: none; /* Hidden by default on desktop */
-             background: none;
-             border: none;
-             cursor: pointer;
-             padding: 0;
-             position: absolute; /* Position button absolutely */
-             left: 10px; /* Position on the left */
-             top: 50%; /* Vertically center */
-             transform: translateY(-50%);
-             z-index: 10; /* Ensure button is clickable */
-            @media (max-width: 768px) {
-                display: block; /* Show on mobile */
-            }
-        }
-
-         .mobile-header .menu-button img {
-             width: 24px;
-             height: 24px;
-         }
-
-
-        .mobile-header .supple-logo-mobile {
-             height: 30px; /* Adjust size for mobile header */
-             width: auto;
-             max-width: 150px; /* Max width for logo */
-             @media (min-width: 769px) {
-                 display: none; /* Hide on desktop */
-             }
-        }
-
-
+        /* Initial text styling */
         #initialText {
             width: 100%;
             max-width: 800px;
@@ -237,6 +269,7 @@
             align-self: center;
         }
 
+        /* Chat container styling */
         .chat-container {
             width: 100%;
             max-width: 800px;
@@ -249,6 +282,7 @@
             align-self: center;
         }
 
+        /* Message styling */
         .message {
             padding: 12px 20px;
             border-radius: 20px;
@@ -274,47 +308,158 @@
             border-top-left-radius: 0;
             padding: 0;
             box-shadow: none;
+            width: 100%; /* Allow AI message container to take full width */
         }
 
-        /* Add CSS rules to remove default margins/padding for elements within .message.ai */
+        /* Reset default margins/padding for elements within .message.ai */
         .message.ai b,
         .message.ai strong,
         .message.ai em,
-        .message.ai code {
-            margin: 0;
-            padding: 0;
-        }
-
+        .message.ai code,
         .message.ai ul,
+        .message.ai ol, /* Added ol */
         .message.ai blockquote,
+        .message.ai pre,
+        .message.ai li,
+        .message.ai table,
+        .message.ai h1, .message.ai h2, .message.ai h3, .message.ai h4, .message.ai h5, .message.ai h6, /* Added headings */
+        .message.ai p, .message.ai a, .message.ai img, .message.ai hr /* Added paragraph, link, image, hr */
+         {
+            margin: 0;
+            padding: 0;
+            /* Add specific padding/margin back in the markdown styles below */
+        }
+
+        .message.ai ul {
+             list-style: disc; /* Restore list style for ul */
+             padding-left: 20px; /* Add padding for list indentation */
+             margin-top: 5px; /* Add margin */
+             margin-bottom: 5px; /* Add margin */
+        }
+
+        .message.ai ol { /* Added ol styles */
+             list-style: decimal; /* Restore list style for ol */
+             padding-left: 20px; /* Add padding for list indentation */
+             margin-top: 5px; /* Add margin */
+             margin-bottom: 5px; /* Add margin */
+        }
+
+
+         .message.ai li {
+             margin-bottom: 5px; /* Add margin between list items */
+         }
+
+
+        /* Styling for AI response markdown elements */
         .message.ai pre {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
         }
 
-        .message.ai li {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+        .message.ai code {
+             background-color: #e9e9eb;
+             padding: 2px 5px;
+             border-radius: 4px;
+             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+             font-size: 0.9em;
         }
 
+        .message.ai pre code {
+             background-color: transparent;
+             padding: 0;
+             border-radius: 0;
+        }
+
+        .message.ai blockquote {
+            border-left: 4px solid #ccc;
+            margin: 10px 0;
+            padding: 10px 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .message.ai table {
+            border-collapse: collapse;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .message.ai th,
+        .message.ai td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .message.ai th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .message.ai tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .message.ai h1, .message.ai h2, .message.ai h3, .message.ai h4, .message.ai h5, .message.ai h6 { /* Added heading styles */
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .message.ai h1 { font-size: 2em; }
+        .message.ai h2 { font-size: 1.5em; }
+        .message.ai h3 { font-size: 1.2em; }
+        .message.ai h4 { font-size: 1em; }
+        .message.ai h5 { font-size: 0.8em; }
+        .message.ai h6 { font-size: 0.7em; }
+
+        .message.ai p { /* Added paragraph styles */
+            margin-bottom: 10px;
+        }
+
+        .message.ai a { /* Added link styles */
+            color: #1a73e8; /* Google Blue */
+            text-decoration: none;
+        }
+
+        .message.ai a:hover {
+            text-decoration: underline;
+        }
+
+        .message.ai img { /* Added image styles */
+            max-width: 100%;
+            height: auto;
+            display: block; /* Prevent extra space below image */
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .message.ai hr { /* Added horizontal rule styles */
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+
+
+        /* Arrow styling - Removed */
         .message::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .message.user::before,
-        .message.ai::before {
             display: none;
         }
 
+
+        /* Input container styling */
         .input-container {
             display: flex;
-            left: 300px; /* Desktop left position */
+            left: 300px; /* Default PC position (sidebar width + padding) */
             right: 20px;
             border: 1px solid #ccc;
             border-radius: 25px;
@@ -325,12 +470,16 @@
             bottom: 20px;
             box-sizing: border-box;
             z-index: 10;
-            /* Adjust left position for mobile when sidebar is closed */
-            @media (max-width: 768px) {
-                left: 20px; /* Adjust left for mobile */
-                right: 20px;
-            }
         }
+
+        /* Mobile input container position */
+         @media (max-width: 768px) {
+             .input-container {
+                 left: 20px; /* Adjust left position for mobile */
+                 right: 20px;
+             }
+         }
+
 
         .input-container input {
             flex-grow: 1;
@@ -353,6 +502,53 @@
         .input-container button img {
             width: 24px;
             height: 24px;
+        }
+
+        /* Menu Button for Mobile */
+        .menu-button {
+            display: none; /* Hidden by default on PC */
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 30; /* Ensure button is on top */
+        }
+
+        .menu-button img {
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+
+        /* Show menu button on mobile */
+        @media (max-width: 768px) {
+            .menu-button {
+                display: block;
+            }
+             /* Adjust main content margin when menu is closed on mobile */
+             .main-content {
+                 margin-left: 0;
+             }
+        }
+
+        /* Overlay when sidebar is open on mobile */
+        .overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            z-index: 15; /* Below sidebar, above main content */
+        }
+
+        .overlay.visible {
+            display: block;
         }
 
         /* Functions and Suggestions - Kept original styling */
@@ -404,31 +600,22 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-         /* Overlay to close sidebar when clicking outside on mobile */
-        .sidebar-overlay {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-            z-index: 15; /* Below sidebar, above main content */
-            @media (max-width: 768px) {
-                body.sidebar-open & {
-                    display: block; /* Show when sidebar is open */
-                }
-            }
-        }
-
 
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <div class="menu-button" id="menuButton">
+        <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" alt="Menu">
+    </div>
+
+    <div class="pc-header">
+        <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고">
+    </div>
+
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고 (데스크톱)">
-            </div>
+            <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고">
+        </div>
         <ul class="sidebar-menu">
             <li class="active">
                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/message-square.svg" alt="Message">
@@ -465,15 +652,9 @@
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="mobile-header">
-             <button class="menu-button" id="menuButton">
-                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/menu.svg" alt="메뉴 열기">
-             </button>
-             <img src="https://i.postimg.cc/XvWHmKZt/001-78.png" alt="SUPPLE 로고 (모바일)" class="supple-logo-mobile">
-             <div></div>
-        </div>
+    <div class="overlay" id="overlay"></div>
 
+    <div class="main-content" id="mainContent">
         <div id="initialText">무엇을 도와드릴까요?</div>
         <div class="chat-container" id="chatContainer">
             </div>
@@ -486,97 +667,108 @@
         </button>
     </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 
     <script>
         const promptInput = document.getElementById('promptInput');
         const sendButton = document.getElementById('sendButton');
         const chatContainer = document.getElementById('chatContainer');
         const initialTextElement = document.getElementById('initialText');
-        const chatHistoryElement = document.getElementById('chatHistory');
-        const newChatButton = document.getElementById('newChatButton');
+        const chatHistoryElement = document.getElementById('chatHistory'); // Get the history list element
+        const newChatButton = document.getElementById('newChatButton'); // Get the new chat button
+        const mainContent = document.getElementById('mainContent'); // Get the main content area for scrolling
+        const sidebar = document.getElementById('sidebar'); // Get the sidebar element
         const menuButton = document.getElementById('menuButton'); // Get the menu button
-        const sidebar = document.querySelector('.sidebar'); // Get the sidebar
-        const sidebarOverlay = document.getElementById('sidebarOverlay'); // Get the overlay
+        const overlay = document.getElementById('overlay'); // Get the overlay
         const apiKey = 'AIzaSyCIg1Hlmhm4ZYPi6TtPBqkhXsJJsdXJfWY'; // 여기에 실제 API 키를 넣으세요.
 
+        // Array to store chat history data
         let chatHistory = [];
+        // Variable to track the index of the currently active chat thread
         let currentChatIndex = -1;
 
+        // Save chat history and current index to localStorage
         function saveChatHistory() {
             localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
             localStorage.setItem('currentChatIndex', currentChatIndex);
         }
 
+        // Load chat history and current index from localStorage
         function loadChatHistory() {
             const savedHistory = localStorage.getItem('chatHistory');
             const savedIndex = localStorage.getItem('currentChatIndex');
 
             if (savedHistory) {
                 chatHistory = JSON.parse(savedHistory);
-                displayChatHistory();
+                displayChatHistory(); // Display loaded history in the sidebar
 
                 if (savedIndex !== null && chatHistory[savedIndex]) {
                     currentChatIndex = parseInt(savedIndex, 10);
-                    loadChatThread(currentChatIndex);
+                    loadChatThread(currentChatIndex); // Load the last active chat thread
                 } else {
+                     // If no valid index saved or chatHistory is empty, start fresh
                     startNewChat();
                 }
             } else {
+                 // If no history saved, start fresh
                 startNewChat();
             }
         }
 
+        // Display chat history in the sidebar
         function displayChatHistory() {
-            chatHistoryElement.innerHTML = '';
+            chatHistoryElement.innerHTML = ''; // Clear current history display
             chatHistory.forEach((historyItem, index) => {
                 const listItem = document.createElement('li');
+                // Display the first user message as the history item summary
                 const firstUserMessage = historyItem.messages.find(msg => msg.role === 'user');
                 const summaryText = firstUserMessage ? firstUserMessage.text : '새 대화';
 
-                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : '');
-                listItem.dataset.index = index;
+                listItem.textContent = summaryText.substring(0, 30) + (summaryText.length > 30 ? '...' : ''); // Truncate for summary
+                listItem.dataset.index = index; // Store index for loading full conversation
 
+                // Add active class if this is the current chat
                 if (index === currentChatIndex) {
                     listItem.classList.add('active');
                 }
 
                 listItem.addEventListener('click', () => {
-                    loadChatThread(index);
-                    closeSidebar(); // Close sidebar after selecting a chat on mobile
+                    loadChatThread(index); // Load the clicked conversation
+                    closeMobileMenu(); // Close menu after selecting chat on mobile
                 });
                 chatHistoryElement.appendChild(listItem);
             });
         }
 
+        // Load a specific chat thread into the main chat area
         function loadChatThread(index) {
             if (index >= 0 && index < chatHistory.length) {
                 currentChatIndex = index;
-                chatContainer.innerHTML = '';
-                initialTextElement.style.display = 'none';
+                chatContainer.innerHTML = ''; // Clear current chat display
+                initialTextElement.style.display = 'none'; // Hide initial text
 
                 const threadMessages = chatHistory[currentChatIndex].messages;
                 threadMessages.forEach(message => {
                     const messageElement = document.createElement('div');
                     messageElement.classList.add('message', message.role);
-                    messageElement.innerHTML = message.role === 'user' ? autoFormatText(message.text) : formatApiResponse(message.text);
+                     // Use formatApiResponse for both user and AI messages for consistent markdown handling
+                    messageElement.innerHTML = formatApiResponse(message.text, message.role);
                     chatContainer.appendChild(messageElement);
                 });
 
-                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
-                saveChatHistory();
-                displayChatHistory();
+                scrollToBottom(); // Scroll to bottom after loading thread
+                saveChatHistory(); // Save the current index
+                displayChatHistory(); // Update sidebar active state
             }
         }
 
+        // Start a new chat conversation
         function startNewChat() {
-            chatContainer.innerHTML = '';
-            initialTextElement.style.display = 'block';
-            currentChatIndex = -1;
-            saveChatHistory();
-            displayChatHistory();
-            closeSidebar(); // Close sidebar when starting a new chat on mobile
+            chatContainer.innerHTML = ''; // Clear current chat display
+            initialTextElement.style.display = 'block'; // Show initial text
+            currentChatIndex = -1; // No active chat thread initially
+            saveChatHistory(); // Save the updated index
+            displayChatHistory(); // Update sidebar (no active item)
+            closeMobileMenu(); // Close menu after starting new chat on mobile
         }
 
 
@@ -588,27 +780,30 @@
         });
 
         sendButton.addEventListener('click', sendMessage);
-        newChatButton.addEventListener('click', startNewChat);
+        newChatButton.addEventListener('click', startNewChat); // Add event listener to new chat button
 
-        // Event listener for the menu button to toggle sidebar
+        // Mobile menu toggle functionality
         menuButton.addEventListener('click', () => {
-            document.body.classList.toggle('sidebar-open');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('visible');
         });
 
-        // Event listener for the overlay to close sidebar
-        sidebarOverlay.addEventListener('click', () => {
-            closeSidebar();
+        // Close mobile menu when clicking overlay
+        overlay.addEventListener('click', () => {
+            closeMobileMenu();
         });
 
-        // Function to close the sidebar
-        function closeSidebar() {
-             document.body.classList.remove('sidebar-open');
+        // Function to close the mobile menu
+        function closeMobileMenu() {
+             sidebar.classList.remove('open');
+             overlay.classList.remove('visible');
         }
 
 
         function sendMessage() {
             const prompt = promptInput.value;
             if (!prompt.trim()) {
+                 // Use a simple message box instead of alert
                 showMessageBox("질문을 입력해주세요.");
                 return;
             }
@@ -617,6 +812,7 @@
                 initialTextElement.style.display = 'none';
             }
 
+            // If no active chat thread, create a new one
             if (currentChatIndex === -1) {
                 chatHistory.push({ messages: [] });
                 currentChatIndex = chatHistory.length - 1;
@@ -624,14 +820,17 @@
 
             const userMessageElement = document.createElement('div');
             userMessageElement.classList.add('message', 'user');
-            userMessageElement.innerHTML = autoFormatText(prompt);
+            // Use formatApiResponse for user messages as well
+            userMessageElement.innerHTML = formatApiResponse(prompt, 'user');
             chatContainer.appendChild(userMessageElement);
             promptInput.value = '';
-            document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
 
+            scrollToBottom(); // Scroll to bottom after sending user message
+
+            // Add user message to the current history thread
             chatHistory[currentChatIndex].messages.push({ role: 'user', text: prompt });
-            saveChatHistory();
-            displayChatHistory();
+            saveChatHistory(); // Save history after adding user message
+            displayChatHistory(); // Update sidebar display (adds new item if it's the first message of a new thread)
 
 
             getGeminiResponse(prompt);
@@ -642,11 +841,23 @@
             const headers = {
                 'Content-Type': 'application/json'
             };
+             // Include previous messages in the request for context
+            const contents = chatHistory[currentChatIndex].messages.map(msg => ({
+                 role: msg.role === 'user' ? 'user' : 'model', // API expects 'user' or 'model'
+                 parts: [{ text: msg.text }]
+            }));
+
+             // Add the current user prompt to the contents
+            contents.push({
+                 role: 'user',
+                 parts: [{ text: prompt }]
+            });
+
+
             const data = {
-                "contents": [{
-                    "parts": [{"text": prompt}]
-                }]
+                "contents": contents
             };
+
 
             try {
                 const response = await fetch(url, {
@@ -659,18 +870,23 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const responseData = await response.json();
+                // Check if candidates and parts exist before accessing text
                 const responseText = responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0] ? responseData.candidates[0].content.parts[0].text : "응답을 받을 수 없습니다.";
 
 
                 const aiMessageElement = document.createElement('div');
                 aiMessageElement.classList.add('message', 'ai');
-                aiMessageElement.innerHTML = formatApiResponse(responseText);
+                // Use formatApiResponse for AI messages
+                aiMessageElement.innerHTML = formatApiResponse(responseText, 'ai');
                 chatContainer.appendChild(aiMessageElement);
-                document.querySelector('.main-content').scrollTop = document.querySelector('.main-content').scrollHeight;
 
+                scrollToBottom(); // Scroll to bottom after receiving AI message
+
+
+                // Add AI message to the current history thread
                  if (currentChatIndex !== -1) {
                      chatHistory[currentChatIndex].messages.push({ role: 'ai', text: responseText });
-                     saveChatHistory();
+                     saveChatHistory(); // Save history after adding AI message
                  }
 
 
@@ -680,34 +896,138 @@
                 errorMessage.textContent = `오류 발생: ${error.message}`;
                 chatContainer.appendChild(errorMessage);
                 console.error("Error:", error);
+                scrollToBottom(); // Scroll to bottom even on error
             }
         }
 
-        function autoFormatText(text) {
+        // Improved markdown formatting function
+        function formatApiResponse(text, role) {
             let formattedText = text;
-            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');
-            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');
+
+            // Basic newline conversion
             formattedText = formattedText.replace(/\n/g, '<br>');
-            return formattedText;
-        }
 
-        function formatApiResponse(text) {
-            let formattedText = text;
-
-            formattedText = formattedText.replace(/^\*\s(.*?)$/gm, '<li>$1</li>');
-            if (formattedText.includes('<li>')) {
-                formattedText = '<ul>' + formattedText + '</ul>';
+            // Apply different formatting based on role if needed, but for now, keep it mostly unified
+            // User messages might not need as complex markdown rendering as AI responses.
+            if (role === 'user') {
+                 // Simple formatting for user messages
+                 formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong style="font-size: 1.1em;">$1</strong>');
+                 formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');
+                 formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>'); // Inline code for user too
+                 return formattedText;
             }
 
-            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
+
+            // Formatting for AI responses (more comprehensive markdown)
+
+            // Headings (#, ##, etc.)
+            formattedText = formattedText.replace(/^######\s(.*)$/gm, '<h6>$1</h6>');
+            formattedText = formattedText.replace(/^#####\s(.*)$/gm, '<h5>$1</h5>');
+            formattedText = formattedText.replace(/^####\s(.*)$/gm, '<h4>$1</h4>');
+            formattedText = formattedText.replace(/^###\s(.*)$/gm, '<h3>$1</h3>');
+            formattedText = formattedText.replace(/^##\s(.*)$/gm, '<h2>$1</h2>');
+            formattedText = formattedText.replace(/^#\s(.*)$/gm, '<h1>$1</h1>');
+
+
+            // Code blocks (```) - Handle before other formatting to avoid issues inside code
+            formattedText = formattedText.replace(/```([\w\W]*?)```/g, (match, codeContent) => {
+                // Remove leading/trailing newlines from code content
+                const trimmedCode = codeContent.trim();
+                return `<pre><code>${trimmedCode}</code></pre>`;
+            });
+
+            // In-line code (`) - Handle after code blocks
             formattedText = formattedText.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            // Bold text (**...**)
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b style="font-size: 1.1em;">$1</b>');
+
+            // Italic text (_..._) - Use <em> for semantic correctness
+            formattedText = formattedText.replace(/_(.*?)_/g, '<em style="font-size: 1.1em;">$1</em>');
+
+            // Bullet points (*) or (-)
+            // This is a simplified approach. A more robust parser would handle nested lists.
+            formattedText = formattedText.replace(/^[\*-]\s(.*?)$/gm, '<li>$1</li>');
+            if (formattedText.includes('<li>')) {
+                 // Wrap consecutive list items in <ul>
+                 formattedText = formattedText.replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>');
+            }
+
+             // Ordered list (1., 2., etc.)
+            formattedText = formattedText.replace(/^\d+\.\s(.*?)$/gm, '<li>$1</li>');
+            // Check if there are list items that should be in an ordered list
+            const potentialOlItems = formattedText.match(/<li>.*?<\/li>/g);
+            if (potentialOlItems) {
+                let inOlBlock = false;
+                formattedText = formattedText.split('<br>').map(line => {
+                    if (/^\d+\.\s/.test(line.trim())) {
+                        if (!inOlBlock) {
+                            inOlBlock = true;
+                            return '<ol><li>' + line.replace(/^\d+\.\s/, '').trim() + '</li>';
+                        } else {
+                            return '<li>' + line.replace(/^\d+\.\s/, '').trim() + '</li>';
+                        }
+                    } else {
+                        if (inOlBlock) {
+                            inOlBlock = false;
+                            return '</ol>' + line;
+                        } else {
+                            return line;
+                        }
+                    }
+                }).join('<br>');
+                 // Close the last ol tag if needed
+                if (inOlBlock) {
+                    formattedText += '</ol>';
+                }
+                // Clean up any remaining temporary list item tags not wrapped in ol/ul
+                 formattedText = formattedText.replace(/<li>(.*?)<\/li>/g, '$1'); // This might need refinement depending on exact markdown output
+            }
+
+
+            // Blockquote (>)
             formattedText = formattedText.replace(/^>\s(.*?)$/gm, '<blockquote>$1</blockquote>');
-            formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-            formattedText = formattedText.replace(/\n/g, '<br>');
+
+             // Basic Table Handling (simplified)
+             // This is a very basic attempt. Full markdown table parsing is complex.
+             // Assumes a simple header and rows separated by |
+            formattedText = formattedText.replace(/^(.*?\|.*?\|.*?)<br>[-|\s]+<br>((?:.*?\|.*?\|.*?<br>)*)/gm, (match, headerRow, dataRows) => {
+                 const headerCells = headerRow.split('|').map(cell => `<th>${cell.trim()}</th>`).join('');
+                 let tableHtml = `<table><thead><tr>${headerCells}</tr></thead><tbody>`;
+                 const rows = dataRows.split('<br>').filter(row => row.trim() !== '');
+                 rows.forEach(row => {
+                     const dataCells = row.split('|').map(cell => `<td>${cell.trim()}</td>`).join('');
+                     tableHtml += `<tr>${dataCells}</tr>`;
+                 });
+                 tableHtml += `</tbody></table>`;
+                 return tableHtml;
+             });
+
+            // Links ([text](url))
+            formattedText = formattedText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+            // Images (![alt text](url))
+            formattedText = formattedText.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+
+            // Horizontal Rule (--- or ***)
+            formattedText = formattedText.replace(/<br>[-*_]{3,}<br>/g, '<hr>');
+            formattedText = formattedText.replace(/^[-*_]{3,}<br>/gm, '<hr>'); // Handle if it's at the start of a line
+            formattedText = formattedText.replace(/<br>[-*_]{3,}$/gm, '<hr>'); // Handle if it's at the end of a line
+
 
             return formattedText;
         }
 
+        // Function to smoothly scroll to the bottom of the chat container
+        function scrollToBottom() {
+             mainContent.scrollTo({
+                 top: mainContent.scrollHeight,
+                 behavior: 'smooth'
+             });
+         }
+
+
+        // Simple message box function
         function showMessageBox(message) {
             const messageBox = document.createElement('div');
             messageBox.style.cssText = `
@@ -726,9 +1046,10 @@
             document.body.appendChild(messageBox);
             setTimeout(() => {
                 document.body.removeChild(messageBox);
-            }, 3000);
+            }, 3000); // Remove after 3 seconds
         }
 
+        // Load chat history when the page loads
         window.onload = loadChatHistory;
 
     </script>
