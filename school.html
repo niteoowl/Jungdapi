@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리 학교 정보 포털</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 기본 폰트 및 다크 모드 배경 설정 */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #1a202c; /* 어두운 배경색 */
+            color: #e2e8f0; /* 밝은 글자색 */
+            line-height: 1.6;
+            padding-bottom: 60px; /* 하단 내비게이션 바 높이만큼 여백 추가 */
+        }
+        /* 섹션 숨김/보기를 위한 스타일 */
+        .hidden {
+            display: none;
+        }
+        /* 하단 고정 내비게이션 바 스타일 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2d3748; /* 어두운 배경 */
+            color: #e2e8f0; /* 밝은 글자색 */
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5); /* 상단 그림자 */
+            z-index: 10; /* 다른 요소 위에 표시 */
+        }
+        .bottom-nav ul {
+            display: flex;
+            justify-content: space-around; /* 항목 간 간격 균등 분배 */
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .bottom-nav li {
+            flex-grow: 1; /* 항목이 공간을 채우도록 함 */
+            text-align: center;
+        }
+        .bottom-nav a {
+            display: block; /* 링크 영역 전체 클릭 가능 */
+            padding: 8px 0; /* 패딩 줄임 */
+            text-decoration: none;
+            color: #e2e8f0; /* 밝은 글자색 */
+            font-size: 0.7rem; /* 글자 크기 줄임 */
+            transition: color 0.3s ease; /* 색상 변화 애니메이션 */
+        }
+        .bottom-nav a:hover,
+        .bottom-nav a.active {
+            color: #63b3ed; /* 활성/호버 시 밝은 파란색 */
+            font-weight: bold;
+        }
+         /* 아이콘 스타일 */
+        .nav-icon {
+            display: block;
+            margin: 0 auto 2px; /* 아이콘 위/아래 여백 줄임 */
+            width: 20px; /* 아이콘 크기 줄임 */
+            height: 20px;
+            fill: currentColor; /* 글자색 따라가도록 설정 */
+        }
+
+        /* 카드 스타일 */
+        .card {
+            background-color: #2d3748; /* 어두운 배경 */
+            padding: 16px; /* 패딩 줄임 */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* 그림자 진하게 */
+            color: #e2e8f0; /* 밝은 글자색 */
+        }
+
+        /* 학교생활 버튼 컨테이너 */
+        .school-life-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* 반응형 그리드 */
+            gap: 12px; /* 간격 */
+            margin-bottom: 24px;
+        }
+
+        .school-life-button {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .school-life-button:hover {
+            background-color: #4a5568;
+        }
+         .school-life-button svg {
+             width: 24px;
+             height: 24px;
+             margin-bottom: 4px;
+             fill: currentColor;
+         }
+
+
+        /* 탭 네비게이션 스타일 */
+        .tab-nav {
+            display: flex;
+            border-bottom: 2px solid #4a5568; /* 어두운 하단 테두리 */
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            flex-grow: 1;
+            text-align: center;
+            padding: 10px 0;
+            cursor: pointer;
+            color: #a0aec0; /* 비활성 탭 글자색 */
+            font-weight: bold;
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent; /* 기본 투명 테두리 */
+        }
+        .tab-button.active {
+            color: #63b3ed; /* 활성 탭 글자색 */
+            border-bottom-color: #63b3ed; /* 활성 탭 하단 테두리 */
+        }
+
+        /* 시간표/급식/캘린더 콘텐츠 컨테이너 */
+        .tab-content {
+            /* 탭 내용에 따라 동적으로 높이 조절 */
+        }
+
+        /* 시간표/급식 컨테이너 스타일 (탭 내용 안에 포함) */
+        .timetable-meals-container-detailed {
+            display: grid;
+            grid-template-columns: 1fr; /* 기본적으로 세로 쌓기 */
+            gap: 16px; /* 간격 */
+        }
+
+        @media (min-width: 768px) { /* 미디어 쿼리: md 이상 크기에서 */
+            .timetable-meals-container-detailed {
+                grid-template-columns: 1fr 1fr; /* 2열 그리드 */
+            }
+        }
+
+        /* 시간표 테이블 스타일 */
+        .timetable-table {
+            width: 100%;
+            border-collapse: collapse; /* 테이블 셀 간 간격 제거 */
+            margin-top: 10px; /* 여백 줄임 */
+            font-size: 0.9rem; /* 글자 크기 줄임 */
+        }
+        .timetable-table th,
+        .timetable-table td {
+            border: 1px solid #4a5568; /* 어두운 테두리 */
+            padding: 8px; /* 패딩 줄임 */
+            text-align: center;
+        }
+        .timetable-table th {
+            background-color: #4a5568; /* 헤더 어두운 배경색 */
+            font-weight: bold;
+        }
+        .timetable-table tr:nth-child(even) {
+            background-color: #2d3748; /* 짝수 행 배경색 */
+        }
+
+        /* 급식 정보 스타일 */
+        .meal-info {
+            margin-top: 10px; /* 여백 줄임 */
+            padding: 10px; /* 패딩 줄임 */
+            background-color: #4a5568; /* 어두운 배경 */
+            border-left: 4px solid #63b3ed; /* 왼쪽 파란색 테두리 */
+            border-radius: 4px;
+        }
+        .meal-info h3 {
+            font-size: 1.1rem; /* 글자 크기 줄임 */
+            font-weight: bold;
+            margin-bottom: 8px; /* 여백 줄임 */
+            color: #e2e8f0; /* 밝은 글자 */
+        }
+        .meal-item {
+            margin-bottom: 8px; /* 항목 간 간격 줄임 */
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #718096; /* 점선 구분선 */
+        }
+         .meal-item:last-child {
+             border-bottom: none; /* 마지막 항목은 구분선 없음 */
+             margin-bottom: 0;
+             padding-bottom: 0;
+         }
+        .meal-type {
+            font-weight: bold;
+            color: #e2e8f0; /* 밝은 글자 */
+            display: block; /* 식사명 줄바꿈 */
+            margin-bottom: 2px; /* 여백 줄임 */
+             font-size: 0.9rem;
+        }
+        .meal-menu {
+            color: #cbd5e0; /* 연한 글자색 */
+            display: block; /* 요리명 줄바꿈 */
+            margin-bottom: 2px; /* 여백 줄림 */
+            font-size: 0.9rem;
+        }
+        .meal-details {
+            font-size: 0.8rem; /* 글자 크기 줄임 */
+            color: #a0aec0; /* 더 연한 글자색 */
+        }
+        .meal-details span {
+            margin-right: 8px; /* 상세 정보 항목 간 간격 줄임 */
+        }
+
+        /* 초기 설정 프롬프트 스타일 */
+        .initial-prompt {
+            background-color: #2d3748; /* 어두운 배경 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            color: #e2e8f0;
+        }
+         .initial-prompt label {
+             color: #e2e8f0; /* 밝은 글자색 */
+         }
+         .initial-prompt input[type="number"] {
+             background-color: #1a202c; /* 더 어두운 입력 필드 배경 */
+             border-color: #4a5568; /* 어두운 테두리 */
+             color: #e2e8f0; /* 밝은 글자색 */
+         }
+         .initial-prompt input[type="number"]:focus {
+             ring-color: #63b3ed; /* 포커스 시 밝은 파란색 테두리 */
+         }
+         .initial-prompt button {
+             background-color: #63b3ed; /* 밝은 파란색 버튼 */
+             color: #1a202c; /* 어두운 글자색 */
+             font-weight: bold;
+         }
+         .initial-prompt button:hover {
+             background-color: #4299e1; /* 호버 시 더 진한 파란색 */
+         }
+
+         /* 최신 글 섹션 스타일 */
+        .latest-posts .post-item {
+            border-bottom: 1px solid #4a5568; /* 어두운 구분선 */
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .latest-posts .post-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .latest-posts .post-item a {
+            color: #90cdf4; /* 연한 파란색 링크 */
+            hover:underline;
+        }
+         .latest-posts .post-meta {
+            font-size: 0.8rem;
+            color: #a0aec0; /* 연한 글자색 */
+            margin-top: 4px;
+         }
+         .latest-posts .post-meta svg {
+             display: inline-block;
+             vertical-align: middle;
+             margin-right: 2px;
+             width: 14px;
+             height: 14px;
+             fill: currentColor;
+         }
+         .latest-posts .post-meta span {
+             vertical-align: middle;
+             margin-right: 8px;
+         }
+
+         /* 날짜 표시 스타일 */
+         .date-display {
+             font-size: 1rem;
+             color: #cbd5e0;
+         }
+         .date-buttons button {
+             background-color: #4a5568;
+             color: #e2e8f0;
+             padding: 4px 8px;
+             border-radius: 4px;
+             font-size: 0.8rem;
+             margin-left: 8px;
+             transition: background-color 0.3s ease;
+         }
+         .date-buttons button:hover {
+             background-color: #63b3ed;
+         }
+
+         /* 시간표/급식 접기 토글 스타일 */
+         .fold-toggle {
+             text-align: center;
+             margin-top: 16px;
+             font-size: 0.9rem;
+             color: #90cdf4;
+             cursor: pointer;
+         }
+         .fold-toggle:hover {
+             text-decoration: underline;
+         }
+
+         /* 시간표 이용 방법 링크 */
+         .timetable-help-link {
+             font-size: 0.8rem;
+             color: #a0aec0;
+             text-decoration: underline;
+             cursor: pointer;
+             margin-bottom: 10px;
+             display: block;
+             text-align: right;
+         }
+          .timetable-management-buttons {
+              display: flex;
+              justify-content: flex-end;
+              gap: 8px;
+              margin-top: 10px;
+          }
+         .timetable-management-buttons button {
+             background-color: #4a5568;
+             color: #e2e8f0;
+             padding: 4px 8px;
+             border-radius: 4px;
+             font-size: 0.8rem;
+             transition: background-color 0.3s ease;
+         }
+         .timetable-management-buttons button:hover {
+             background-color: #63b3ed;
+         }
+
+         /* 홈 섹션의 시간표/급식 요약 스타일 */
+         .summary-card {
+             background-color: #2d3748;
+             padding: 12px; /* 패딩 줄임 */
+             border-radius: 8px;
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 연하게 */
+         }
+         .summary-card h3 {
+             font-size: 1rem; /* 글자 크기 줄임 */
+             font-weight: bold;
+             margin-bottom: 6px; /* 여백 줄임 */
+             color: #e2e8f0;
+         }
+         .summary-card .content {
+             font-size: 0.8rem; /* 글자 크기 줄임 */
+             color: #cbd5e0;
+         }
+         .summary-card .link {
+             font-size: 0.8rem;
+             color: #90cdf4;
+             text-decoration: underline;
+             cursor: pointer;
+             display: block;
+             margin-top: 6px;
+         }
+
+
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-bold">부산 남중 학교</h1>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 cursor-pointer hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" onclick="location.reload();">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.582m-15.356-2A8.001 8.001 0 0019.418 15m0 0H15"></path>
+        </svg>
+    </header>
+
+    <main class="container mx-auto mt-4 p-4 flex-grow">
+
+        <section id="initial-setup-prompt" class="initial-prompt hidden">
+            <h2 class="text-xl font-semibold mb-4 text-gray-200">환영합니다!</h2>
+            <p class="text-gray-400 mb-4">시간표와 급식 정보를 자동으로 조회하기 위해 학년과 반을 입력해주세요.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="prompt-grade" class="block text-gray-300 font-bold mb-1">학년</label>
+                    <input type="number" id="prompt-grade" min="1" max="6" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 border-gray-600 text-white">
+                </div>
+                <div>
+                    <label for="prompt-classNm" class="block text-gray-300 font-bold mb-1">반</label>
+                    <input type="number" id="prompt-classNm" min="1" max="20" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 border-gray-600 text-white">
+                </div>
+            </div>
+            <button onclick="saveSchoolInfo()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 ease-in-out w-full">
+                정보 저장 및 시작
+            </button>
+        </section>
+
+        <section id="home-section" class="content-section hidden">
+            <div class="card mb-4 flex justify-between items-center cursor-pointer" onclick="alert('디데이 설정 기능은 개발 예정입니다.')">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                    <span>디데이를 설정 해 보세요!</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <span class="date-display" id="current-date"></span>
+                <div class="date-buttons">
+                    <button id="today-button">오늘</button>
+                    <button id="tomorrow-button">내일</button>
+                    <input type="hidden" id="date" value="">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="summary-card">
+                    <h3 class="text-xl font-semibold mb-2">시간표</h3>
+                    <div class="content" id="timetable-summary">
+                        주말 에는 시간표 가 없어 요
+                    </div>
+                    <span class="link" onclick="showSection('school-life-section'); activateTab('timetable');">다음 주 시간표 보러 가기</span>
+                </div>
+
+                <div class="summary-card">
+                    <h3 class="text-xl font-semibold mb-2">급식</h3>
+                    <div class="content" id="meal-summary">
+                        등록 된 급식 이 없어 요
+                    </div>
+                     <span class="link" onclick="showSection('school-life-section'); activateTab('meal');">급식 상세 보기</span>
+                </div>
+            </div>
+
+            <div class="card mb-6">
+                <div class="flex items-center mb-3">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                         <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                    <h3 class="text-xl font-semibold text-gray-200">캘린더</h3>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    캘린더에 새로운 일정을 등록 해 보세요
+                </div>
+            </div>
+
+            <div class="card latest-posts">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xl font-semibold text-gray-200">최신 글</h3>
+                    <a href="#" class="text-blue-400 hover:underline text-sm">더 보기</a>
+                </div>
+                <div class="post-list space-y-3">
+                    <div class="post-item">
+                        <a href="#">아예 모르는 사람</a>
+                        <div class="post-meta">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                            <span>2</span>
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.1c-.02-.05-.04-.1-.059-.15L2 14l1.338-3.1c-.02-.05-.04-.1-.059-.15A8.841 8.841 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="post-item">
+                        <a href="#">다음 주 수학 여행</a>
+                        <div class="post-meta">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                            <span>1</span>
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.1c-.02-.05-.04-.1-.059-.15L2 14l1.338-3.1c-.02-.05-.04-.1-.059-.15A8.841 8.841 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                            <span>0</span>
+                        </div>
+                    </div>
+                    <div class="post-item">
+                        <a href="#">얼공 한다는 사람 어케 됨?</a>
+                        <div class="post-meta">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                            <span>2</span>
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.1c-.02-.05-.04-.1-.059-.15L2 14l1.338-3.1c-.02-.05-.04-.1-.059-.15A8.841 8.841 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="school-life-section" class="content-section hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-200">학교 생활</h2>
+             <div class="school-life-buttons">
+                 <div class="school-life-button" onclick="alert('학교 홈 기능은 개발 예정입니다.')">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                     학교 홈
+                 </div>
+                 <div class="school-life-button" onclick="alert('성적 관리 기능은 개발 예정입니다.')">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-.707 1.293a1 1 0 01-1.414 0L9 12l-1.293 1.293a1 1 0 01-1.414 0L5 12V5z" clip-rule="evenodd"></path></svg>
+                     성적 관리
+                 </div>
+                 <div class="school-life-button" onclick="alert('숙제 기능은 개발 예정입니다.')">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.83-2.829z"></path></svg>
+                     숙제
+                 </div>
+             </div>
+
+            <div class="tab-nav">
+                <div class="tab-button active" data-tab="timetable">시간표</div>
+                <div class="tab-button" data-tab="meal">급식</div>
+                <div class="tab-button" data-tab="calendar">캘린더</div>
+            </div>
+
+            <div class="tab-content">
+                <div id="timetable-tab-content" class="tab-pane">
+                    <span class="timetable-help-link" onclick="alert('시간표 이용 방법 기능은 개발 예정입니다.')">시간표 이용 방법</span>
+
+                    <div class="card mb-4 flex justify-between items-center cursor-pointer" onclick="alert('시간표 이미지 올리기 기능은 개발 예정입니다.')">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>우리 반 시간표 이미지를 올려 볼까요?</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+
+                    <div class="text-gray-400 text-sm mb-2">
+                         <span id="display-grade"></span>학년 <span id="display-classNm"></span>반
+                    </div>
+
+                    <div class="card" id="timetable-card-detailed">
+                        <div class="timetable-result" id="timetable-result-detailed">
+                             <div class="text-gray-400 text-sm">날짜를 선택하고 시간표를 조회하세요.</div>
+                        </div>
+                    </div>
+
+                    <div class="timetable-management-buttons">
+                         <button onclick="alert('시간표 되돌리기 기능은 개발 예정입니다.')">시간표 되돌리기</button>
+                         <button onclick="alert('시간표 올리기 기능은 개발 예정입니다.')">시간표 올리기</button>
+                    </div>
+
+
+                </div>
+
+                <div id="meal-tab-content" class="tab-pane hidden">
+                    <div class="card" id="meal-card-detailed">
+                         <div class="meal-result" id="meal-result-detailed">
+                             <div class="text-gray-400 text-sm">날짜를 선택하고 급식을 조회하세요.</div>
+                         </div>
+                    </div>
+                </div>
+
+                <div id="calendar-tab-content" class="tab-pane hidden">
+                    <div class="card">
+                        <div class="flex items-center mb-3">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                            </svg>
+                            <h3 class="text-xl font-semibold text-gray-200">캘린더</h3>
+                        </div>
+                        <div class="text-gray-400 text-sm">
+                            캘린더에 새로운 일정을 등록 해 보세요
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section id="announcements-section" class="content-section bg-gray-800 p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-semibold border-b border-gray-600 pb-2 mb-4 text-gray-200">공지사항</h2>
+            <ul class="list-disc list-inside text-gray-400 space-y-2">
+                <li><a href="#" class="text-blue-400 hover:underline">중요 공지: 여름 방학 일정 안내</a> <span class="text-gray-500 text-sm">- 2024-07-01</span></li>
+                <li><a href="#" class="text-blue-400 hover:underline">학교 급식 만족도 조사 실시</a> <span class="text-gray-500 text-sm">- 2024-06-25</span></li>
+                <li><a href="#" class="text-blue-400 hover:underline">도서관 이용 시간 변경 안내</a> <span class="text-gray-500 text-sm">- 2024-06-20</span></li>
+                </ul>
+        </section>
+
+        <section id="community-section" class="content-section bg-gray-800 p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-semibold border-b border-gray-600 pb-2 mb-4 text-gray-200">자유 게시판 (수다방)</h2>
+            <p class="text-gray-400">여기는 학생들이 자유롭게 글을 남기는 공간입니다.</p>
+            <div class="mt-4 border-t border-gray-700 pt-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-200">인기 글</h3>
+                <ul class="list-none p-0 m-0 space-y-2 text-gray-400">
+                    <li><a href="#" class="text-blue-400 hover:underline">중간고사 후기 공유해요!</a> <span class="text-gray-500 text-sm">[댓글 15]</span></li>
+                    <li><a href="#" class="text-blue-400 hover:underline">오늘 급식 메뉴 최고였어요!</a> <span class="text-gray-500 text-sm">[댓글 8]</span></li>
+                    <li><a href="#" class="text-blue-400 hover:underline">방과 후 스터디 그룹 구합니다</a> <span class="text-gray-500 text-sm">[댓글 3]</span></li>
+                </ul>
+                 </div>
+        </section>
+
+
+        <section id="playground-section" class="content-section bg-gray-800 p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-semibold border-b border-gray-600 pb-2 mb-4 text-gray-200">놀이터</h2>
+            <p class="text-gray-400">재미있는 활동이나 게임이 추가될 공간입니다.</p>
+         </section>
+
+         <section id="all-section" class="content-section bg-gray-800 p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-semibold border-b border-gray-600 pb-2 mb-4 text-gray-200">전체 메뉴</h2>
+            <p class="text-gray-400">모든 기능 목록이 표시될 공간입니다.</p>
+         </section>
+
+
+        </main>
+
+    <nav class="bottom-nav">
+        <ul>
+            <li><a href="#" class="nav-link active" data-section="home-section">
+                <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                </svg>
+                홈
+            </a></li>
+            <li><a href="#" class="nav-link" data-section="school-life-section">
+                 <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2V4a2 2 0 00-2 2v5a2 2 0 002 2h2.586l1.591 1.591a.997.997 0 001.414 0l1.591-1.591H14a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a2 2 0 114 0v1a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm3 1a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm3 0a1 1 0 000 2h.01a1 1 0 100-2H13z" clip-rule="evenodd"></path>
+                </svg>
+                학교생활
+            </a></li>
+            <li><a href="#" class="nav-link" data-section="community-section">
+                 <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.1c-.02-.05-.04-.1-.059-.15L2 14l1.338-3.1c-.02-.05-.04-.1-.059-.15A8.841 8.841 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                </svg>
+                커뮤니티
+            </a></li>
+             <li><a href="#" class="nav-link" data-section="playground-section">
+                 <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm-.414 5.586a1 1 0 000-1.414L9.586 10l-3.793-3.793a1 1 0 011.414-1.414L11 8.586l3.793-3.793a1 1 0 011.414 1.414L12.414 10l3.793 3.793a1 1 0 01-1.414 1.414L11 11.414l-3.793 3.793a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                놀이터
+            </a></li>
+             <li><a href="#" class="nav-link" data-section="all-section">
+                 <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                전체
+            </a></li>
+            </ul>
+    </nav>
+
+
+    <script>
+        // 모든 콘텐츠 섹션과 내비게이션 링크를 가져옵니다.
+        const contentSections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const initialPromptSection = document.getElementById('initial-setup-prompt');
+        const homeSection = document.getElementById('home-section');
+        const schoolLifeSection = document.getElementById('school-life-section');
+
+
+        const timetableSummaryDiv = document.getElementById('timetable-summary');
+        const mealSummaryDiv = document.getElementById('meal-summary');
+
+        const timetableDetailedCard = document.getElementById('timetable-card-detailed');
+        const mealDetailedCard = document.getElementById('meal-card-detailed');
+
+        const currentDateSpan = document.getElementById('current-date');
+        const todayButton = document.getElementById('today-button');
+        const tomorrowButton = document.getElementById('tomorrow-button');
+        const dateInput = document.getElementById('date'); // 숨겨진 날짜 입력 필드
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        const displayGradeSpan = document.getElementById('display-grade');
+        const displayClassNmSpan = document.getElementById('display-classNm');
+
+
+        // 페이지 로드 시 실행
+        window.onload = function() {
+            loadSchoolInfo(); // 저장된 학년/반 정보 불러오기
+            showInitialContent(); // 초기 화면 표시 (프롬프트 또는 홈)
+            updateDateDisplay(new Date()); // 현재 날짜 표시
+            setDateInput(new Date()); // 숨겨진 날짜 입력 필드에 오늘 날짜 설정
+
+            // '오늘' 버튼 클릭 이벤트
+            todayButton.addEventListener('click', () => {
+                const today = new Date();
+                updateDateDisplay(today);
+                setDateInput(today);
+                 // 날짜 변경 시 시간표와 급식 자동 조회 (홈 및 학교생활 섹션 모두 업데이트)
+                 getTimetable();
+                 getMeals();
+            });
+
+            // '내일' 버튼 클릭 이벤트
+            tomorrowButton.addEventListener('click', () => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                updateDateDisplay(tomorrow);
+                setDateInput(tomorrow);
+                 // 날짜 변경 시 시간표와 급식 자동 조회 (홈 및 학교생활 섹션 모두 업데이트)
+                 getTimetable();
+                 getMeals();
+            });
+
+            // 탭 버튼 클릭 이벤트 (학교생활 섹션 내에서만 작동)
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+                    activateTab(targetTab);
+                });
+            });
+
+             // 페이지 로드 시 시간표와 급식 정보 자동 조회 (필요시 주석 해제)
+             // getTimetable();
+             // getMeals();
+        };
+
+        // 저장된 학년/반 정보를 불러와 입력 필드에 설정하는 함수
+        function loadSchoolInfo() {
+            const savedGrade = localStorage.getItem('schoolGrade');
+            const savedClassNm = localStorage.getItem('schoolClassNm');
+
+            if (savedGrade && savedClassNm) {
+                // 저장된 정보가 있으면 입력 필드에 설정
+                // 메인 섹션의 입력 필드는 읽기 전용으로 변경되었으므로, 초기 프롬프트 입력 필드에만 설정합니다.
+                 document.getElementById('prompt-grade').value = savedGrade;
+                 document.getElementById('prompt-classNm').value = savedClassNm;
+                 // 학년/반 표시 업데이트
+                 displayGradeSpan.textContent = savedGrade;
+                 displayClassNmSpan.textContent = savedClassNm;
+            }
+        }
+
+        // 학년/반 정보를 저장하고 홈 섹션을 표시하는 함수
+        function saveSchoolInfo() {
+            const grade = document.getElementById('prompt-grade').value;
+            const classNm = document.getElementById('prompt-classNm').value;
+
+            if (grade && classNm) {
+                localStorage.setItem('schoolGrade', grade);
+                localStorage.setItem('schoolClassNm', classNm);
+
+                // 학년/반 표시 업데이트
+                displayGradeSpan.textContent = grade;
+                displayClassNmSpan.textContent = classNm;
+
+
+                showInitialContent(); // 홈 섹션 표시
+                 // 정보 저장 후 시간표와 급식 자동 조회
+                 getTimetable();
+                 getMeals();
+            } else {
+                alert('학년과 반을 모두 입력해주세요.'); // 간단한 유효성 검사
+            }
+        }
+
+        // 초기 화면을 표시하는 함수 (저장된 정보 유무에 따라 다름)
+        function showInitialContent() {
+            const savedGrade = localStorage.getItem('schoolGrade');
+            const savedClassNm = localStorage.getItem('schoolClassNm');
+
+            if (savedGrade && savedClassNm) {
+                // 정보가 저장되어 있으면 홈 섹션 표시
+                initialPromptSection.classList.add('hidden');
+                homeSection.classList.remove('hidden');
+                showSection('home-section'); // 홈 섹션 활성화 및 표시
+                 // 페이지 로드 시 자동으로 시간표와 급식을 불러오려면 아래 주석을 해제하세요.
+                 // getTimetable();
+                 // getMeals();
+            } else {
+                // 정보가 없으면 초기 설정 프롬프트 표시
+                initialPromptSection.classList.remove('hidden');
+                homeSection.classList.add('hidden'); // 홈 섹션 숨김
+                // 다른 섹션도 모두 숨김
+                contentSections.forEach(section => {
+                    if (section.id !== 'initial-setup-prompt') {
+                        section.classList.add('hidden');
+                    }
+                });
+                 // 하단 내비게이션 메뉴의 활성 상태 초기화 (선택 사항)
+                 navLinks.forEach(link => link.classList.remove('active'));
+            }
+        }
+
+
+        // 내비게이션 링크 클릭 이벤트 리스너 추가
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // 기본 링크 이동 방지
+                const targetSectionId = link.getAttribute('data-section');
+                 // 학년/반 정보가 저장되어 있을 때만 섹션 이동 허용
+                 if (localStorage.getItem('schoolGrade') && localStorage.getItem('schoolClassNm')) {
+                     showSection(targetSectionId);
+                 } else {
+                     alert('먼저 학년과 반 정보를 입력해주세요.');
+                 }
+            });
+        });
+
+        // 특정 섹션을 보여주고 나머지 섹션을 숨기는 함수
+        function showSection(sectionId) {
+            contentSections.forEach(section => {
+                 // 초기 프롬프트 섹션은 이 함수에서 제어하지 않음
+                 if (section.id !== 'initial-setup-prompt') {
+                    if (section.id === sectionId) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                 }
+            });
+
+            // 선택된 내비게이션 링크에 활성 상태 표시
+            navLinks.forEach(link => {
+                 if (link.getAttribute('data-section') === sectionId) {
+                     link.classList.add('active'); // 활성 링크 클래스 추가
+                 } else {
+                     link.classList.remove('active');
+                 }
+            });
+
+            // 섹션이 변경될 때마다 해당 섹션의 내용을 로드하는 함수 호출 (필요시)
+            if (sectionId === 'home-section') {
+                // 홈 섹션으로 이동 시 시간표 및 급식 요약 정보 로드 (자동 로드는 필요에 따라 주석 해제)
+                // getTimetable(); // 페이지 로드 시 자동으로 시간표를 표시하려면 주석 해제
+                // getMeals(); // 페이지 로드 시 자동으로 급식을 표시하려면 주석 해제
+            } else if (sectionId === 'school-life-section') {
+                 // 학교생활 섹션으로 이동 시 시간표 탭 기본 활성화 및 데이터 로드
+                 activateTab('timetable');
+            }
+            else if (sectionId === 'announcements-section') {
+                loadAnnouncements(); // 예시: 공지사항 로드 함수 호출
+            } else if (sectionId === 'community-section') {
+                loadCommunity(); // 예시: 커뮤니티 로드 함수 호출
+            } else if (sectionId === 'playground-section') {
+                 loadPlayground(); // 예시: 놀이터 로드 함수 호출
+            } else if (sectionId === 'all-section') {
+                 loadAllMenu(); // 예시: 전체 메뉴 로드 함수 호출
+            }
+        }
+
+        // 탭 활성화 함수 (학교생활 섹션 내에서만 작동)
+        function activateTab(tabId) {
+            // 학교생활 섹션이 활성화된 상태에서만 탭 작동
+            if (!schoolLifeSection.classList.contains('hidden')) {
+                tabButtons.forEach(button => {
+                    if (button.getAttribute('data-tab') === tabId) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+
+                tabPanes.forEach(pane => {
+                    if (pane.id === `${tabId}-tab-content`) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                });
+
+                 // 탭 변경 시 해당 내용 로드 (필요시)
+                 if (tabId === 'timetable') {
+                     getTimetable(); // 시간표 탭 선택 시 시간표 로드
+                 } else if (tabId === 'meal') {
+                     getMeals(); // 급식 탭 선택 시 급식 로드
+                 } else if (tabId === 'calendar') {
+                     loadCalendar(); // 캘린더 탭 선택 시 캘린더 로드 (예시)
+                 }
+            }
+        }
+
+
+        // 날짜를 'YYYY년 M월 D일 요일' 형식으로 업데이트하는 함수
+        function updateDateDisplay(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // getMonth()는 0부터 시작
+            const day = date.getDate();
+            const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const dayOfWeek = dayNames[date.getDay()];
+
+            currentDateSpan.textContent = `${year}년 ${month}월 ${day}일 ${dayOfWeek}`;
+        }
+
+        // 숨겨진 날짜 입력 필드에 'YYYYMMDD' 형식으로 날짜를 설정하는 함수
+        function setDateInput(date) {
+             const year = date.getFullYear();
+             const month = ('0' + (date.getMonth() + 1)).slice(-2); // 두 자리로 포맷
+             const day = ('0' + date.getDate()).slice(-2); // 두 자리로 포맷
+             dateInput.value = `${year}${month}${day}`;
+        }
+
+
+        // NEIS API를 사용하여 시간표를 불러오는 함수
+        async function getTimetable() {
+            // 홈 섹션 요약 및 학교생활 섹션 상세 모두 업데이트
+            const summaryDiv = document.getElementById("timetable-summary");
+            const detailedDiv = document.getElementById("timetable-result-detailed");
+
+            summaryDiv.innerHTML = '<div class="text-gray-400 text-sm">불러오는 중...</div>';
+            detailedDiv.innerHTML = '<div class="text-gray-400 text-sm">시간표를 불러오는 중입니다...</div>';
+
+            // 저장된 학년과 반 정보를 사용
+            const grade = localStorage.getItem('schoolGrade');
+            const classNm = localStorage.getItem('schoolClassNm');
+            const date = dateInput.value; // 숨겨진 입력 필드에서 날짜 가져옴
+
+             if (!grade || !classNm) {
+                 const errorHtml = '<div class="error text-red-400 font-bold text-sm">오류: 학년과 반 정보가 설정되지 않았습니다.</div>';
+                 summaryDiv.innerHTML = errorHtml;
+                 detailedDiv.innerHTML = errorHtml;
+                 return;
+             }
+
+
+            // 날짜 유효성 검사 (간단한 예시)
+            if (!/^\d{8}$/.test(date)) {
+                 const errorHtml = '<div class="error text-red-400 font-bold text-sm">오류: 날짜 형식이 올바르지 않습니다 (YYYYMMDD).</div>';
+                 summaryDiv.innerHTML = errorHtml;
+                 detailedDiv.innerHTML = errorHtml;
+                return;
+            }
+
+            const year = date.substring(0, 4);
+            const month = parseInt(date.substring(4, 6), 10);
+            // 1학기: 3월 ~ 8월, 2학기: 9월 ~ 2월 (학교마다 다를 수 있음)
+            const semester = (month >= 3 && month <= 8) ? 1 : 2;
+            // 연도 계산 시 학년도가 아닌 조회 날짜의 연도를 사용
+            const schoolYear = year;
+
+            // NEIS API URL (샘플 키와 학교 코드 사용 - 실제 사용 시에는 발급받은 키와 학교 코드를 사용하세요)
+            // 샘플 키: cbb4da48e87445f68c2732368454ebc3
+            // 샘플 학교 코드: C10 (교육청 코드), 7171018 (학교 코드) - 샘플 데이터는 없을 수 있습니다.
+             // TODO: 실제 학교 정보로 변경 필요
+            const apiKey = "cbb4da48e87445f68c2732368454ebc3";
+            const eduCode = "C10";
+            const schoolCode = "7171018";
+
+            const apiUrl = `https://open.neis.go.kr/hub/misTimetable?KEY=${apiKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${eduCode}&SD_SCHUL_CODE=${schoolCode}&AY=${schoolYear}&SEM=${semester}&GRADE=${grade}&CLASS_NM=${classNm}&ALL_TI_YMD=${date}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // API 응답 구조 확인 및 데이터 추출
+                if (data.misTimetable && data.misTimetable[1] && data.misTimetable[1].row) {
+                    const timetable = data.misTimetable[1].row;
+
+                    // 홈 섹션 요약 업데이트
+                    if (timetable.length === 0) {
+                         summaryDiv.innerHTML = '시간표 데이터가 없습니다.';
+                    } else {
+                        // 간단한 목록 형태로 표시
+                        let summaryHtml = '';
+                         timetable.forEach(period => {
+                             summaryHtml += `${period.PERIO}교시: ${period.ITRT_CNTNT}<br>`;
+                         });
+                         summaryDiv.innerHTML = summaryHtml;
+                    }
+
+
+                    // 학교생활 섹션 상세 업데이트 (표 형태로)
+                    detailedDiv.innerHTML = ''; // 이전 결과 지우기
+                    if (timetable.length === 0) {
+                         detailedDiv.innerHTML = '<div class="text-gray-400 text-sm">해당 날짜의 시간표 데이터가 없습니다.</div>';
+                    } else {
+                        // 시간표를 표 형태로 생성
+                        let tableHtml = '<table class="timetable-table"><thead><tr><th>교시</th><th>과목</th></tr></thead><tbody>';
+                        timetable.forEach(period => {
+                            tableHtml += `<tr><td>${period.PERIO}</td><td>${period.ITRT_CNTNT}</td></tr>`;
+                        });
+                        tableHtml += '</tbody></table>';
+                        detailedDiv.innerHTML = tableHtml;
+                    }
+
+                } else if (data.RESULT) {
+                    // API 오류 메시지 처리
+                    const errorMsg = data.RESULT.MESSAGE || "시간표 데이터를 불러오는데 실패했습니다.";
+                    const errorHtml = `<div class='error text-red-400 font-bold text-sm'>오류: ${errorMsg}</div>`;
+                    summaryDiv.innerHTML = errorHtml;
+                    detailedDiv.innerHTML = errorHtml;
+                }
+                else {
+                     const errorHtml = '<div class="error text-red-400 font-bold text-sm">시간표 데이터를 찾을 수 없습니다. 응답 구조를 확인하세요.</div>';
+                     summaryDiv.innerHTML = errorHtml;
+                     detailedDiv.innerHTML = errorHtml;
+                }
+
+            } catch (error) {
+                console.error("시간표 조회 중 오류 발생:", error);
+                const errorHtml = '<div class="error text-red-400 font-bold text-sm">시간표를 불러오는 중 네트워크 오류가 발생했습니다.</div>';
+                summaryDiv.innerHTML = errorHtml;
+                detailedDiv.innerHTML = errorHtml;
+            }
+        }
+
+         // NEIS API를 사용하여 급식 정보를 불러오는 함수
+        async function getMeals() {
+            // 홈 섹션 요약 및 학교생활 섹션 상세 모두 업데이트
+            const summaryDiv = document.getElementById("meal-summary");
+            const detailedDiv = document.getElementById("meal-result-detailed");
+
+            summaryDiv.innerHTML = '<div class="text-gray-400 text-sm">불러오는 중...</div>'; // 로딩 메시지 표시
+            detailedDiv.innerHTML = '<div class="text-gray-400 text-sm">급식 정보를 불러오는 중입니다...</div>'; // 로딩 메시지 표시
+
+
+            // 조회 날짜는 숨겨진 입력 필드에서 가져옴
+            const date = dateInput.value;
+
+            // 날짜 유효성 검사 (YYYYMMDD 형식 확인)
+            if (!/^\d{8}$/.test(date)) {
+                const errorHtml = '<div class="error text-red-400 font-bold text-sm">오류: 날짜 형식이 올바르지 않습니다 (YYYYMMDD).</div>';
+                summaryDiv.innerHTML = errorHtml;
+                detailedDiv.innerHTML = errorHtml;
+                return;
+            }
+
+            // NEIS 급식 정보 API URL
+            // 실제 사용 시에는 발급받은 인증키와 학교 정보(시도교육청코드, 행정표준코드)를 사용해야 합니다.
+            // 현재는 샘플 키와 샘플 학교 코드를 사용하고 있어 데이터가 없을 수 있습니다.
+            // TODO: 실제 학교 정보로 변경 필요
+            const apiKey = "cbb4da48e87445f68c2732368454ebc3"; // 발급받은 인증키로 변경하세요
+            const eduCode = "C10"; // 해당 학교의 시도교육청코드로 변경하세요
+            const schoolCode = "7171018"; // 해당 학교의 행정표준코드로 변경하세요
+
+            const apiUrl = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${apiKey}&Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=${eduCode}&SD_SCHUL_CODE=${schoolCode}&MLSV_YMD=${date}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json(); // 응답을 JSON 형태로 파싱
+
+                // API 응답 구조 확인 및 데이터 추출
+                // 'mealServiceDietInfo' 키가 존재하고, 그 안에 데이터 배열이 있는지 확인
+                if (data.mealServiceDietInfo && data.mealServiceDietInfo[1] && data.mealServiceDietInfo[1].row) {
+                    const meals = data.mealServiceDietInfo[1].row; // 급식 데이터 배열
+
+                    // 홈 섹션 요약 업데이트
+                    if (meals.length === 0) {
+                         summaryDiv.innerHTML = '등록 된 급식 이 없어 요';
+                    } else {
+                        let summaryHtml = '';
+                         meals.forEach(meal => {
+                             // 식사명과 요리명만 간단히 표시
+                             const menu = meal.DDISH_NM.replace(/\([^)]*\)/g, '').trim();
+                             summaryHtml += `${meal.MMEAL_SC_NM}: ${menu}<br>`;
+                         });
+                         summaryDiv.innerHTML = summaryHtml;
+                    }
+
+
+                    // 학교생활 섹션 상세 업데이트
+                    detailedDiv.innerHTML = ''; // 이전 결과 지우기
+
+                    if (meals.length === 0) {
+                         detailedDiv.innerHTML = '<div class="text-gray-400 text-sm">해당 날짜의 급식 정보가 없습니다.</div>';
+                    } else {
+                        let mealHtml = '<div class="meal-info">';
+                        meals.forEach(meal => {
+                            // 요리명에서 괄호 안의 내용 (알레르기 정보 등) 제거
+                            const menu = meal.DDISH_NM.replace(/\([^)]*\)/g, '').trim();
+                            // 원산지 정보와 영양 정보가 있는지 확인하고 표시
+                            const originInfo = meal.ORPLC_INFO ? `원산지: ${meal.ORPLC_INFO}` : '';
+                            const nutritionInfo = meal.NTR_INFO ? `영양정보: ${meal.NTR_INFO}` : '';
+
+                            mealHtml += `
+                                <div class="meal-item">
+                                    <span class="meal-type">${meal.MMEAL_SC_NM}:</span>
+                                    <span class="meal-menu">${menu}</span>
+                                    <div class="meal-details">
+                                        <span>칼로리: ${meal.CAL_INFO}</span>
+                                        ${originInfo ? `<span>${originInfo}</span>` : ''}
+                                        ${nutritionInfo ? `<span>${nutritionInfo}</span>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        mealHtml += '</div>';
+                        detailedDiv.innerHTML = mealHtml; // 결과 영역에 HTML 삽입
+                    }
+
+                } else if (data.RESULT) {
+                    // API 오류 메시지 처리 (예: 데이터 없음, 인증 오류 등)
+                    const errorMsg = data.RESULT.MESSAGE || "급식 데이터를 불러오는데 실패했습니다.";
+                    const errorHtml = `<div class='error text-red-400 font-bold text-sm'>오류: ${errorMsg}</div>`;
+                    summaryDiv.innerHTML = errorHtml;
+                    detailedDiv.innerHTML = errorHtml;
+                }
+                 else {
+                     // 예상치 못한 응답 구조
+                     const errorHtml = '<div class="error text-red-400 font-bold text-sm">급식 데이터를 찾을 수 없습니다. API 응답 구조를 확인하세요.</div>';
+                     summaryDiv.innerHTML = errorHtml;
+                     detailedDiv.innerHTML = errorHtml;
+                 }
+
+            } catch (error) {
+                // 네트워크 오류 등 예외 처리
+                console.error("급식 조회 중 오류 발생:", error);
+                const errorHtml = '<div class="error text-red-400 font-bold text-sm">급식을 불러오는 중 네트워크 오류가 발생했습니다.</div>';
+                summaryDiv.innerHTML = errorHtml;
+                detailedDiv.innerHTML = errorHtml;
+            }
+        }
+
+
+        // 공지사항을 불러오는 예시 함수 (실제 구현 필요)
+        function loadAnnouncements() {
+            const announcementsSection = document.getElementById('announcements-section');
+            // 공지사항 섹션의 내용이 이미 HTML에 있으므로, 이 함수는 필요에 따라 서버에서 데이터를 비동기적으로 불러와 업데이트하는 로직을 추가할 때 사용합니다.
+            console.log("공지사항 섹션 로드");
+        }
+
+        // 커뮤니티 정보를 불러오는 예시 함수 (실제 구현 필요)
+        function loadCommunity() {
+             const communitySection = document.getElementById('community-section');
+             // 커뮤니티 섹션의 내용이 이미 HTML에 있으므로, 이 함수는 필요에 따라 서버에서 데이터를 비동기적으로 불러와 업데이트하는 로직을 추가할 때 사용합니다.
+             console.log("수다방 섹션 로드");
+        }
+
+         // 놀이터 섹션을 불러오는 예시 함수 (실제 구현 필요)
+        function loadPlayground() {
+             const playgroundSection = document.getElementById('playground-section');
+             console.log("놀이터 섹션 로드");
+        }
+
+         // 전체 메뉴 섹션을 불러오는 예시 함수 (실제 구현 필요)
+        function loadAllMenu() {
+             const allSection = document.getElementById('all-section');
+             console.log("전체 메뉴 섹션 로드");
+        }
+
+         // 학교생활 섹션을 불러오는 예시 함수 (실제 구현 필요)
+        function loadSchoolLife() {
+             const schoolLifeSection = document.getElementById('school-life-section');
+             console.log("학교생활 섹션 로드");
+             // 학교생활 섹션 진입 시 시간표 탭이 기본으로 활성화되도록 showSection 함수에서 처리
+        }
+
+         // 캘린더 섹션을 불러오는 예시 함수 (실제 구현 필요)
+        function loadCalendar() {
+             const calendarSection = document.getElementById('calendar-tab-content');
+             console.log("캘린더 탭 로드");
+             // 캘린더 내용을 동적으로 로드하거나 표시하는 로직 추가
+         }
+
+
+    </script>
+</body>
+</html>
