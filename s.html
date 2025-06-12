@@ -1,0 +1,529 @@
+import React, { useState, useEffect } from 'react';
+import { RefreshCcw, Search, BarChart3, Bot, ChevronDown, ChevronUp, Info } from 'lucide-react'; // Icons
+
+// Utility function to parse XML to JSON-like object
+const parseXml = (xmlString) => {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+  const result = {};
+
+  const parseNode = (node) => {
+    const obj = {};
+    if (node.hasChildNodes()) {
+      for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        const tagName = child.tagName;
+        if (child.children.length > 0) {
+          if (!obj[tagName]) {
+            obj[tagName] = [];
+          }
+          obj[tagName].push(parseNode(child));
+        } else {
+          obj[tagName] = child.textContent;
+        }
+      }
+    }
+    return obj;
+  };
+
+  if (xmlDoc.documentElement) {
+    result[xmlDoc.documentElement.tagName] = parseNode(xmlDoc.documentElement);
+  }
+  return result;
+};
+
+// Main App Component
+export default function App() {
+  // State for input parameters
+  const [sgId, setSgId] = useState('20231011'); // Default sample value
+  const [sgTypecode, setSgTypecode] = useState('4'); // Default sample value
+  const [sdName, setSdName] = useState('');
+  const [wiwName, setWiwName] = useState('');
+  const [sggName, setSggName] = useState('');
+
+  // State for fetched data
+  const [generalElectionData, setGeneralElectionData] = useState(null);
+  const [electionDetailData, setElectionDetailData] = useState(null);
+
+  // State for AI analysis results
+  const [aiAnalysisResult, setAiAnalysisResult] = useState('');
+
+  // State for loading indicators and errors
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [error, setError] = useState('');
+
+  // State for showing/hiding detail sections
+  const [showGeneralDetails, setShowGeneralDetails] = useState(true);
+  const [showPartyCandidateDetails, setShowPartyCandidateDetails] = useState(true);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(true);
+
+  // API Keys and Endpoints (Placeholder for Canvas environment variables)
+  // Ensure the serviceKey is correctly URL-encoded. It appears to be already, but double-check.
+  const serviceKey = 'E3Eos3zdsfvVFG4mC5qYCljIz3vEjbgfHA0Xnyl4zU7eXYLNaN5Tf9%2FqBILOxzpU%2BMztJySivBxXfKAnK3lg6w%3D%3D'; // User-provided service key, fixed typo: JySivBxXfKAnK3lg6w%3D%3D instead of JyIivBxXfKAnK3lg6w%3D%3D
+  const publicApiEndpoint = 'https://apis.data.go.kr/9760000/VoteXmntckInfoInqireService2';
+  const geminiApiKey = ""; // Canvas provides this dynamically if empty
+
+  // Function to fetch general election data (총선거인수, 투표자수, 투표율)
+  const fetchGeneralElectionData = async () => {
+    setIsLoadingData(true);
+    setError('');
+    const url = new URL(`${publicApiEndpoint}/getVoteXmntckInfoInqire`);
+    url.searchParams.append('serviceKey', serviceKey);
+    url.searchParams.append('sgId', sgId);
+    url.searchParams.append('sgTypecode', sgTypecode);
+    if (sdName) url.searchParams.append('sdName', sdName);
+    if (wiwName) url.searchParams.append('wiwName', wiwName);
+    url.searchParams.append('pageNo', '1');
+    url.searchParams.append('numOfRows', '10');
+
+    const fullUrl = url.toString();
+    console.log("Fetching General Election Data from:", fullUrl); // Log the URL
+
+    try {
+      const response = await fetch(fullUrl);
+      console.log("General Election Data Response Status:", response.status); // Log status
+      console.log("General Election Data Response OK:", response.ok); // Log ok status
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("General Election Data API Error Response:", errorText);
+        throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText.substring(0, 100)}...`);
+      }
+      const xmlText = await response.text();
+      console.log("General Election Data XML Response:", xmlText.substring(0, 500)); // Log part of XML for debugging
+      const parsed = parseXml(xmlText);
+      const data = parsed?.response?.body?.[0]?.items?.[0]?.item?.[0];
+      if (data) {
+        setGeneralElectionData(data);
+      } else {
+        setError("선거 개요 데이터를 찾을 수 없습니다. 입력값을 다시 확인해주세요.");
+        setGeneralElectionData(null);
+      }
+    } catch (err) {
+      console.error("Error fetching general election data:", err);
+      setError(`선거 데이터 조회 실패: ${err.message}. CORS 문제일 수 있습니다. 개발자 도구의 네트워크 탭을 확인해보세요.`);
+      setGeneralElectionData(null);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  // Function to fetch detailed election data (정당별 득표수, 후보자별 득표수)
+  const fetchDetailedElectionData = async () => {
+    setIsLoadingData(true);
+    setError('');
+    const url = new URL(`${publicApiEndpoint}/getVoteXmntckRgstrnInfoInqire`);
+    url.searchParams.append('serviceKey', serviceKey);
+    url.searchParams.append('sgId', sgId);
+    url.searchParams.append('sgTypecode', sgTypecode);
+    if (sggName) url.searchParams.append('sggName', sggName);
+    if (sdName) url.searchParams.append('sdName', sdName);
+    if (wiwName) url.searchParams.append('wiwName', wiwName);
+    url.searchParams.append('pageNo', '1');
+    url.searchParams.append('numOfRows', '10');
+
+    const fullUrl = url.toString();
+    console.log("Fetching Detailed Election Data from:", fullUrl); // Log the URL
+
+    try {
+      const response = await fetch(fullUrl);
+      console.log("Detailed Election Data Response Status:", response.status); // Log status
+      console.log("Detailed Election Data Response OK:", response.ok); // Log ok status
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Detailed Election Data API Error Response:", errorText);
+        throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText.substring(0, 100)}...`);
+      }
+      const xmlText = await response.text();
+      console.log("Detailed Election Data XML Response:", xmlText.substring(0, 500)); // Log part of XML for debugging
+      const parsed = parseXml(xmlText);
+      const data = parsed?.response?.body?.[0]?.items?.[0]?.item?.[0];
+      if (data) {
+        setElectionDetailData(data);
+      } else {
+        setError("상세 선거 데이터를 찾을 수 없습니다. 입력값을 다시 확인해주세요.");
+        setElectionDetailData(null);
+      }
+    } catch (err) {
+      console.error("Error fetching detailed election data:", err);
+      setError(`상세 선거 데이터 조회 실패: ${err.message}. CORS 문제일 수 있습니다. 개발자 도구의 네트워크 탭을 확인해보세요.`);
+      setElectionDetailData(null);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  // Combined fetch function
+  const handleFetchElectionData = async () => {
+    // Clear previous data and errors before new fetch
+    setGeneralElectionData(null);
+    setElectionDetailData(null);
+    setAiAnalysisResult('');
+    setError('');
+    await Promise.all([fetchGeneralElectionData(), fetchDetailedElectionData()]);
+  };
+
+  // Function to call Gemini API for analysis
+  const analyzeElectionDataWithAI = async () => {
+    if (!generalElectionData && !electionDetailData) {
+      setError("분석할 선거 데이터가 없습니다. 먼저 데이터를 조회해주세요.");
+      return;
+    }
+
+    setIsLoadingAI(true);
+    setAiAnalysisResult('');
+    setError('');
+
+    let prompt = `
+      다음은 한국 총선 선거 데이터입니다. 이 데이터를 바탕으로 대수의 법칙 관점에서 어떤 시사점을 얻을 수 있는지, 그리고 선거 이상 징후는 없는지 분석해주세요.
+      데이터에 없는 정보는 가정하지 마세요. 불확실한 내용은 명확히 언급해주세요.
+
+      ---
+      선거 개요 데이터:
+      선거ID: ${generalElectionData?.sgId || 'N/A'}
+      선거종류코드: ${generalElectionData?.sgTypecode || 'N/A'}
+      시도명: ${generalElectionData?.sdName || 'N/A'}
+      구시군명: ${generalElectionData?.wiwName || 'N/A'}
+      총선거인수: ${generalElectionData?.totSunsu || 'N/A'}명
+      총 투표자수: ${generalElectionData?.totTusu || 'N/A'}명
+      투표율: ${generalElectionData?.Turnout || 'N/A'}%
+      선거일 투표 선거인수: ${generalElectionData?.psSunsu || 'N/A'}명
+      거소·사전·선상·재외 선거인수: ${generalElectionData?.psEtcSunsu || 'N/A'}명
+      선거일 투표자수: ${generalElectionData?.psTusu || 'N/A'}명
+      거소·사전·선상·재외 투표자수: ${electionDetailData?.psEtcTusu || 'N/A'}명
+
+      ---
+      선거구별 상세 데이터 (존재하는 경우):
+      선거구명: ${electionDetailData?.sggName || 'N/A'}
+      선거인수: ${electionDetailData?.sunsu || 'N/A'}명
+      투표수: ${electionDetailData?.tusu || 'N/A'}명
+      유효투표수: ${electionDetailData?.yutusu || 'N/A'}명
+      무효투표수: ${electionDetailData?.mutusu || 'N/A'}명
+      기권수: ${electionDetailData?.gigwonsu || 'N/A'}명
+
+      ---
+      정당 및 후보자별 득표수 (존재하는 경우):
+    `;
+
+    // Dynamically add party and candidate vote counts
+    if (electionDetailData) {
+      for (let i = 1; i <= 30; i++) {
+        const jdKey = `jd${String(i).padStart(2, '0')}`;
+        const hbjKey = `hbj${String(i).padStart(2, '0')}`;
+        const dugsuKey = `dugsu${String(i).padStart(2, '0')}`;
+
+        const partyName = electionDetailData[jdKey];
+        const candidateName = electionDetailData[hbjKey];
+        const voteCount = electionDetailData[dugsuKey];
+
+        // Display if either party name or candidate name exists and vote count exists
+        if ((partyName && partyName !== '-') || (candidateName && candidateName !== '-')) {
+          prompt += `  ${partyName && partyName !== '-' ? `정당명${i}: ${partyName}` : ''}`;
+          if (partyName && partyName !== '-' && candidateName && candidateName !== '-') {
+            prompt += ' / ';
+          }
+          prompt += `${candidateName && candidateName !== '-' ? `후보자명${i}: ${candidateName}` : ''}`;
+          prompt += `: 득표수: ${voteCount || '0'}표\n`;
+        }
+      }
+    }
+    prompt += `
+      ---
+      요청 사항:
+      1. 대수의 법칙(Law of Large Numbers) 관점에서 주어진 선거 데이터가 이 법칙을 어떻게 반영하는지 설명해주세요. 특히, 선거인수, 투표자수, 투표율 등 큰 규모의 데이터에서 안정적인 패턴이 보이는지 언급해주세요.
+      2. 선거 이상 징후(Election Anomaly)가 있는지 분석해주세요. 예를 들어, 특정 지역의 비정상적인 투표율, 무효표 비율, 또는 후보자/정당 득표수의 비정상적인 분포 등이 있는지 판단해주세요. 데이터가 제한적이므로, 불확실한 경우에는 '데이터만으로는 판단하기 어렵다'고 명시해주세요.
+      3. 답변은 한국어로 제공해주세요.
+    `;
+
+    // Gemini API call
+    try {
+      const chatHistory = [];
+      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+      const payload = { contents: chatHistory };
+
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (result.candidates && result.candidates.length > 0 &&
+        result.candidates[0].content && result.candidates[0].content.parts &&
+        result.candidates[0].content.parts.length > 0) {
+        const text = result.candidates[0].content.parts[0].text;
+        setAiAnalysisResult(text);
+      } else {
+        throw new Error("Gemini API 응답 구조가 예상과 다릅니다.");
+      }
+    } catch (err) {
+      console.error("Error analyzing data with AI:", err);
+      setError(`AI 분석 중 오류 발생: ${err.message}.`);
+      setAiAnalysisResult('AI 분석에 실패했습니다.');
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-4 sm:p-6 font-inter text-gray-800">
+      <header className="text-center mb-8">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-800 tracking-tight flex items-center justify-center gap-3">
+          <BarChart3 className="text-purple-600" size={36} />
+          AI 총선 분석 시스템
+        </h1>
+        <p className="mt-2 text-lg text-gray-600">선거 데이터 분석 및 AI 기반 이상 징후 탐지</p>
+      </header>
+
+      <main className="max-w-4xl mx-auto space-y-6">
+        {/* Input Form */}
+        <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <Search size={20} /> 선거 정보 입력
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label htmlFor="sgId" className="block text-sm font-medium text-gray-700 mb-1">선거ID (필수)</label>
+              <input
+                type="text"
+                id="sgId"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={sgId}
+                onChange={(e) => setSgId(e.target.value)}
+                placeholder="예: 20231011"
+              />
+            </div>
+            <div>
+              <label htmlFor="sgTypecode" className="block text-sm font-medium text-gray-700 mb-1">선거종류 (필수)</label>
+              <input
+                type="text"
+                id="sgTypecode"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={sgTypecode}
+                onChange={(e) => setSgTypecode(e.target.value)}
+                placeholder="예: 4 (총선)"
+              />
+            </div>
+            <div>
+              <label htmlFor="sdName" className="block text-sm font-medium text-gray-700 mb-1">시도명 (선택)</label>
+              <input
+                type="text"
+                id="sdName"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={sdName}
+                onChange={(e) => setSdName(e.target.value)}
+                placeholder="예: 서울특별시"
+              />
+            </div>
+            <div>
+              <label htmlFor="wiwName" className="block text-sm font-medium text-gray-700 mb-1">구시군명 (선택)</label>
+              <input
+                type="text"
+                id="wiwName"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={wiwName}
+                onChange={(e) => setWiwName(e.target.value)}
+                placeholder="예: 강서구"
+              />
+            </div>
+            <div className="col-span-full">
+              <label htmlFor="sggName" className="block text-sm font-medium text-gray-700 mb-1">선거구명 (선택, 상세 데이터용)</label>
+              <input
+                type="text"
+                id="sggName"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                value={sggName}
+                onChange={(e) => setSggName(e.target.value)}
+                placeholder="예: 강서구갑"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleFetchElectionData}
+            disabled={isLoadingData || !sgId || !sgTypecode}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          >
+            {isLoadingData ? (
+              <>
+                <RefreshCcw className="animate-spin" size={20} />
+                데이터 조회 중...
+              </>
+            ) : (
+              <>
+                <Search size={20} />
+                선거 데이터 조회
+              </>
+            )}
+          </button>
+        </section>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+            <strong className="font-bold">오류!</strong>
+            <span className="block sm:inline ml-2">{error}</span>
+          </div>
+        )}
+
+        {/* General Election Data */}
+        {generalElectionData && (
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center justify-between cursor-pointer" onClick={() => setShowGeneralDetails(!showGeneralDetails)}>
+              <span><Info size={20} className="inline-block mr-2" />선거 개요 데이터</span>
+              {showGeneralDetails ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </h2>
+            {showGeneralDetails && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">선거ID:</span> <span className="font-bold">{generalElectionData.sgId}</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">선거종류코드:</span> <span className="font-bold">{generalElectionData.sgTypecode}</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">시도명:</span> <span className="font-bold">{generalElectionData.sdName || 'N/A'}</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">구시군명:</span> <span className="font-bold">{generalElectionData.wiwName || 'N/A'}</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">총 선거인수:</span> <span className="font-bold">{generalElectionData.totSunsu}명</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">총 투표자수:</span> <span className="font-bold">{generalElectionData.totTusu}명</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">투표율:</span> <span className="font-bold">{generalElectionData.Turnout}%</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">선거일 투표 선거인수:</span> <span className="font-bold">{generalElectionData.psSunsu}명</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">거소·사전·선상·재외 선거인수:</span> <span className="font-bold">{generalElectionData.psEtcSunsu}명</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">선거일 투표자수:</span> <span className="font-bold">{generalElectionData.psTusu}명</span>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="font-medium text-gray-600">거소·사전·선상·재외 투표자수:</span> <span className="font-bold">{generalElectionData.psEtcTusu}명</span>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Party and Candidate Details */}
+        {electionDetailData && (
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center justify-between cursor-pointer" onClick={() => setShowPartyCandidateDetails(!showPartyCandidateDetails)}>
+              <span><Info size={20} className="inline-block mr-2" />정당 및 후보자별 상세 데이터</span>
+              {showPartyCandidateDetails ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </h2>
+            {showPartyCandidateDetails && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">선거구명:</span> <span className="font-bold">{electionDetailData.sggName || 'N/A'}</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">선거인수:</span> <span className="font-bold">{electionDetailData.sunsu}명</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">투표수:</span> <span className="font-bold">{electionDetailData.tusu}명</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">유효투표수:</span> <span className="font-bold">{electionDetailData.yutusu}명</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">무효투표수:</span> <span className="font-bold">{electionDetailData.mutusu}명</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium text-gray-600">기권수:</span> <span className="font-bold">{electionDetailData.gigwonsu}명</span>
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-semibold text-gray-700 mt-4 mb-2">득표 현황</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {Array.from({ length: 30 }).map((_, i) => {
+                    const jdKey = `jd${String(i + 1).padStart(2, '0')}`;
+                    const hbjKey = `hbj${String(i + 1).padStart(2, '0')}`;
+                    const dugsuKey = `dugsu${String(i + 1).padStart(2, '0')}`;
+
+                    const partyName = electionDetailData[jdKey];
+                    const candidateName = electionDetailData[hbjKey];
+                    const voteCount = electionDetailData[dugsuKey];
+
+                    // Display if either party name or candidate name exists and vote count exists
+                    if ((partyName && partyName !== '-') || (candidateName && candidateName !== '-')) {
+                        return (
+                          <div key={i} className="p-3 bg-blue-50 rounded-lg">
+                            <span className="font-medium text-gray-700">
+                              {partyName && partyName !== '-' ? `${partyName}` : ''}
+                              {partyName && partyName !== '-' && candidateName && candidateName !== '-' ? ' / ' : ''}
+                              {candidateName && candidateName !== '-' ? `${candidateName}` : ''}
+                            : </span>
+                            <span className="font-bold text-blue-800">{voteCount || '0'}표</span>
+                          </div>
+                        );
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* AI Analysis Section */}
+        {(generalElectionData || electionDetailData) && (
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
+              <Bot size={20} /> AI 선거 분석
+            </h2>
+            <button
+              onClick={analyzeElectionDataWithAI}
+              disabled={isLoadingAI || isLoadingData || (!generalElectionData && !electionDetailData)}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            >
+              {isLoadingAI ? (
+                <>
+                  <RefreshCcw className="animate-spin" size={20} />
+                  AI 분석 중...
+                </>
+              ) : (
+                <>
+                  <BarChart3 size={20} />
+                  AI 분석 실행
+                </>
+              )}
+            </button>
+
+            {aiAnalysisResult && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-700 mb-3 flex items-center justify-between cursor-pointer" onClick={() => setShowAIAnalysis(!showAIAnalysis)}>
+                  <span><Info size={20} className="inline-block mr-2" />AI 분석 결과</span>
+                  {showAIAnalysis ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </h3>
+                {showAIAnalysis && (
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 max-h-96 overflow-y-auto whitespace-pre-wrap">
+                    {aiAnalysisResult}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+      </main>
+
+      <footer className="text-center mt-8 text-gray-500 text-sm">
+        <p>&copy; 2024 AI 총선 분석 시스템. 공공데이터포털 API 활용.</p>
+      </footer>
+    </div>
+  );
+}
