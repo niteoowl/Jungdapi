@@ -3,419 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Gmail</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Gmail">
-    <meta name="theme-color" content="#ffffff">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Gmail%22,%22short_name%22:%22Gmail%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%23ffffff%22,%22icons%22:[{%22src%22:%22https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]}">
-
-    <!-- App Icon -->
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png">
-
+    <title>데이터 내보내기</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
-        
-        body {
-            font-family: 'Google Sans', 'Roboto', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            background-color: #fff;
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+        :root {
+            --zepeto-purple: #7C4DFF;
+            --zepeto-bg: #FFFFFF;
+            --zepeto-gray: #F8F9FB;
         }
 
-        /* Splash Screen */
-        #splash-screen {
-            position: fixed;
-            inset: 0;
-            background-color: white;
-            z-index: 9999;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+            background-color: var(--zepeto-bg);
+            color: #1A1A1A;
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+            word-break: keep-all;
+            overflow-x: hidden;
+        }
+
+        /* Accordion Animation */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .accordion-content.open {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+
+        /* Scroll Box for Policy */
+        .policy-box {
+            height: 120px;
+            overflow-y: auto;
+            background: #F2F2F7;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            border: 1px solid #E5E5EA;
+        }
+        .policy-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .policy-box::-webkit-scrollbar-thumb {
+            background: #D1D1D6;
+            border-radius: 10px;
+        }
+
+        /* Checkbox */
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #D1D1D6;
+            border-radius: 8px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.4s ease-out, visibility 0.4s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fff;
+        }
+        .check-box.active {
+            background-color: var(--zepeto-purple);
+            border-color: var(--zepeto-purple);
+        }
+        .check-box .material-symbols-outlined {
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+        .check-box.active .material-symbols-outlined {
+            display: block;
+        }
+        .check-box.disabled {
+            background-color: #F2F2F7;
+            opacity: 0.5;
         }
 
-        #splash-logo {
-            width: 160px;
-            animation: logo-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @keyframes logo-pop {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        #splash-footer {
-            position: absolute;
-            bottom: 80px;
-            text-align: center;
-        }
-
-        .workspace-label {
-            font-size: 16px;
-            color: #5f6368;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .progress-container {
-            width: 180px;
-            height: 4px;
-            background-color: #f1f3f4;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 30%; height: 100%;
-            background-color: #4285f4;
-            animation: progress-loop 1.4s infinite ease-in-out;
-            position: relative;
-        }
-
-        @keyframes progress-loop {
-            0% { left: -30%; width: 10%; }
-            50% { width: 40%; }
-            100% { left: 100%; width: 10%; }
-        }
-
-        /* Full Sheets */
-        .full-sheet {
+        /* Fixed Button Area */
+        .action-area {
             position: fixed;
-            top: 100%; left: 0; width: 100%; height: 100%;
-            background-color: white;
-            z-index: 1000;
-            transition: top 0.35s cubic-bezier(0, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, #fff 80%, rgba(255,255,255,0));
+            padding: 20px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
+            z-index: 100;
         }
 
-        .full-sheet.open { top: 0; }
-
-        /* Ripple */
-        .ripple-container { position: relative; overflow: hidden; }
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: scale(0);
-            animation: ripple-effect 0.5s ease-out;
+        .z-button {
+            background-color: var(--zepeto-purple);
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            border-radius: 30px;
+            height: 58px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .z-button.disabled {
+            background-color: #E5E5EA;
+            color: #AEAEE2;
             pointer-events: none;
         }
-        @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+        .z-button:active { transform: scale(0.97); }
 
-        .new-badge {
-            background-color: #0b57d0;
-            color: white;
-            padding: 1px 7px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 700;
-            margin-left: 8px;
+        /* Modal */
+        #modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(4px);
         }
-
-        .fab {
-            box-shadow: 0 4px 12px 0 rgba(60,64,67,.3);
+        .modal-body {
+            background: #fff;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 32px;
+            padding: 32px 24px;
+            text-align: center;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        input, textarea { outline: none; }
-        
-        header { padding-top: env(safe-area-inset-top); }
-        .bottom-nav { padding-bottom: calc(env(safe-area-inset-bottom) + 16px); }
-
-        .email-body {
-            line-height: 1.6;
-            color: #3c4043;
-            white-space: pre-wrap;
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
-<body class="flex flex-col">
+<body>
 
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-        <img id="splash-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png" alt="Gmail">
-        <div id="splash-footer">
-            <div class="workspace-label">Google Workspace</div>
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Compose Sheet -->
-    <div id="compose-sheet" class="full-sheet">
-        <div class="flex items-center justify-between p-4 border-b border-gray-100">
-            <div class="flex items-center">
-                <button onclick="closeSheet('compose-sheet')" class="mr-6 p-2 rounded-full ripple-container">
-                    <span class="material-symbols-outlined text-gray-700">arrow_back</span>
-                </button>
-                <h2 class="text-xl text-gray-800 font-medium">편지쓰기</h2>
-            </div>
-            <div class="flex items-center space-x-6">
-                <span class="material-symbols-outlined text-gray-600">attach_file</span>
-                <span class="material-symbols-outlined text-[#0b57d0] font-bold">send</span>
-                <span class="material-symbols-outlined text-gray-600">more_vert</span>
-            </div>
-        </div>
-        <div class="flex-1 overflow-y-auto px-4">
-            <div class="flex items-center border-b border-gray-100 py-4">
-                <span class="text-gray-500 mr-4 text-sm w-12">보낸사람</span>
-                <span class="flex-1 text-gray-900 text-sm">niteowl (xx.niteowl@gmail.com)</span>
-                <span class="material-symbols-outlined text-gray-400">expand_more</span>
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-4">
-                <span class="text-gray-500 mr-4 text-sm w-12">받는사람</span>
-                <input type="email" class="flex-1 text-sm bg-transparent">
-            </div>
-            <div class="flex items-center border-b border-gray-100 py-4">
-                <input type="text" placeholder="제목" class="flex-1 text-gray-800 bg-transparent">
-            </div>
-            <textarea placeholder="이메일 작성" class="w-full mt-4 h-full min-h-[400px] text-gray-800 resize-none bg-transparent"></textarea>
-        </div>
-    </div>
-
-    <!-- ZEPETO Detail Sheet -->
-    <div id="zepeto-detail-sheet" class="full-sheet">
-        <div class="flex items-center justify-between p-4">
-            <div class="flex items-center">
-                <button onclick="closeSheet('zepeto-detail-sheet')" class="mr-6 p-2 rounded-full ripple-container">
-                    <span class="material-symbols-outlined text-gray-700">arrow_back</span>
-                </button>
-            </div>
-            <div class="flex items-center space-x-6">
-                <span class="material-symbols-outlined text-gray-600">archive</span>
-                <span class="material-symbols-outlined text-gray-600">delete</span>
-                <span class="material-symbols-outlined text-gray-600">mail</span>
-                <span class="material-symbols-outlined text-gray-600">more_vert</span>
-            </div>
-        </div>
-        <div class="flex-1 overflow-y-auto px-4 pb-20">
-            <div class="flex justify-between items-start mb-6">
-                <h1 class="text-xl text-gray-900 pr-8 font-medium">[ZEPETO] 계정 복구 및 비밀번호 재설정 완료 안내</h1>
-                <span class="material-symbols-outlined text-gray-400">star</span>
-            </div>
-            
-            <div class="flex items-center mb-6">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-bold mr-3 bg-[#7c4dff]">
-                    Z
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-gray-900 text-[15px]">ZEPETO</span>
-                        <span class="text-xs text-gray-500">15:42</span>
-                    </div>
-                    <div class="flex items-center text-xs text-gray-500">
-                        <span>받는사람: 나</span>
-                        <span class="material-symbols-outlined text-[14px] ml-1">expand_more</span>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4 ml-2">
-                    <span class="material-symbols-outlined text-gray-600 text-[20px]">reply</span>
-                    <span class="material-symbols-outlined text-gray-600 text-[20px]">more_vert</span>
-                </div>
-            </div>
-
-            <div class="email-body text-[15px]">안녕하세요, 제페토 보안팀입니다.
-고객님께서 요청하신 foma201561 계정의 복구 처리가 완료되었습니다.
-아울러, 요청하신 대로 비밀번호가 임시 비밀번호로 재설정되었음을 알려드립니다. 지금부터 해당 계정으로의 모든 접근 권한은 요청하신 보안 매체로 통합되었습니다.
-
-90일 유예 기간 내 복구이므로 모든 기록은 삭제 전과 동일하게 유지됩니다.</div>
-        </div>
-        
-        <div class="p-4 border-t border-gray-100 bg-white flex space-x-2">
-            <button class="flex-1 border border-gray-300 rounded-full py-2 flex items-center justify-center space-x-2 text-gray-600">
-                <span class="material-symbols-outlined text-[18px]">reply</span>
-                <span class="text-sm">답장</span>
-            </button>
-            <button class="flex-1 border border-gray-300 rounded-full py-2 flex items-center justify-center space-x-2 text-gray-600">
-                <span class="material-symbols-outlined text-[18px]">forward</span>
-                <span class="text-sm">전달</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Header -->
-    <header class="px-4 py-3 bg-white">
-        <div class="flex items-center bg-[#f3f6fc] rounded-full px-4 py-3 shadow-sm border border-transparent ripple-container">
-            <button class="mr-3 p-1 rounded-full ripple-container">
-                <span class="material-symbols-outlined text-gray-700">menu</span>
-            </button>
-            <input type="text" placeholder="메일 검색" class="flex-1 bg-transparent text-base placeholder-gray-500">
-            <div class="w-8 h-8 rounded-full overflow-hidden border border-gray-200 ml-2 cursor-pointer ripple-container">
-                <img src="https://lh3.googleusercontent.com/-UDVUg31wQV0/AAAAAAAAAAI/AAAAAAAAAAA/ALKGfknLZ98QV2-RLB3XmDBWUTc5TdfqOg/photo.jpg?sz=46" alt="Profile" class="w-full h-full object-cover">
-            </div>
-        </div>
+    <!-- Top App Bar -->
+    <header class="h-14 flex items-center px-2 sticky top-0 bg-white z-50">
+        <button class="w-12 h-12 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[28px]">chevron_left</span>
+        </button>
+        <h1 class="flex-1 text-center text-[17px] font-bold mr-12">데이터 내보내기</h1>
     </header>
 
-    <!-- List -->
-    <main class="flex-1 overflow-y-auto bg-white">
-        <div class="px-5 py-2">
-            <div class="text-[11px] font-bold text-gray-500 tracking-wider uppercase">기본</div>
+    <main class="px-5 pt-6 pb-40">
+        <div class="mb-8">
+            <h2 class="text-[24px] font-bold leading-tight mb-3">개인정보 데이터를<br>파일로 보내드릴까요?</h2>
+            <p class="text-[#8E8E8E] text-[15px] font-medium leading-relaxed">준비된 데이터는 계정에 연결된 이메일로 안전하게 전송됩니다.</p>
         </div>
-        <div id="mail-list"></div>
+
+        <!-- Accordion Section -->
+        <div class="bg-[#F8F9FB] rounded-[24px] p-5 mb-4" id="accordion-trigger">
+            <div class="flex items-center justify-between cursor-pointer">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm mr-4">
+                        <span class="material-symbols-outlined text-purple-600 text-[24px]" style="font-variation-settings: 'FILL' 1;">dataset</span>
+                    </div>
+                    <span class="font-bold text-[16px]">포함되는 데이터 항목</span>
+                </div>
+                <span class="material-symbols-outlined text-[#AEAEB2] transition-transform duration-300" id="arrow-icon">expand_more</span>
+            </div>
+            
+            <div class="accordion-content" id="accordion-content">
+                <div class="space-y-4 border-t border-[#E5E5EA] pt-4">
+                    <div class="flex items-start">
+                        <div class="w-1 h-1 rounded-full bg-purple-400 mt-2 mr-3 flex-shrink-0"></div>
+                        <p class="text-[14px] text-[#48484A] leading-relaxed">
+                            <span class="font-bold">기본 정보:</span> 프로필 이름, 제페토 ID, 가입일, 국가 정보 등
+                        </p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-1 h-1 rounded-full bg-purple-400 mt-2 mr-3 flex-shrink-0"></div>
+                        <p class="text-[14px] text-[#48484A] leading-relaxed">
+                            <span class="font-bold">활동 및 콘텐츠:</span> 팔로워/팔로잉 목록, 포스팅 텍스트, 아이템 구매 내역, 메시지(DM) 대화 기록
+                        </p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-1 h-1 rounded-full bg-purple-400 mt-2 mr-3 flex-shrink-0"></div>
+                        <p class="text-[14px] text-[#48484A] leading-relaxed">
+                            <span class="font-bold">설정 정보:</span> 차단 목록, 푸시 알림 설정, 연동된 소셜 계정 정보
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email View -->
+        <div class="bg-white border border-[#F2F2F7] rounded-[24px] p-5 mb-8">
+            <h3 class="font-bold text-[13px] text-[#8E8E93] mb-2 uppercase tracking-wide">수신 이메일</h3>
+            <div class="flex justify-between items-center">
+                <span class="text-[16px] font-semibold text-[#1C1C1E]">xx.niteowl@gmail.com</span>
+                <button class="text-[#7C4DFF] font-bold text-[13px] bg-[#F2EEFF] px-3 py-1.5 rounded-full">변경</button>
+            </div>
+        </div>
+
+        <!-- Policy & Agreement -->
+        <div class="mb-4">
+            <h3 class="font-bold text-[15px] mb-3 px-1 text-[#1C1C1E]">개인정보 처리 주의사항</h3>
+            <div class="policy-box" id="policy-box">
+                [데이터 내보내기 안내 및 주의사항]<br><br>
+                1. 본 서비스는 제페토 서비스 이용 과정에서 생성된 본인의 개인정보 데이터를 파일 형태로 제공하는 서비스입니다.<br><br>
+                2. 데이터 생성 요청 시, 시스템 상황에 따라 파일 준비까지 최대 48시간이 소요될 수 있으며 완료 시 이메일로 알림이 발송됩니다.<br><br>
+                3. 보안을 위해 이메일 내 포함된 다운로드 링크는 발송 후 7일간만 유효하며, 이후에는 링크가 만료되어 다시 신청해야 합니다.<br><br>
+                4. 제공되는 데이터 파일은 본인의 책임 하에 안전하게 보관하여야 하며, 분실 또는 유출 시 당사는 책임을 지지 않습니다.<br><br>
+                5. 특히 메시지 대화 내용 등 민감한 정보가 포함되어 있으므로 공용 PC에서의 다운로드를 지양해 주시기 바랍니다.<br><br>
+                --- 여기까지 읽으시면 동의가 활성화됩니다 ---
+            </div>
+            <p id="scroll-hint" class="text-[11px] text-red-500 mt-2 px-1 font-medium">※ 위 주의사항을 끝까지 읽어야 동의할 수 있습니다.</p>
+        </div>
+
+        <div class="flex items-start cursor-pointer transition-opacity duration-200 opacity-40 pointer-events-none" id="agree-area">
+            <div class="check-box mr-4 mt-0.5" id="check-box">
+                <span class="material-symbols-outlined">check</span>
+            </div>
+            <p class="text-[14px] text-[#3A3A3C] font-medium leading-relaxed">
+                개인정보 데이터 내보내기 주의사항을 모두 확인하였으며, 데이터 생성을 요청합니다.
+            </p>
+        </div>
     </main>
 
-    <!-- FAB -->
-    <button onclick="openSheet('compose-sheet')" class="fixed bottom-28 right-4 bg-[#c2e7ff] flex items-center px-5 py-4 rounded-2xl fab transition-transform active:scale-90 z-50 ripple-container">
-        <span class="material-symbols-outlined mr-3 text-gray-800">edit</span>
-        <span class="font-medium text-gray-800">편지쓰기</span>
-    </button>
+    <!-- Bottom Action -->
+    <div class="action-area">
+        <button id="submit-btn" class="z-button disabled shadow-lg">
+            데이터 내보내기 신청
+        </button>
+    </div>
 
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav bg-[#f3f6fc] border-t border-gray-200 flex justify-around items-center pt-2 z-50">
-        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer">
-            <div class="bg-[#d3e3fd] px-5 py-1 rounded-full mb-1">
-                <span class="material-symbols-outlined text-[#0b57d0]" style="font-variation-settings: 'FILL' 1;">mail</span>
+    <!-- Success Modal -->
+    <div id="modal-overlay">
+        <div class="modal-body">
+            <div class="w-20 h-20 bg-[#F2EEFF] rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-[#7C4DFF] text-[44px] font-bold">check</span>
             </div>
-            <span class="text-[10px] font-bold text-[#0b57d0]">메일</span>
+            <h3 class="text-[20px] font-bold mb-3">신청이 완료되었습니다</h3>
+            <p class="text-[#8E8E93] text-[15px] leading-relaxed mb-8 px-2">
+                데이터 준비가 완료되면 등록된 이메일로 링크를 보내드릴게요!
+            </p>
+            <button onclick="closeModal()" class="w-full bg-[#F2F2F7] text-[#1A1A1A] font-bold py-4 rounded-2xl active:scale-95 transition-transform">
+                확인
+            </button>
         </div>
-        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer opacity-50">
-            <div class="px-5 py-1 rounded-full mb-1">
-                <span class="material-symbols-outlined">video_chat</span>
-            </div>
-            <span class="text-[10px] font-medium">채팅</span>
-        </div>
-        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer opacity-50">
-            <div class="px-5 py-1 rounded-full mb-1">
-                <span class="material-symbols-outlined">videocam</span>
-            </div>
-            <span class="text-[10px] font-medium">회의</span>
-        </div>
-    </nav>
+    </div>
 
     <script>
-        const mailData = [
-            { 
-                id: 'zepeto', 
-                sender: "ZEPETO", 
-                subject: "[ZEPETO] 계정 복구 및 비밀번호 재설정 완료 안내", 
-                body: "안녕하세요, 제페토 보안팀입니다. 고객님께서 요청하신 foma201561 계정의 복구 처리가 완료되었습니다...", 
-                time: "15:42", unread: true, color: "bg-[#7c4dff]", initial: "Z", canOpen: true 
-            },
-            { 
-                id: 'notion', 
-                sender: "Notion", 
-                subject: "niteowl님, 'Mega_DeoBox' 페이지 협업 초대", 
-                body: "ieeple님이 당신을 새 프로젝트에 초대했습니다. 설계를 확인하세요.", 
-                time: "14:10", unread: true, color: "bg-black", initial: "N", canOpen: false 
-            },
-            { 
-                id: 'gemini', 
-                sender: "Gemini", 
-                subject: "xx.niteowl님, Gemini 2.5 Flash가 출시되었습니다", 
-                body: "더 빨라진 추론 속도와 이미지 처리 능력을 지금 바로 경험해보세요.", 
-                time: "오전 11:20", unread: true, color: "bg-gradient-to-tr from-blue-400 to-purple-500", initial: "G", canOpen: false 
-            },
-            { 
-                id: 'github', 
-                sender: "GitHub", 
-                subject: "[GitHub] Successful login as @niteowl", 
-                body: "A new device (Linux/Seoul) was used to sign in to your account.", 
-                time: "오전 09:15", unread: false, color: "bg-gray-900", initial: "G", canOpen: false 
-            },
-            { 
-                id: 'figma', 
-                sender: "Figma", 
-                subject: "niteowl, 'App_UI_Final' 편집 권한 수락됨", 
-                body: "이제 프로젝트의 모든 레이어를 편집할 수 있습니다. 작업을 시작하세요.", 
-                time: "어제", unread: false, color: "bg-[#F24E1E]", initial: "F", canOpen: false 
-            },
-            { 
-                id: 'mega', 
-                sender: "MEGA", 
-                subject: "DeoBox_Final.zip 전송 완료", 
-                body: "xx.niteowl님의 대용량 파일(2.4GB)이 안전하게 업로드되었습니다.", 
-                time: "어제", unread: false, color: "bg-[#d9272e]", initial: "M", canOpen: false 
-            },
-            { 
-                id: 'discord', 
-                sender: "Discord", 
-                subject: "niteowl, [Dev_Hub] 서버 멘션 알림", 
-                body: "ieeple: \"@niteowl님 입장을 환영합니다!\"", 
-                time: "2월 20일", unread: false, color: "bg-[#5865F2]", initial: "D", canOpen: false 
-            }
-        ];
+        // 1. Accordion Logic
+        const accordionTrigger = document.getElementById('accordion-trigger');
+        const accordionContent = document.getElementById('accordion-content');
+        const arrowIcon = document.getElementById('arrow-icon');
 
-        window.onload = () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 500);
-            }, 2500);
-            renderMails();
+        accordionTrigger.onclick = () => {
+            const isOpen = accordionContent.classList.toggle('open');
+            arrowIcon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
         };
 
-        function openSheet(id) {
-            document.getElementById(id).classList.add('open');
-        }
+        // 2. Scroll-to-Agree Logic
+        const policyBox = document.getElementById('policy-box');
+        const agreeArea = document.getElementById('agree-area');
+        const scrollHint = document.getElementById('scroll-hint');
+        let hasReadToBottom = false;
 
-        function closeSheet(id) {
-            document.getElementById(id).classList.remove('open');
-        }
+        policyBox.onscroll = () => {
+            if (hasReadToBottom) return;
+            
+            // Check if scroll is at bottom (with 5px buffer)
+            const isAtBottom = policyBox.scrollHeight - policyBox.scrollTop <= policyBox.clientHeight + 5;
+            
+            if (isAtBottom) {
+                hasReadToBottom = true;
+                agreeArea.style.opacity = '1';
+                agreeArea.style.pointerEvents = 'auto';
+                scrollHint.style.display = 'none';
+                policyBox.style.borderColor = '#7C4DFF';
+            }
+        };
 
-        function createRipple(e) {
-            const container = e.currentTarget;
-            const ripple = document.createElement("span");
-            const d = Math.max(container.clientWidth, container.clientHeight);
-            const r = d / 2;
-            const rect = container.getBoundingClientRect();
-            ripple.style.width = ripple.style.height = `${d}px`;
-            ripple.style.left = `${e.clientX - rect.left - r}px`;
-            ripple.style.top = `${e.clientY - rect.top - r}px`;
-            ripple.className = "ripple";
-            const prev = container.getElementsByClassName("ripple")[0];
-            if (prev) prev.remove();
-            container.appendChild(ripple);
-        }
+        // 3. Agreement & Submit Logic
+        const checkBox = document.getElementById('check-box');
+        const submitBtn = document.getElementById('submit-btn');
+        const overlay = document.getElementById('modal-overlay');
+        let isChecked = false;
 
-        function renderMails() {
-            const list = document.getElementById('mail-list');
-            mailData.forEach(m => {
-                const row = document.createElement('div');
-                row.className = `flex px-5 py-4 cursor-pointer ripple-container transition-colors ${m.unread ? 'bg-[#f2f6fc]' : 'bg-white'}`;
-                
-                row.onclick = () => {
-                    if (m.canOpen) {
-                        openSheet('zepeto-detail-sheet');
-                    }
-                };
+        agreeArea.onclick = () => {
+            if (!hasReadToBottom) return;
+            isChecked = !isChecked;
+            if (isChecked) {
+                checkBox.classList.add('active');
+                submitBtn.classList.remove('disabled');
+            } else {
+                checkBox.classList.remove('active');
+                submitBtn.classList.add('disabled');
+            }
+        };
 
-                row.innerHTML = `
-                    <div class="w-12 h-12 rounded-full ${m.color} flex items-center justify-center text-white text-xl font-medium mr-4 flex-shrink-0 shadow-sm">
-                        ${m.initial}
-                    </div>
-                    <div class="flex-1 min-w-0 pointer-events-none">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <div class="flex items-center min-w-0">
-                                <span class="${m.unread ? 'font-bold text-gray-900' : 'text-gray-600'} text-[14px] truncate">${m.sender}</span>
-                                ${m.unread ? '<span class="new-badge">New</span>' : ''}
-                            </div>
-                            <span class="text-[11px] ${m.unread ? 'font-bold text-blue-600' : 'text-gray-500'} ml-2">${m.time}</span>
-                        </div>
-                        <div class="flex justify-between items-start">
-                            <div class="min-w-0 pr-2">
-                                <p class="text-[13px] ${m.unread ? 'font-bold text-gray-900' : 'text-gray-700'} truncate">${m.subject}</p>
-                                <p class="text-[13px] text-gray-500 truncate leading-tight">${m.body}</p>
-                            </div>
-                            <span class="material-symbols-outlined text-gray-300 text-[20px]">star</span>
-                        </div>
-                    </div>
-                `;
-                row.addEventListener('mousedown', createRipple);
-                list.appendChild(row);
-            });
+        submitBtn.onclick = () => {
+            overlay.style.display = 'flex';
+        };
+
+        function closeModal() {
+            overlay.style.display = 'none';
         }
     </script>
 </body>
