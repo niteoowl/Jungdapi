@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gmail</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Gmail">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Gmail%22,%22short_name%22:%22Gmail%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%23ffffff%22,%22icons%22:[{%22src%22:%22https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22,%22purpose%22:%22any%20maskable%22}]}">
+
+    <!-- App Icon -->
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Google Sans', 'Roboto', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            background-color: #fff;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background-color: white;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease-out, visibility 0.4s;
+        }
+
+        #splash-logo {
+            width: 160px;
+            animation: logo-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes logo-pop {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #splash-footer {
+            position: absolute;
+            bottom: 80px;
+            text-align: center;
+        }
+
+        .workspace-label {
+            font-size: 16px;
+            color: #5f6368;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 180px;
+            height: 4px;
+            background-color: #f1f3f4;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 30%; height: 100%;
+            background-color: #4285f4;
+            animation: progress-loop 1.4s infinite ease-in-out;
+            position: relative;
+        }
+
+        @keyframes progress-loop {
+            0% { left: -30%; width: 10%; }
+            50% { width: 40%; }
+            100% { left: 100%; width: 10%; }
+        }
+
+        /* Full Sheets */
+        .full-sheet {
+            position: fixed;
+            top: 100%; left: 0; width: 100%; height: 100%;
+            background-color: white;
+            z-index: 1000;
+            transition: top 0.35s cubic-bezier(0, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-sheet.open { top: 0; }
+
+        /* Ripple */
+        .ripple-container { position: relative; overflow: hidden; }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: scale(0);
+            animation: ripple-effect 0.5s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+
+        .new-badge {
+            background-color: #0b57d0;
+            color: white;
+            padding: 1px 7px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .fab {
+            box-shadow: 0 4px 12px 0 rgba(60,64,67,.3);
+        }
+
+        input, textarea { outline: none; }
+        
+        header { padding-top: env(safe-area-inset-top); }
+        .bottom-nav { padding-bottom: calc(env(safe-area-inset-bottom) + 16px); }
+
+        .email-body {
+            line-height: 1.6;
+            color: #3c4043;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img id="splash-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/512px-Gmail_icon_%282020%29.svg.png" alt="Gmail">
+        <div id="splash-footer">
+            <div class="workspace-label">Google Workspace</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compose Sheet -->
+    <div id="compose-sheet" class="full-sheet">
+        <div class="flex items-center justify-between p-4 border-b border-gray-100">
+            <div class="flex items-center">
+                <button onclick="closeSheet('compose-sheet')" class="mr-6 p-2 rounded-full ripple-container">
+                    <span class="material-symbols-outlined text-gray-700">arrow_back</span>
+                </button>
+                <h2 class="text-xl text-gray-800 font-medium">편지쓰기</h2>
+            </div>
+            <div class="flex items-center space-x-6">
+                <span class="material-symbols-outlined text-gray-600">attach_file</span>
+                <span class="material-symbols-outlined text-[#0b57d0] font-bold">send</span>
+                <span class="material-symbols-outlined text-gray-600">more_vert</span>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto px-4">
+            <div class="flex items-center border-b border-gray-100 py-4">
+                <span class="text-gray-500 mr-4 text-sm w-12">보낸사람</span>
+                <span class="flex-1 text-gray-900 text-sm">niteowl (xx.niteowl@gmail.com)</span>
+                <span class="material-symbols-outlined text-gray-400">expand_more</span>
+            </div>
+            <div class="flex items-center border-b border-gray-100 py-4">
+                <span class="text-gray-500 mr-4 text-sm w-12">받는사람</span>
+                <input type="email" class="flex-1 text-sm bg-transparent">
+            </div>
+            <div class="flex items-center border-b border-gray-100 py-4">
+                <input type="text" placeholder="제목" class="flex-1 text-gray-800 bg-transparent">
+            </div>
+            <textarea placeholder="이메일 작성" class="w-full mt-4 h-full min-h-[400px] text-gray-800 resize-none bg-transparent"></textarea>
+        </div>
+    </div>
+
+    <!-- ZEPETO Detail Sheet -->
+    <div id="zepeto-detail-sheet" class="full-sheet">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center">
+                <button onclick="closeSheet('zepeto-detail-sheet')" class="mr-6 p-2 rounded-full ripple-container">
+                    <span class="material-symbols-outlined text-gray-700">arrow_back</span>
+                </button>
+            </div>
+            <div class="flex items-center space-x-6">
+                <span class="material-symbols-outlined text-gray-600">archive</span>
+                <span class="material-symbols-outlined text-gray-600">delete</span>
+                <span class="material-symbols-outlined text-gray-600">mail</span>
+                <span class="material-symbols-outlined text-gray-600">more_vert</span>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto px-4 pb-20">
+            <div class="flex justify-between items-start mb-6">
+                <h1 class="text-xl text-gray-900 pr-8 font-medium">[ZEPETO] 계정 복구 및 비밀번호 재설정 완료 안내</h1>
+                <span class="material-symbols-outlined text-gray-400">star</span>
+            </div>
+            
+            <div class="flex items-center mb-6">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-bold mr-3 bg-[#7c4dff]">
+                    Z
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-gray-900 text-[15px]">ZEPETO</span>
+                        <span class="text-xs text-gray-500">15:42</span>
+                    </div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        <span>받는사람: 나</span>
+                        <span class="material-symbols-outlined text-[14px] ml-1">expand_more</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 ml-2">
+                    <span class="material-symbols-outlined text-gray-600 text-[20px]">reply</span>
+                    <span class="material-symbols-outlined text-gray-600 text-[20px]">more_vert</span>
+                </div>
+            </div>
+
+            <div class="email-body text-[15px]">안녕하세요, 제페토 보안팀입니다.
+고객님께서 요청하신 foma201561 계정의 복구 처리가 완료되었습니다.
+아울러, 요청하신 대로 비밀번호가 임시 비밀번호로 재설정되었음을 알려드립니다. 지금부터 해당 계정으로의 모든 접근 권한은 요청하신 보안 매체로 통합되었습니다.
+
+90일 유예 기간 내 복구이므로 모든 기록은 삭제 전과 동일하게 유지됩니다.</div>
+        </div>
+        
+        <div class="p-4 border-t border-gray-100 bg-white flex space-x-2">
+            <button class="flex-1 border border-gray-300 rounded-full py-2 flex items-center justify-center space-x-2 text-gray-600">
+                <span class="material-symbols-outlined text-[18px]">reply</span>
+                <span class="text-sm">답장</span>
+            </button>
+            <button class="flex-1 border border-gray-300 rounded-full py-2 flex items-center justify-center space-x-2 text-gray-600">
+                <span class="material-symbols-outlined text-[18px]">forward</span>
+                <span class="text-sm">전달</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="px-4 py-3 bg-white">
+        <div class="flex items-center bg-[#f3f6fc] rounded-full px-4 py-3 shadow-sm border border-transparent ripple-container">
+            <button class="mr-3 p-1 rounded-full ripple-container">
+                <span class="material-symbols-outlined text-gray-700">menu</span>
+            </button>
+            <input type="text" placeholder="메일 검색" class="flex-1 bg-transparent text-base placeholder-gray-500">
+            <div class="w-8 h-8 rounded-full overflow-hidden border border-gray-200 ml-2 cursor-pointer ripple-container">
+                <img src="https://lh3.googleusercontent.com/-UDVUg31wQV0/AAAAAAAAAAI/AAAAAAAAAAA/ALKGfknLZ98QV2-RLB3XmDBWUTc5TdfqOg/photo.jpg?sz=46" alt="Profile" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </header>
+
+    <!-- List -->
+    <main class="flex-1 overflow-y-auto bg-white">
+        <div class="px-5 py-2">
+            <div class="text-[11px] font-bold text-gray-500 tracking-wider uppercase">기본</div>
+        </div>
+        <div id="mail-list"></div>
+    </main>
+
+    <!-- FAB -->
+    <button onclick="openSheet('compose-sheet')" class="fixed bottom-28 right-4 bg-[#c2e7ff] flex items-center px-5 py-4 rounded-2xl fab transition-transform active:scale-90 z-50 ripple-container">
+        <span class="material-symbols-outlined mr-3 text-gray-800">edit</span>
+        <span class="font-medium text-gray-800">편지쓰기</span>
+    </button>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav bg-[#f3f6fc] border-t border-gray-200 flex justify-around items-center pt-2 z-50">
+        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer">
+            <div class="bg-[#d3e3fd] px-5 py-1 rounded-full mb-1">
+                <span class="material-symbols-outlined text-[#0b57d0]" style="font-variation-settings: 'FILL' 1;">mail</span>
+            </div>
+            <span class="text-[10px] font-bold text-[#0b57d0]">메일</span>
+        </div>
+        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer opacity-50">
+            <div class="px-5 py-1 rounded-full mb-1">
+                <span class="material-symbols-outlined">video_chat</span>
+            </div>
+            <span class="text-[10px] font-medium">채팅</span>
+        </div>
+        <div class="flex flex-col items-center ripple-container px-6 py-2 rounded-xl cursor-pointer opacity-50">
+            <div class="px-5 py-1 rounded-full mb-1">
+                <span class="material-symbols-outlined">videocam</span>
+            </div>
+            <span class="text-[10px] font-medium">회의</span>
+        </div>
+    </nav>
+
+    <script>
+        const mailData = [
+            { 
+                id: 'zepeto', 
+                sender: "ZEPETO", 
+                subject: "[ZEPETO] 계정 복구 및 비밀번호 재설정 완료 안내", 
+                body: "안녕하세요, 제페토 보안팀입니다. 고객님께서 요청하신 foma201561 계정의 복구 처리가 완료되었습니다...", 
+                time: "15:42", unread: true, color: "bg-[#7c4dff]", initial: "Z", canOpen: true 
+            },
+            { 
+                id: 'notion', 
+                sender: "Notion", 
+                subject: "niteowl님, 'Mega_DeoBox' 페이지 협업 초대", 
+                body: "ieeple님이 당신을 새 프로젝트에 초대했습니다. 설계를 확인하세요.", 
+                time: "14:10", unread: true, color: "bg-black", initial: "N", canOpen: false 
+            },
+            { 
+                id: 'gemini', 
+                sender: "Gemini", 
+                subject: "xx.niteowl님, Gemini 2.5 Flash가 출시되었습니다", 
+                body: "더 빨라진 추론 속도와 이미지 처리 능력을 지금 바로 경험해보세요.", 
+                time: "오전 11:20", unread: true, color: "bg-gradient-to-tr from-blue-400 to-purple-500", initial: "G", canOpen: false 
+            },
+            { 
+                id: 'github', 
+                sender: "GitHub", 
+                subject: "[GitHub] Successful login as @niteowl", 
+                body: "A new device (Linux/Seoul) was used to sign in to your account.", 
+                time: "오전 09:15", unread: false, color: "bg-gray-900", initial: "G", canOpen: false 
+            },
+            { 
+                id: 'figma', 
+                sender: "Figma", 
+                subject: "niteowl, 'App_UI_Final' 편집 권한 수락됨", 
+                body: "이제 프로젝트의 모든 레이어를 편집할 수 있습니다. 작업을 시작하세요.", 
+                time: "어제", unread: false, color: "bg-[#F24E1E]", initial: "F", canOpen: false 
+            },
+            { 
+                id: 'mega', 
+                sender: "MEGA", 
+                subject: "DeoBox_Final.zip 전송 완료", 
+                body: "xx.niteowl님의 대용량 파일(2.4GB)이 안전하게 업로드되었습니다.", 
+                time: "어제", unread: false, color: "bg-[#d9272e]", initial: "M", canOpen: false 
+            },
+            { 
+                id: 'discord', 
+                sender: "Discord", 
+                subject: "niteowl, [Dev_Hub] 서버 멘션 알림", 
+                body: "ieeple: \"@niteowl님 입장을 환영합니다!\"", 
+                time: "2월 20일", unread: false, color: "bg-[#5865F2]", initial: "D", canOpen: false 
+            }
+        ];
+
+        window.onload = () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }, 2500);
+            renderMails();
+        };
+
+        function openSheet(id) {
+            document.getElementById(id).classList.add('open');
+        }
+
+        function closeSheet(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        function createRipple(e) {
+            const container = e.currentTarget;
+            const ripple = document.createElement("span");
+            const d = Math.max(container.clientWidth, container.clientHeight);
+            const r = d / 2;
+            const rect = container.getBoundingClientRect();
+            ripple.style.width = ripple.style.height = `${d}px`;
+            ripple.style.left = `${e.clientX - rect.left - r}px`;
+            ripple.style.top = `${e.clientY - rect.top - r}px`;
+            ripple.className = "ripple";
+            const prev = container.getElementsByClassName("ripple")[0];
+            if (prev) prev.remove();
+            container.appendChild(ripple);
+        }
+
+        function renderMails() {
+            const list = document.getElementById('mail-list');
+            mailData.forEach(m => {
+                const row = document.createElement('div');
+                row.className = `flex px-5 py-4 cursor-pointer ripple-container transition-colors ${m.unread ? 'bg-[#f2f6fc]' : 'bg-white'}`;
+                
+                row.onclick = () => {
+                    if (m.canOpen) {
+                        openSheet('zepeto-detail-sheet');
+                    }
+                };
+
+                row.innerHTML = `
+                    <div class="w-12 h-12 rounded-full ${m.color} flex items-center justify-center text-white text-xl font-medium mr-4 flex-shrink-0 shadow-sm">
+                        ${m.initial}
+                    </div>
+                    <div class="flex-1 min-w-0 pointer-events-none">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <div class="flex items-center min-w-0">
+                                <span class="${m.unread ? 'font-bold text-gray-900' : 'text-gray-600'} text-[14px] truncate">${m.sender}</span>
+                                ${m.unread ? '<span class="new-badge">New</span>' : ''}
+                            </div>
+                            <span class="text-[11px] ${m.unread ? 'font-bold text-blue-600' : 'text-gray-500'} ml-2">${m.time}</span>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <div class="min-w-0 pr-2">
+                                <p class="text-[13px] ${m.unread ? 'font-bold text-gray-900' : 'text-gray-700'} truncate">${m.subject}</p>
+                                <p class="text-[13px] text-gray-500 truncate leading-tight">${m.body}</p>
+                            </div>
+                            <span class="material-symbols-outlined text-gray-300 text-[20px]">star</span>
+                        </div>
+                    </div>
+                `;
+                row.addEventListener('mousedown', createRipple);
+                list.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
